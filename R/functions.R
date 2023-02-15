@@ -1,17 +1,11 @@
-# SWAPUI dependency file
-# Author: Moritz Shore | moritz.shore@nibio.no | 9.1.23
-# Contents: this has all the misc. functions that are used by the various
-#           functions of the tool.
-
-
 #' Runs the SWAP model
-#' file are found.
 #'
 #' @param project_path
 #'
+#' @return returns name of run (change this!)
 #' @export
 #'
-run_swap <- function(field){
+run_swap <- function(project_path){
 
   # delete previous results, if it exists
   if(file.exists(paste0(field,"/work/*"))){
