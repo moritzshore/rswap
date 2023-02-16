@@ -1,11 +1,12 @@
 #' Runs the SWAP model
 #'
-#' @param project_path
+#' @param project_path String, path to the project directory.
+#' @param swap_path String, path to the swap executable (optional, will try to auto find if none is poath)
 #'
 #' @return returns name of run (change this!)
 #' @export
 #'
-run_swap <- function(project_path){
+run_swap <- function(project_path, swap_path){
 
   # delete previous results, if it exists
   if(file.exists(paste0(field,"/work/*"))){
