@@ -1,48 +1,128 @@
+
+
+#' Makes a temporary sub-directory workspace for the package to run in.
+#' @param project_path string, path to project directory
+#'
+#' @importFrom glue glue
+#' @importFrom dyplr %>%
+#'
+#' @keywords internal
+#'
+build_rswap_directory <- function(project_path){
+
+  temp_directory <- glue("{project_path}/rswap/")
+  # create the hidden temp directory
+  dir.create(temp_directory, showWarnings = F, mode = "0777")
+
+
+  # list all the files in the original project directory
+  #TODO might want to check the options here, so you get ALL the files and none more
+  file_list <- list.files(project_path, full.names = T, recursive = T)
+
+  # vector of all the files i want to copy over
+  #TODO might want to think of a better solution than "observed_data.xslx someday
+  file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv", "observed_data.xlsx")
+  match_string <- paste(file_types, collapse = "|")
+
+  # find out the index of the required files and copy only those over to the temp directory
+  required_files <- file_list %>% grepl(x = ., match_string) %>% which()
+  required_file_list <- file_list[required_files]
+  status <- file.copy(from = required_file_list, to = temp_directory)
+
+  # legacy support for old met files:
+  # copies over any files with a "numeric" file type. (best way i could think of)
+  not_numeric <- str_split(file_list, "[.]", simplify = T)[,2] %>% as.numeric() %>% is.na() %>% suppressWarnings()
+  met_files <- file_list[which(not_numeric == FALSE)]
+  met_status <- file.copy(from = met_files, to = temp_directory)
+
+  # return the path to the temp directory
+  return(temp_directory)
+}
+
+#' updates the filepaths in the swap main file
+#' @param temp_directory path to the temp directory
+#' @param swap_file name of the swap file to be modified
+#' @importFrom glue glue
+#' @importFrom dplyr %>%
+#' @keywords internal
+update_swp_paths <- function(temp_directory, swap_file){
+
+  swap_file_lines <- read_lines(glue("{temp_directory}/{swap_file}"))
+
+  swap_file_new <- swap_file_lines
+
+  project_line = swap_file_lines %>% grepl(x=., "PROJECT", fixed = T) %>% which()
+  pathwork_line = swap_file_lines %>% grepl(x=., "PATHWORK", fixed = T) %>% which()
+  pathatm_line = swap_file_lines %>% grepl(x=., "PATHATM", fixed = T) %>% which()
+  pathcrop_line = swap_file_lines %>% grepl(x=., "PATHCROP", fixed = T) %>% which()
+  pathdrain_line = swap_file_lines %>% grepl(x=., "PATHDRAIN", fixed = T) %>% which()
+
+ dir.create(glue("{temp_directory}work"), showWarnings = F)
+
+ swap_file_new[pathwork_line] <-  glue("  PATHWORK  = 'rswap/work/' ! changed by rswap {Sys.time()}")
+ swap_file_new[pathatm_line] <-   glue("  PATHATM   = 'rswap/'      ! changed by rswap {Sys.time()}")
+ swap_file_new[pathcrop_line] <-  glue("  PATHCROP  = 'rswap/'      ! changed by rswap {Sys.time()}")
+ swap_file_new[pathdrain_line] <- glue("  PATHDRAIN = 'rswap/'      ! changed by rswap {Sys.time()}")
+
+ new_swap_file_name = glue("{temp_directory}rswap_{swap_file}")
+
+ writeLines(text = swap_file_new, con = new_swap_file_name )
+
+ return(new_swap_file_name)
+}
+
+
+
 #' Runs the SWAP model
 #'
 #' @param project_path String, path to the project directory.
 #' @param swap_path String, path to the swap executable (optional, will try to auto find if none is poath)
+#' @param string name of the *.swp main file
+#' @param verbose logical
+#' @param timeout number of seconds before run timeout (optional, unlimited by default)
 #'
 #' @return returns name of run (change this!)
+#'
+#' @importFrom glue glue
+#' @importFrom dyplr %>%
 #' @export
 #'
-run_swap <- function(project_path, swap_path){
+run_swap <- function(project_path, swap_path, swap_file, verbose = T, timeout = Inf){
 
-  # delete previous results, if it exists
-  if(file.exists(paste0(field,"/work/*"))){
-  unlink(paste0(field,"/work/*"))
-  }
+  # create a temp directory to work in
+  temp_directory <- build_rswap_directory(project_path)
 
-  # create the directories, if they dont exist.
-  dir.create(paste0(field,"/archive"), showWarnings = F)
-  dir.create(paste0(field,"/crop"), showWarnings = F)
-  dir.create(paste0(field,"/drain"), showWarnings = F)
-  dir.create(paste0(field,"/meteo"), showWarnings = F)
-  dir.create(paste0(field,"/observed"), showWarnings = F)
-  dir.create(paste0(field,"/output"), showWarnings = F)
-  dir.create(paste0(field,"/work"), showWarnings = F)
+  # update the swap main file with the new paths to the input files
+  file_path <- update_swp_paths(temp_directory, swap_file)
 
-  # parse the command to run swap
-  command = paste0('dependent/swap.exe ',field,'/swap.swp')
-  print(command)
+  # parse the working directory from the given swap path
+  swap_path_split = swap_path %>% str_split("swap.exe", simplify = T)
+  swap_wd <- swap_path_split[,1]
 
-  # execute command and store the status in variable "code"
-  code = system(command)
+  # remove the working directory from the path of the swap main file
+  fixed_path <- file_path %>% str_remove(swap_wd)
 
-  if(code!=100){print('Run failed');return(NULL)}
-
-  # create a run name based off on the current datetime
-  run_name = paste0(field,"_", Sys.time() %>%
-                      str_replace_all(pattern = " ", replacement = "_") %>%
-                      str_replace_all(pattern = ":", replacement = "-"))
-
-
-  # remove swap.ok and reruns.log since they annoy me (feel free to change)
-  unlink("swap.ok");unlink("reruns.log")
-
-  # return the name of the run.
-  return(run_name)
+  # run the model
+  msg <- run( command = "swap.exe", wd = swap_wd, args = fixed_path,
+      error_on_status = F,
+      timeout = timeout,
+      echo_cmd = T,
+      echo = T
+    )
+  # return status of run
+  return(msg$status)
 }
+
+
+
+
+
+
+
+
+
+# to be transformed to package form:
+
 
 # this function archives the current model setup, so that you can revert back
 # to it on a later date.
