@@ -1,5 +1,3 @@
-
-
 #' Makes a temporary sub-directory workspace for the package to run in.
 #' @param project_path string, path to project directory
 #'
@@ -39,13 +37,13 @@ build_rswap_directory <- function(project_path){
   return(temp_directory)
 }
 
-#' updates the filepaths in the swap main file
+#' updates the file paths in the swap main file
 #' @param temp_directory path to the temp directory
 #' @param swap_file name of the swap file to be modified
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @keywords internal
-update_swp_paths <- function(temp_directory, swap_file){
+update_swp_paths <- function(temp_directory, swap_file, swap_exe){
 
   swap_file_lines <- read_lines(glue("{temp_directory}/{swap_file}"))
 
@@ -59,10 +57,17 @@ update_swp_paths <- function(temp_directory, swap_file){
 
  dir.create(glue("{temp_directory}work"), showWarnings = F)
 
- swap_file_new[pathwork_line] <-  glue("  PATHWORK  = 'rswap/work/' ! changed by rswap {Sys.time()}")
- swap_file_new[pathatm_line] <-   glue("  PATHATM   = 'rswap/'      ! changed by rswap {Sys.time()}")
- swap_file_new[pathcrop_line] <-  glue("  PATHCROP  = 'rswap/'      ! changed by rswap {Sys.time()}")
- swap_file_new[pathdrain_line] <- glue("  PATHDRAIN = 'rswap/'      ! changed by rswap {Sys.time()}")
+ # "tetves/rswap/
+
+ path_split = swap_exe %>% str_split("/", simplify = T)
+ swap_file_name = path_split[5]
+ path_without_swap <-  swap_exe %>% str_remove(swap_file_name)
+ swap_main_file_path <- temp_directory %>% str_remove(path_without_swap)
+
+ swap_file_new[pathwork_line] <-  glue("  PATHWORK  = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
+ swap_file_new[pathatm_line] <-   glue("  PATHATM   = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
+ swap_file_new[pathcrop_line] <-  glue("  PATHCROP  = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
+ swap_file_new[pathdrain_line] <- glue("  PATHDRAIN = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
 
  new_swap_file_name = glue("{temp_directory}rswap_{swap_file}")
 
