@@ -2,7 +2,7 @@
 #' @param project_path string, path to project directory
 #'
 #' @importFrom glue glue
-#' @importFrom dyplr %>%
+#' @importFrom dplyr %>%
 #'
 #' @keywords internal
 #'
@@ -12,14 +12,12 @@ build_rswap_directory <- function(project_path){
   # create the hidden temp directory
   dir.create(temp_directory, showWarnings = F, mode = "0777")
 
-
   # list all the files in the original project directory
   #TODO might want to check the options here, so you get ALL the files and none more
   file_list <- list.files(project_path, full.names = T, recursive = T)
 
   # vector of all the files i want to copy over
-  #TODO might want to think of a better solution than "observed_data.xslx someday
-  file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv", "observed_data.xlsx")
+  file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv")
   match_string <- paste(file_types, collapse = "|")
 
   # find out the index of the required files and copy only those over to the temp directory
@@ -55,8 +53,6 @@ update_swp_paths <- function(temp_directory, swap_file, swap_exe){
   pathcrop_line = swap_file_lines %>% grepl(x=., "PATHCROP", fixed = T) %>% which()
   pathdrain_line = swap_file_lines %>% grepl(x=., "PATHDRAIN", fixed = T) %>% which()
 
- dir.create(glue("{temp_directory}work"), showWarnings = F)
-
  # "tetves/rswap/
 
  path_split = swap_exe %>% str_split("/", simplify = T)
@@ -76,8 +72,6 @@ update_swp_paths <- function(temp_directory, swap_file, swap_exe){
  return(new_swap_file_name)
 }
 
-
-
 #' Runs the SWAP model
 #'
 #' @param project_path String, path to the project directory.
@@ -89,16 +83,16 @@ update_swp_paths <- function(temp_directory, swap_file, swap_exe){
 #' @return returns name of run (change this!)
 #'
 #' @importFrom glue glue
-#' @importFrom dyplr %>%
+#' @importFrom dplyr %>%
 #' @export
 #'
-run_swap <- function(project_path, swap_path, swap_file, verbose = T, timeout = Inf){
+run_swap <- function(project_path, swap_exe, swap_file, verbose = T, timeout = Inf){
 
   # create a temp directory to work in
   temp_directory <- build_rswap_directory(project_path)
 
   # update the swap main file with the new paths to the input files
-  file_path <- update_swp_paths(temp_directory, swap_file)
+  file_path <- update_swp_paths(temp_directory, swap_file, swap_exe)
 
   # parse the working directory from the given swap path
   swap_path_split = swap_path %>% str_split("swap.exe", simplify = T)
@@ -107,267 +101,162 @@ run_swap <- function(project_path, swap_path, swap_file, verbose = T, timeout = 
   # remove the working directory from the path of the swap main file
   fixed_path <- file_path %>% str_remove(swap_wd)
 
+  # KILL swap before running to avoid file locking issues.
+  system('taskkill /IM  "swap.exe" /F', show.output.on.console = verbose)
+
   # run the model
   msg <- run( command = "swap.exe", wd = swap_wd, args = fixed_path,
       error_on_status = F,
       timeout = timeout,
-      echo_cmd = T,
-      echo = T
+      echo_cmd = verbose,
+      echo = verbose
     )
+
+  # TODO improve this
+  if (msg$status != "100") {
+    warning(glue("SWAP error, code {msg$status}"))
+  }
+
   # return status of run
   return(msg$status)
 }
 
+#' Save a swap run
+#'
+#' @param project_path String, path to the project directory.
+#' @param save_location String, path to directory where the model files are to
+#' be saved. default is "project_directory"/rswap_saved_runs/
+#' @param run_name name of run to be saved. default is "rswap_{time,date}"
+#' @param verbose logical
+#'#'
+#' @importFrom glue glue
+#' @importFrom dplyr %>%
+#' @importFrom stringr str_replace_all
+#' @export
+#'
+save_run <- function(project_path, save_location = NULL, run_name = NULL, verbose = F){
 
-
-
-
-
-
-
-
-# to be transformed to package form:
-
-
-# this function archives the current model setup, so that you can revert back
-# to it on a later date.
-archive_run <- function(run_name){
-
-  # path where it will be saved
-  dirpath = paste0(field,"/archive/",run_name)
-
-  # archives work and deletes saved log files
-  dir.create(dirpath, showWarnings = F)
-  dir.create(paste0(dirpath, "/log"), showWarnings = F)
-  dir.create(paste0(dirpath,"/work"), showWarnings = F)
-  file.copy(from = paste0(field,"/work"), to = paste0(dirpath, "/"), recursive = TRUE, )
-  file.copy(from = paste0(field, "/crop"), to = paste0(dirpath,"/"), recursive = TRUE)
-  file.copy(from = paste0(field, "/drain"), to = paste0(dirpath,"/"), recursive = TRUE)
-  file.copy(from = paste0(field, "/meteo"), to = paste0(dirpath,"/"), recursive = TRUE)
-  file.copy(from = paste0(field, "/swap.swp"), to = paste0(dirpath,"/swap.swp"))
-  if(file.exists(paste0(field, "/swap_swap.log"))) {
-    file.copy(
-      from = paste0(field, "/swap_swap.log"),
-      to = paste0(dirpath, "/log"),
-      recursive = TRUE
-    )
-    file.remove(paste0(field,"/swap_swap.log"))
+  if(run_name %>% is.null()){
+    tad = Sys.time() %>%  str_replace_all(":", "_") %>% str_replace_all(" ","at")
+    run_name = glue("rswap_{tad}")
   }
-  if (file.exists("swap.ok")) {
-    file.copy(from = "swap.ok",
-              to = paste0(dirpath, "/log"),
-              recursive = TRUE)
-    file.remove("swap.ok")
+
+  if(save_location %>% is.null()){
+    save_location = glue("{project_path}/rswap_saved")
   }
-  if (file.exists("reruns.log")) {
-    file.copy(from = "reruns.log",
-              to = paste0(dirpath, "/log"),
-              recursive = TRUE)
-    file.remove("reruns.log")
+
+  # create the save folder of ALL the saves
+  dir.create(save_location, showWarnings = F)
+
+  # create the save folder for the individual run
+  to_path = glue("{save_location}/{run_name}")
+  dir.create(to_path, showWarnings = T)
+
+  from_path = glue("{project_path}/rswap/")
+
+  from_copy = list.files(from_path, full.names = T)
+  to_copy = glue("{to_path}/{list.files(from_path)}")
+
+  status = file.copy(from_copy, to_copy)
+
+  if (verbose) {
+    if (any(status == FALSE)) {
+      cat("some files were not copied!\n")
+      cat(to_copy[which(status == FALSE)], sep = "\n")
+    } else{
+      cat("all files succesfully copied to:\n")
+      cat(to_path, "\n")
+    }
   }
-  print(paste0("model setup archived in ",dirpath))
-  return(dirpath)
+  #TODO generate a preview plot of the model run in the directory?
 }
 
-# reads the observed file and returns in proper format
-read_observed <- function(field = NA){
+#' Load observed data (make sure to use the template .xlsx file)
+#' @param path String. Path to observed data file (.xlsx)
+#' @param verbose Logical. Prints status reports
+#' @importFrom readxl read_excel
+#' @importFrom stringr str_remove str_replace str_split
+#'
+#' @export
+load_observed <- function(path, verbose = F){
 
-  # error catch if no field was provided
-  if (is.na(field)) {
-    print("No field site specified, RETURNING EMPTY VALUES AT DEFAULT DEPTH")
-    return(tibble(
-      DATE = NA,
-      obsWC_15 = NA,
-      obsWC_40 = NA,
-      obsWC_70 = NA
-    ))
+  # TODO: maybe this should be internal
+  # TODO: install the template file via package!
+
+  data <- read_excel(path)
+  columns <- colnames(data)
+
+  # find a better way to do this. or remove it
+  date_col <- columns %>% grepl(x = ., "DATE") %>% which()
+
+  obs_cols <- columns %>%  grepl(x = ., "obs*")
+
+  col_sep <- columns[obs_cols] %>% str_remove("obs") %>% str_split("_") %>% unlist()
+
+  num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
+
+  obs_vars <- col_sep[num_index] %>% unique()
+
+  return_df <- data.frame(data, obs_vars)
+
+  if(verbose){
+    cat("observed data loaded, following variables detected:", sep = "\n")
+    cat(obs_vars, "\n", sep = " ")
   }
-
-  # error catch if file does not exist
-  if (!file.exists(paste0(field, "/observed/observed_data.xlsx"))) {
-    print("NO OBSERVED FILE, RETURNING EMPTY VALUES AT DEFAULT DEPTH")
-    return(tibble(
-      DATE = NA,
-      obsWC_15 = NA,
-      obsWC_40 = NA,
-      obsWC_70 = NA
-    ))
-  }
-
-  # read in the file if it exists
-  observed_file <- read_xlsx(path = paste0(field,"/observed/observed_data.xlsx"), sheet = 1, na = "")
-  # force date into date format
-  observed_file$DATE <- as.Date(observed_file$DATE)
-  return(observed_file)
+  return_df %>% return()
 }
 
-
-
-
-
-load_last_run <- function(field){
-
-  last_run = get_last_run(field) %>% str_remove(".csv")
-
-  if(is.na(last_run)){print("No runs saved yet. cannot load.");return(NA)}
-
-  # reads in the daily out of SWAP
-  daily_output <- read_daily_output(field)
-
-  if (daily_output %>% length() == 0) {
-    print("no model run on file, please run model first!")
-    return(NA)
-  }
-  # reads in the measured data
-  observed <- read_observed(field)
-
-
-  if(is.data.frame(daily_output)==FALSE){
-    print("error reading SWAP output")
-    return(NA)
-  }
-
-  if(is.data.frame(observed)==FALSE){
-    print("error reading observed data")
-    return(NA)
-  }
-
-  # combines the measured data with the SWAP output
-  full_df <- left_join(daily_output, observed, by = "DATE")
-
-  # finds out at what depths the measurements were made
-  depths = get_depths(full_df)
-
-
-  # diagnostic plot
-  x = daily_output$DATE
-  y = daily_output[daily_output %>% colnames() %>% grepl(x=.,"WC") %>% which() %>% min()] %>% pull()
-  plot(x,
-       y,
-       type = "l",
-       main = paste("field:",field, "\nrun:",last_run, "\nvar: WC depth=", depths %>% min()),
-       ylab = "WC",
-       xlab = "DATE")
-  print(paste("loaded run:", last_run))
-  return(list(last_run, full_df, observed))
-
+#' Load last run. Loads the most recently saved run of the project directory.
+#' @param project_path String, path to the project directory / or custom save location.
+#' @param custom_directory Logical, Set to TRUE if using custom save location.
+#' @param verbose Logical. Prints status reports
+#'
+#' @export
+load_last_run <- function(project_path, verbose = F) {
+  cat("not implemented yet", sep = "\n")
+  # ISSUE: cannot read creation date of directories
 }
 
+#' Reads SWAP output of current path
+#' @param project_path String, path to the project directory / or custom save location.
+#' @importFrom glue glue
+#' @importFrom stringr str_replace str_remove
+#' @importFrom tibble tibble
+#' @export
+read_swap_output <-  function(project_path){
 
+  # TODO: pass list of files to read OR read and return all
 
-read_daily_output <- function(field){
+  read_path <- glue("{project_path}/rswap")
 
-  if (list.files(paste0(field, "/work/")) %>% length() == 0) {
-    print("no files in work folder")
-    return(NA)
-  }
+  result_output <- read.table(
+    glue("{read_path}/result_output.csv"),
+    comment.char = "*",
+    sep = ",",
+    dec = ".",
+    header = T
+  ) %>% tibble()
 
-  daily_output <- read.table(paste0(field, "/work/result_output.csv"), comment.char = "*", sep = ",", header = T) %>% tibble()
-  daily_output$DATETIME<-as.Date(daily_output$DATETIME)
-  colnames(daily_output)[1] <- c("DATE")
-  # fixing the bad column names
-  colnames(daily_output) <- colnames(daily_output) %>% str_replace_all("\\..", "_") %>% str_replace_all("\\.", "")
-  return(daily_output)
-}
+  new_cols <- result_output %>% colnames() %>% str_replace("\\..", "_") %>% str_remove("\\.")
+  colnames(result_output) <- new_cols
 
-get_depths <- function(results){
+  result_daily <- read.table(
+    glue("{read_path}/result_output_tz.csv"),
+    comment.char = "*",
+    sep = ",",
+    dec = ".",
+    header = T
+  ) %>% tibble()
 
-  colnames(results)[grepl(colnames(results), pattern =  "WC_")] %>%
-    str_remove_all("WC_") %>%
-    str_remove_all("obs") %>%
-    as.numeric() %>%
-    unique() %>%
-    return()
-}
+  # TODO rename these to be more clear
+  r_frame <- list(daily_output = result_daily, custom_depth = result_output)
 
-
-save_output <- function(field, data){
-
-  print("enter custom name. [enter] for default")
-  custom_name = readline()
-
-  if(custom_name==""){run_name=data[[1]]}else{run_name = custom_name}
-
-
-  if (paste0(run_name,".csv") %in% list.files(paste0(field,"/output/"))){
-    list.files(paste0(field,"/output/")) %>% print()
-    return("file name alreay exists. please try again")
-
-  }
-
-  full_df = data[[2]]
-  observed = data[[3]]
-
-
-  filepath = paste0(field, "/output/", run_name, ".csv")
+  r_frame %>% return()
+ }
 
 
 
-  write.table(x = full_df,
-              file = filepath,sep = ",", row.names = F, col.names = T)
-  print(paste0("formatted output saved to ",filepath))
-
-  archive_run(run_name)
-
-}
-
-# wrapper function for running swap. adds some functionality
-# like returning the results in good format
-run_model <- function(field){
-  # kills the SWAP model so so that it doesnt cause any problems
-  system('taskkill /IM  "swap.exe" /F', show.output.on.console = F)
-  # runs the model
-  last_run = run_swap(field)
-
-  # reads in the daily out of SWAP
-  daily_output <- read_daily_output(field)
-
-  # reads in the measured data
-  observed <- read_observed(field)
-
-
-  if(is.data.frame(daily_output)==FALSE){
-    return("error reading SWAP output")
-  }
-
-  if(is.data.frame(observed)==FALSE){
-    return("error reading observed data")
-  }
-  # combines the measured data with the SWAP output
-  full_df <- left_join(daily_output, observed, by = "DATE")
-
-  # finds out at what depths the measurements were made
-  depths = get_depths(full_df)
-
-  # diagnostic plot
-  x = daily_output$DATE
-  y = daily_output[daily_output %>% colnames() %>% grepl(x=.,"WC") %>% which() %>% min()] %>% pull()
-  plot(x,
-       y,
-       type = "l",
-      main = paste("field:",field, "\nrun:",last_run, "\nvar: WC depth=", depths %>% min()),
-      ylab = "WC",
-      xlab = "DATE")
-
-  print(paste("field:",field))
-  print(paste("run name:", last_run))
-  # returns the data as a list since R cannot return multiple objects at once
-  # :(
-  return(list(last_run, full_df, observed))
-}
-
-
-# returns the last run name
-get_last_run <- function(field){
-  # file list
-  files = list.files(path = paste0(field, "/output"), full.names = T)
-  # file infos used to sort
-  details = files %>% file.info()
-  # sorting and removing path and returning
-  files[order(details$mtime, decreasing = T)][1] %>%
-    str_remove(paste0(field,"/output/")) %>%
-    return()
-}
+################################################################################\
 
 # returns run statistics in tibble format
 get_statistics <- function(field, data, user.var = "WC"){

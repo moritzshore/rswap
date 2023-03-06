@@ -4,10 +4,18 @@
 \alias{run_swap}
 \title{Runs the SWAP model}
 \usage{
-run_swap(project_path)
+run_swap(project_path, swap_exe, swap_file, verbose = T, timeout = Inf)
 }
 \arguments{
-\item{project_path}{}
+\item{project_path}{String, path to the project directory.}
+
+\item{verbose}{logical}
+
+\item{timeout}{number of seconds before run timeout (optional, unlimited by default)}
+
+\item{swap_path}{String, path to the swap executable (optional, will try to auto find if none is poath)}
+
+\item{string}{name of the *.swp main file}
 }
 \value{
 returns name of run (change this!)
