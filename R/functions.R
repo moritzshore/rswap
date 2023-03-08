@@ -75,7 +75,7 @@ update_swp_paths <- function(temp_directory, swap_file, swap_exe){
 #' Runs the SWAP model
 #'
 #' @param project_path String, path to the project directory.
-#' @param swap_path String, path to the swap executable (optional, will try to auto find if none is poath)
+#' @param swap_exe String, path to the swap executable (optional, will try to auto find if none is poath)
 #' @param string name of the *.swp main file
 #' @param verbose logical
 #' @param timeout number of seconds before run timeout (optional, unlimited by default)
@@ -83,6 +83,7 @@ update_swp_paths <- function(temp_directory, swap_file, swap_exe){
 #' @return returns name of run (change this!)
 #'
 #' @importFrom glue glue
+#' @importFrom processx run
 #' @importFrom dplyr %>%
 #' @export
 #'
@@ -95,14 +96,14 @@ run_swap <- function(project_path, swap_exe, swap_file, verbose = T, timeout = I
   file_path <- update_swp_paths(temp_directory, swap_file, swap_exe)
 
   # parse the working directory from the given swap path
-  swap_path_split = swap_path %>% str_split("swap.exe", simplify = T)
+  swap_path_split = swap_exe %>% str_split("swap.exe", simplify = T)
   swap_wd <- swap_path_split[,1]
 
   # remove the working directory from the path of the swap main file
   fixed_path <- file_path %>% str_remove(swap_wd)
 
   # KILL swap before running to avoid file locking issues.
-  system('taskkill /IM  "swap.exe" /F', show.output.on.console = verbose)
+  #system('taskkill /IM  "swap.exe" /F', show.output.on.console = verbose)
 
   # run the model
   msg <- run( command = "swap.exe", wd = swap_wd, args = fixed_path,
