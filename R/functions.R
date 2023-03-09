@@ -297,26 +297,54 @@ get_performance <- function(project_path, stat, variable, depth, observed_file_p
 
 }
 
+#' filter observed data
+#'
+#' by variable and depth
+#' @param observed_data observed data as given by load_observed()
+#' @param var **OPT** name(s) of the variables you would like to select (string). leave blank for "all"
+#' @param depth **OPT** value(s) of the depths you would like to select (numeric). leave blank for "all"
+#' @param addtional **OPT** if you would like to select a specific column(s), enter
+#' them here as a string/vector.
+#'
+#' @importFrom dplyr %>% select
+#' @importFrom stringr str_remove str_split
+#' @importFrom stringi stri_extract_all_regex
+#' @returns dataframe consisting of DATE column, and desired observed values
+#' @export
+filter_observed <- function(observed_data, var = NULL, depth = NULL, addtional = NULL){
+
+  colz <- observed_data$data %>% colnames() %>% toupper()
 
 ################################################################################\
+  find <- stri_extract_all_regex(str = colz, pattern = paste(paste0("OBS",var %>% toupper()), collapse = "|")) %>%
+    unlist() %>% is.na()
 
 # returns run statistics in tibble format
 get_statistics <- function(field, data, user.var = "WC"){
+  # which were matched? index.
+  relevant_var_cols <- (find == FALSE) %>% which()
 
   # unpack data package
   run_name = data[[1]]
   full_df = data[[2]]
   observed = data[[3]]
+  depths = get_depths(observed_data, var) %>% as.character()
 
   if(data[[3]][1] %>% pull() %>% length() <= 1){
     print("no observed data, cannot display statistics")
     return(NA)
+  if(depth %>% is.null() == FALSE){
+    depth = depth %>% as.character()
+    depths <- depths[which(depths == depth)]
   }
 
   # observed data depths
   depths = get_depths(full_df)
   # empty DF pre-definition
   stat.df = tibble(depth = depths, NSE = NA, PBIAS = NA, RSR = NA, RMSE = NA)
+  find2 <- stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
+    unlist() %>% is.na()
+  relevant_depth_cols <- (find2 == FALSE) %>% which()
 
   # get statistics for each depth
   for (depth in depths) {
@@ -328,14 +356,39 @@ get_statistics <- function(field, data, user.var = "WC"){
     if(obs_index %>% length() == 0 ) {return(paste0("observed values not found! ", "obs",user.var, "_",depth))}
 
     # filter to only data with observed match
+  # switchboard, determining priorty of union
+  if(depth %>% is.null() & var %>% is.null()){
 
+    # if both were left blank, then return all, but only unique
+    union <- c(relevant_depth_cols, relevant_var_cols) %>% unique()
+  }
+
+  if(depth %>% is.null() == FALSE & var %>% is.null()){
+    # if depth was given, but variable was not, return all the depth cols
+    union <- relevant_depth_cols
+  }
 
     filt_df <- full_df[which(!is.na(full_df[obs_index])),]
+  if(depth %>% is.null() & var %>% is.null() == FALSE){
+    # if var was given but not depth, return all the var cols
+    union <- relevant_var_cols
 
     obs = filt_df[[obs_index]]
     mod = filt_df[[mod_index]]
+  }
 
     # NSE
+  if(depth %>% is.null() == FALSE & var %>% is.null() == FALSE){
+    # if both depth and var were given, then
+    union <- intersect(relevant_var_cols, relevant_depth_cols)
+  }
+
+
+  perf_mod <- observed_data$data %>% select(DATE, all_of(union), all_of(addtional))
+
+  perf_mod %>% return()
+}
+
 
     NSE = NSE(obs, mod) %>% round(x = ., digits = 2)
 
