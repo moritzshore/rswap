@@ -199,9 +199,12 @@ load_observed <- function(path, verbose = F){
 
   num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
 
-  obs_vars <- col_sep[num_index] %>% unique()
+  obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
 
   return_df <- data.frame(data, obs_vars)
+  obs_vars <- obs_vars[-which(obs_vars=="NODEPTH")]
+
+  return_df <- list(data = data, observed_variables = obs_vars)
 
   if(verbose){
     cat("observed data loaded, following variables detected:", sep = "\n")
