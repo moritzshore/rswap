@@ -389,25 +389,51 @@ get_statistics <- function(field, data, user.var = "WC"){
   perf_mod %>% return()
 }
 
+#' get_depth
+#'
+#' extract numeric depth values for given observed variable
+#' @param observed_data **REQ** (list) as given by load_observed()
+#' @param variable **OPT** (string) variable for which depth levels should be given.
+#' If no variable is given, all depths will be returned
+#' @returns numeric vector of depths
+#' @export
+get_depths <- function(observed_data, variable = NULL) {
 
     NSE = NSE(obs, mod) %>% round(x = ., digits = 2)
+  splitted <- colnames(observed_data$data) %>% str_remove("obs") %>%
+    str_split("_") %>% unlist() %>% toupper()
 
     # PBIAS
     PBIAS = PBIAS(obs, mod) %>% round(x = ., digits = 2)
+  char_index <-
+    splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
 
     # RMSE
     RMSE = RMSE(obs, mod) %>% round(x = ., digits = 2)
+  char_index = char_index[-which(splitted[char_index] == "NODEPTH")]
 
     # RSR
     RSR = RSR(obs, mod) %>% round(x = ., digits = 2)
+  vars <- splitted[char_index]
 
     stat.df$NSE[which(stat.df$depth==depth)] = NSE
     stat.df$PBIAS[which(stat.df$depth==depth)] = PBIAS
     stat.df$RMSE[which(stat.df$depth==depth)] = RMSE
     stat.df$RSR[which(stat.df$depth==depth)] = RSR
+  if(variable %>% is.null() == FALSE){
+    var_cols <- vars %in% variable %>% which()
+  }else{
+    var_cols <- vars %in% observed_data$observed_variables %>% which()
   }
 
   return(stat.df)
+  depths <- colnames(observed_data$data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
+  depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
+
+  if(length(depths)<1){
+    depths = NULL
+  }
+  return(depths)
 }
 
 melt_all_runs <- function(field, data, user.var = "WC"){
