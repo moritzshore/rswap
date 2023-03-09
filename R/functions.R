@@ -315,47 +315,24 @@ filter_observed <- function(observed_data, var = NULL, depth = NULL, addtional =
 
   colz <- observed_data$data %>% colnames() %>% toupper()
 
-################################################################################\
   find <- stri_extract_all_regex(str = colz, pattern = paste(paste0("OBS",var %>% toupper()), collapse = "|")) %>%
     unlist() %>% is.na()
 
-# returns run statistics in tibble format
-get_statistics <- function(field, data, user.var = "WC"){
   # which were matched? index.
   relevant_var_cols <- (find == FALSE) %>% which()
 
-  # unpack data package
-  run_name = data[[1]]
-  full_df = data[[2]]
-  observed = data[[3]]
   depths = get_depths(observed_data, var) %>% as.character()
 
-  if(data[[3]][1] %>% pull() %>% length() <= 1){
-    print("no observed data, cannot display statistics")
-    return(NA)
   if(depth %>% is.null() == FALSE){
     depth = depth %>% as.character()
     depths <- depths[which(depths == depth)]
   }
 
-  # observed data depths
-  depths = get_depths(full_df)
-  # empty DF pre-definition
-  stat.df = tibble(depth = depths, NSE = NA, PBIAS = NA, RSR = NA, RMSE = NA)
   find2 <- stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
     unlist() %>% is.na()
   relevant_depth_cols <- (find2 == FALSE) %>% which()
 
-  # get statistics for each depth
-  for (depth in depths) {
-    # find out where the column index is for the desired user.var
-    # (the amout of times i've written this, it could really use a function..)
-    mod_index = colnames(full_df) %>% grepl(x=.,paste0("\\b",user.var,"_",depth,"\\b")) %>% which()
-    obs_index = colnames(full_df) %>% grepl(x=.,paste0("\\bobs",user.var,"_",depth,"\\b")) %>% which()
-    if(mod_index %>% length() == 0 ) {return(paste0("modelled values not found! ", user.var,"_",depth))}
-    if(obs_index %>% length() == 0 ) {return(paste0("observed values not found! ", "obs",user.var, "_",depth))}
 
-    # filter to only data with observed match
   # switchboard, determining priorty of union
   if(depth %>% is.null() & var %>% is.null()){
 
@@ -368,16 +345,12 @@ get_statistics <- function(field, data, user.var = "WC"){
     union <- relevant_depth_cols
   }
 
-    filt_df <- full_df[which(!is.na(full_df[obs_index])),]
   if(depth %>% is.null() & var %>% is.null() == FALSE){
     # if var was given but not depth, return all the var cols
     union <- relevant_var_cols
 
-    obs = filt_df[[obs_index]]
-    mod = filt_df[[mod_index]]
   }
 
-    # NSE
   if(depth %>% is.null() == FALSE & var %>% is.null() == FALSE){
     # if both depth and var were given, then
     union <- intersect(relevant_var_cols, relevant_depth_cols)
@@ -399,34 +372,22 @@ get_statistics <- function(field, data, user.var = "WC"){
 #' @export
 get_depths <- function(observed_data, variable = NULL) {
 
-    NSE = NSE(obs, mod) %>% round(x = ., digits = 2)
   splitted <- colnames(observed_data$data) %>% str_remove("obs") %>%
     str_split("_") %>% unlist() %>% toupper()
 
-    # PBIAS
-    PBIAS = PBIAS(obs, mod) %>% round(x = ., digits = 2)
   char_index <-
     splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
 
-    # RMSE
-    RMSE = RMSE(obs, mod) %>% round(x = ., digits = 2)
   char_index = char_index[-which(splitted[char_index] == "NODEPTH")]
 
-    # RSR
-    RSR = RSR(obs, mod) %>% round(x = ., digits = 2)
   vars <- splitted[char_index]
 
-    stat.df$NSE[which(stat.df$depth==depth)] = NSE
-    stat.df$PBIAS[which(stat.df$depth==depth)] = PBIAS
-    stat.df$RMSE[which(stat.df$depth==depth)] = RMSE
-    stat.df$RSR[which(stat.df$depth==depth)] = RSR
   if(variable %>% is.null() == FALSE){
     var_cols <- vars %in% variable %>% which()
   }else{
     var_cols <- vars %in% observed_data$observed_variables %>% which()
   }
 
-  return(stat.df)
   depths <- colnames(observed_data$data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
   depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
 
@@ -576,7 +537,7 @@ melt_all_runs <- function(field, data, user.var = "WC"){
 
   if(length(depth)==0){return("error, variable not recognized")}
 
-  # if it is depthwise, then add a column with the correct depth
+  # if it is depth wise, then add a column with the correct depth
   if(!is.na(depth)){
     full_melt$depth = full_melt$variable %>% str_remove("obs") %>% str_remove(paste0(user.var,"_")) %>% as.numeric()
     # and remove the depth tag from the variable name
@@ -591,28 +552,3 @@ melt_all_runs <- function(field, data, user.var = "WC"){
 
 # stat functions
 
-# NSE
-NSE <-
-  function(obs, mod) {
-    return((1 - (sum((obs - mod) ^ 2, na.rm = T
-    ) / sum((obs - mean(obs, na.rm = T)) ^ 2, na.rm = T
-    ))) %>% round(x = ., digits = 2))
-  }
-
-# PBIAS
-PBIAS <-
-  function(obs, mod) {
-    return(((sum(obs - mod, na.rm = T) * 100) / sum(obs, na.rm = T)) %>% round(x = ., digits = 2))
-  }
-
-# RMSE
-RMSE <-
-  function(obs, mod) {
-    return(sqrt(sum((obs - mod) ^ 2, na.rm = T) / length(obs)) %>% round(x = ., digits = 2))
-  }
-
-# RSR
-RSR <-
-  function(obs, mod) {
-    return(RMSE(obs, mod) / sd(obs, na.rm = T) %>% round(x = ., digits = 2))
-  }
