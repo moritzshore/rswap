@@ -201,7 +201,6 @@ load_observed <- function(path, verbose = F){
 
   obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
 
-  return_df <- data.frame(data, obs_vars)
   obs_vars <- obs_vars[-which(obs_vars=="NODEPTH")]
 
   return_df <- list(data = data, observed_variables = obs_vars)
@@ -265,6 +264,38 @@ read_swap_output <-  function(project_path){
   r_frame %>% return()
  }
 
+#' Get model performance
+#'
+#' returns the performance indicator for the chosen variable(s) and measure(s)
+#' Supported performance indicators are: NSE, PBIAS, RMSE, RSR
+#' Supported variables are those provided in the observed data file
+#' Please note, passing multiple variables at differing depths will not work!
+#' @param project_path **(REQ)** **(string)**
+#'  path to the project directory / or custom save location.
+#' @param stat (REQ) (string) either "NSE" "PBIAS" "RMSE" "RSR" or "all" for all
+#' @param variable (REQ) (string/vector) variable name (ie. WC, H, TEMP). Use "all" for all available.
+#' @param depth (REQ) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. Use "all" for all available.
+#' @param observed_file_path (OPT) (string) path to observed file. will default to "./project_path/observed_data.xlsx"
+#' @param verbose (OPT) (boolean) print status to console?
+#' @importFrom tibble %>%
+#' @returns (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
+#' @export
+get_performance <- function(project_path, stat, variable, depth, observed_file_path = NULL, verbose = F) {
+
+  variable <- variable %>% toupper()
+
+  if(observed_file_path %>% is.null()){
+    observed_file_path <- glue("{project_path}/observed_data.xlsx")
+  }
+
+  observed_data <- rswap::load_observed(path = observed_file_path, verbose = verbose)
+
+  observed_data_filtered <- filter_observed(observed_data, variable, depth)
+
+
+
+
+}
 
 
 ################################################################################\
