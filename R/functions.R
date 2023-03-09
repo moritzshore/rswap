@@ -436,6 +436,62 @@ get_depths <- function(observed_data, variable = NULL) {
   return(depths)
 }
 
+
+
+#' NSE
+#'
+#' Returns NSE value for a paired observed and modeled vector.
+#' #TODO: change this function to accept a named vector, or dataframe.
+#' @param obs numeric vector of observed values **REQ**
+#' @param mod numeric vector of modeled values **REQ**
+#' @return numeric NSE value rounded to 2 decimals
+#' @export
+NSE <- function(obs, mod) {
+    return((1 - (sum((obs - mod) ^ 2, na.rm = T
+    ) / sum((obs - mean(obs, na.rm = T)) ^ 2, na.rm = T
+    ))) %>% round(x = ., digits = 2))
+  }
+
+#' PBIAS
+#'
+#' Returns PBIAS value for a paired observed and modeled vector.
+#' #TODO: change this function to accept a named vector, or dataframe.
+#' @param obs numeric vector of observed values **REQ**
+#' @param mod numeric vector of modeled values **REQ**
+#' @return numeric PBIAS value rounded to 2 decimal
+#' @export
+
+PBIAS <-function(obs, mod) {
+    return(((sum(obs - mod, na.rm = T) * 100) / sum(obs, na.rm = T)) %>% round(x = ., digits = 2))
+  }
+
+#' RMSE
+#'
+#' Returns RMSE value for a paired observed and modeled vector.
+#' #TODO: change this function to accept a named vector, or dataframe.
+#' @param obs numeric vector of observed values **REQ**
+#' @param mod numeric vector of modeled values **REQ**
+#' @return numeric RMSE value rounded to 2 digits
+#' @export
+RMSE <- function(obs, mod) {
+    return(sqrt(sum((obs - mod) ^ 2, na.rm = T) / length(obs)) %>% round(x = ., digits = 2))
+  }
+
+#' RSR
+#'
+#' Returns RSR value for a paired observed and modeled vector.
+#' #TODO: change this function to accept a named vector, or dataframe.
+#' @param obs numeric vector of observed values **REQ**
+#' @param mod numeric vector of modeled values **REQ**
+#' @return numeric RSR value rounded to 2 digits
+#' @export
+RSR <- function(obs, mod) {
+    return(RMSE(obs, mod) / sd(obs, na.rm = T) %>% round(x = ., digits = 2))
+  }
+
+################################################################################
+
+
 melt_all_runs <- function(field, data, user.var = "WC"){
   # past runs -----
   run_name <- data[[1]]
