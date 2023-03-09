@@ -185,6 +185,9 @@ load_observed <- function(path, verbose = F){
   # TODO: install the template file via package!
 
   data <- read_excel(path)
+
+  data$DATE <- data$DATE %>% as.Date()
+
   columns <- colnames(data)
 
   # find a better way to do this. or remove it
@@ -237,6 +240,10 @@ read_swap_output <-  function(project_path){
     dec = ".",
     header = T
   ) %>% tibble()
+
+  result_output$DATETIME <- result_output$DATETIME %>% as.Date()
+
+  colnames(result_output)[1] <- "DATE"
 
   new_cols <- result_output %>% colnames() %>% str_replace("\\..", "_") %>% str_remove("\\.")
   colnames(result_output) <- new_cols
