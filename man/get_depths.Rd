@@ -4,10 +4,10 @@
 \alias{get_depths}
 \title{get_depth}
 \usage{
-get_depths(observed_data, variable = NULL)
+get_depths(data, variable = NULL)
 }
 \arguments{
-\item{observed_data}{\strong{REQ} (list) as given by load_observed()}
+\item{data}{\strong{REQ} (list) as given by load_observed()}
 
 \item{variable}{\strong{OPT} (string) variable for which depth levels should be given.
 If no variable is given, all depths will be returned}
