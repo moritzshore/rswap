@@ -286,10 +286,10 @@ get_performance <- function(project_path, stat, variable, depth, observed_file_p
 
 }
 
-#' filter observed data
+#' Filter swap data
 #'
 #' by variable and depth
-#' @param observed_data observed data as given by load_observed()
+#' @param data observed/modelled data as given by load_observed()$data or read_swap_output()$custom_depth
 #' @param var **OPT** name(s) of the variables you would like to select (string). leave blank for "all"
 #' @param depth **OPT** value(s) of the depths you would like to select (numeric). leave blank for "all"
 #' @param addtional **OPT** if you would like to select a specific column(s), enter
@@ -300,17 +300,24 @@ get_performance <- function(project_path, stat, variable, depth, observed_file_p
 #' @importFrom stringi stri_extract_all_regex
 #' @returns dataframe consisting of DATE column, and desired observed values
 #' @export
-filter_observed <- function(observed_data, var = NULL, depth = NULL, addtional = NULL){
+filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
 
-  colz <- observed_data$data %>% colnames() %>% toupper()
+  if(var %>% is.null() == FALSE){
+    var <- var %>% toupper()
+  }
 
-  find <- stri_extract_all_regex(str = colz, pattern = paste(paste0("OBS",var %>% toupper()), collapse = "|")) %>%
+  colz <- data %>% colnames() %>% toupper()
+
+  # sorting so that returned columns are in consistent order
+  colz <- sort(colz)
+
+  find <- stri_extract_all_regex(str = colz, pattern = paste(var, collapse = "|")) %>%
     unlist() %>% is.na()
 
   # which were matched? index.
   relevant_var_cols <- (find == FALSE) %>% which()
 
-  depths = get_depths(observed_data, var) %>% as.character()
+  depths = get_depths(observed_data = data, var) %>% as.character()
 
   if(depth %>% is.null() == FALSE){
     depth = depth %>% as.character()
@@ -354,30 +361,31 @@ filter_observed <- function(observed_data, var = NULL, depth = NULL, addtional =
 #' get_depth
 #'
 #' extract numeric depth values for given observed variable
-#' @param observed_data **REQ** (list) as given by load_observed()
+#' @param data **REQ** (list) as given by load_observed()
 #' @param variable **OPT** (string) variable for which depth levels should be given.
 #' If no variable is given, all depths will be returned
 #' @returns numeric vector of depths
 #' @export
-get_depths <- function(observed_data, variable = NULL) {
+get_depths <- function(data, variable = NULL) {
 
-  splitted <- colnames(observed_data$data) %>% str_remove("obs") %>%
+  splitted <- colnames(data) %>% str_remove("obs") %>%
     str_split("_") %>% unlist() %>% toupper()
 
   char_index <-
     splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
 
-  char_index = char_index[-which(splitted[char_index] == "NODEPTH")]
 
   vars <- splitted[char_index]
 
   if(variable %>% is.null() == FALSE){
     var_cols <- vars %in% variable %>% which()
   }else{
-    var_cols <- vars %in% observed_data$observed_variables %>% which()
+    all_vars <- vars %>% unique()
+    all_vars <- all_vars[-which(all_vars == "DATE")]
+    var_cols <- vars %in% all_vars %>% which()
   }
 
-  depths <- colnames(observed_data$data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
+  depths <- colnames(data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
   depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
 
   if(length(depths)<1){
