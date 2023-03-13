@@ -193,15 +193,13 @@ load_observed <- function(path, verbose = F){
   # find a better way to do this. or remove it
   date_col <- columns %>% grepl(x = ., "DATE") %>% which()
 
-  obs_cols <- columns %>%  grepl(x = ., "obs*")
+  obs_cols <- columns[-date_col]
 
-  col_sep <- columns[obs_cols] %>% str_remove("obs") %>% str_split("_") %>% unlist()
+  col_sep <- obs_cols %>% str_split("_") %>% unlist()
 
   num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
 
   obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
-
-  obs_vars <- obs_vars[-which(obs_vars=="NODEPTH")]
 
   return_df <- list(data = data, observed_variables = obs_vars)
 
@@ -387,6 +385,8 @@ get_depths <- function(data, variable = NULL) {
 
   depths <- colnames(data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
   depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
+
+  depths <- depths %>% unique()
 
   if(length(depths)<1){
     depths = NULL
