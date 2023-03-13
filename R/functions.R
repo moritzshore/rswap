@@ -212,17 +212,6 @@ load_observed <- function(path, verbose = F){
   return_df %>% return()
 }
 
-#' Load last run. Loads the most recently saved run of the project directory.
-#' @param project_path String, path to the project directory / or custom save location.
-#' @param custom_directory Logical, Set to TRUE if using custom save location.
-#' @param verbose Logical. Prints status reports
-#'
-#' @export
-load_last_run <- function(project_path, verbose = F) {
-  cat("not implemented yet", sep = "\n")
-  # ISSUE: cannot read creation date of directories
-}
-
 #' Reads SWAP output of current path
 #' @param project_path String, path to the project directory / or custom save location.
 #' @importFrom glue glue
