@@ -43,7 +43,7 @@ build_rswap_directory <- function(project_path){
 #' @keywords internal
 update_swp_paths <- function(temp_directory, swap_file, swap_exe){
 
-  swap_file_lines <- read_lines(glue("{temp_directory}/{swap_file}"))
+  swap_file_lines <- readLines(glue("{temp_directory}/{swap_file}"))
 
   swap_file_new <- swap_file_lines
 
@@ -277,7 +277,7 @@ get_performance <- function(project_path, stat, variable, depth, observed_file_p
 
   observed_data <- rswap::load_observed(path = observed_file_path, verbose = verbose)
 
-  observed_data_filtered <- filter_observed(observed_data, variable, depth)
+  observed_data_filtered <- filter_swap_data(observed_data, variable, depth)
 
 
 
@@ -306,26 +306,24 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
 
   colz <- data %>% colnames() %>% toupper()
 
-  # sorting so that returned columns are in consistent order
-  colz <- sort(colz)
-
+  if(var %>% is.null() == FALSE){
   find <- stri_extract_all_regex(str = colz, pattern = paste(var, collapse = "|")) %>%
     unlist() %>% is.na()
-
   # which were matched? index.
   relevant_var_cols <- (find == FALSE) %>% which()
 
-  depths = get_depths(observed_data = data, var) %>% as.character()
+  }else{relevant_var_cols=NULL}
+
+
+  depths = get_depths(data = data, var) %>% as.character()
 
   if(depth %>% is.null() == FALSE){
     depth = depth %>% as.character()
     depths <- depths[which(depths == depth)]
-  }
-
-  find2 <- stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
-    unlist() %>% is.na()
-  relevant_depth_cols <- (find2 == FALSE) %>% which()
-
+    find2 <- stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
+      unlist() %>% is.na()
+    relevant_depth_cols <- (find2 == FALSE) %>% which()
+  }else{relevant_depth_cols=NULL}
 
   # switchboard, determining priorty of union
   if(depth %>% is.null() & var %>% is.null()){
@@ -351,7 +349,7 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
   }
 
 
-  perf_mod <- observed_data$data %>% select(DATE, all_of(union), all_of(addtional))
+  perf_mod <- data %>% select(DATE, all_of(union), all_of(addtional))
 
   perf_mod %>% return()
 }
