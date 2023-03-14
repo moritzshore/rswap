@@ -15,53 +15,43 @@
 #' no depth
 #' @param observed_file_path (OPT) (string) path to observed file, in case it is
 #' not located in the default location
+#' @param custom_save_path (OPT) (string) path to the custom save location.
+#' leave blank for default
 #' @param verbose (OPT) (logical) print status?
 #'
 #' @importFrom grDevices colorRampPalette
 #' @importFrom dplyr %>%
+#' @importFrom stringr str_split
 #' @importFrom glue glue
+#' @importFrom ggpubr color_palette
+#' @importFrom plotly plot_ly
 #'
-comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_path = NULL, verbose = NULL) {
+comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_path = NULL,custom_save_path = NULL, verbose = NULL) {
 
   # a custom color pallette
   color_palette<-colorRampPalette(c("red","blue","green" ), )
-
-
-  if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/observed_data.xlsx")
-  }
-
-  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
-  observed_data = observed_data$data
-  obs_cols = observed_data[-1] %>% colnames() %>% paste0("obs",.)
-  colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
-
-  modelled_data <- read_swap_output(project_path)
-  modelled_data <- modelled_data$custom_depth
-
-  full_df = left_join(modelled_data, observed_data, by = "DATE")
 
   # grab data from model run
   run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
 
   # combine the past runs, the current run
-  master_df <- melt_all_runs(field, data, user.var)
-
-  # return NA if there was an issue creating a master data frame
-  if(!is.data.frame(master_df)){return(NA)}
+  master_df <-
+    melt_all_runs(
+      project_path = project_path,
+      custom_save_path = custom_save_path,
+      observed_file_path = observed_file_path,
+      variable = variable,
+      depth = depth,
+      verbose = verbose
+    )
 
   # find out how many total runs there are, and then create a color palette
   # with that amount of colors.
-  custom_colors = master_df$path %>% unique() %>% length() %>% color_palette(.)
+  custom_colors = master_df$run %>% unique() %>% length() %>% color_palette(.)
 
   # create a base plot with the custom color palette
   plot <- plot_ly(colors = custom_colors)
-
-  # if depth is specified, then filter by it.
-  if(!is.na(user.depth)){
-    master_df = master_df %>% filter(depth == user.depth)
-  }
 
   # add observed WC Trace
   plot <-
@@ -83,10 +73,10 @@ comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_pa
   # add the most recent run
   plot <-
     plot %>% add_trace(
-      data = master_df %>% filter(tag == "current"),
+      data = master_df %>% filter(tag == "present"),
       x = ~ DATE,
       y = ~ value,
-      name = run_name,
+      name = "Current Run",
       opacity = 1,
       mode = "lines+marker",
       type = "scatter",
@@ -99,12 +89,12 @@ comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_pa
       data = master_df %>% filter(tag == "past"),
       x = ~ DATE,
       y = ~ value,
-      name = ~ path,
+      name = ~ run,
       opacity = 1,
-      color = ~ path,
+      color = ~ run,
       mode = "lines",
       line = list(
-        color = ~ path,
+        color = ~ run,
         width = 1,
         dash = 'dot'
       ),
@@ -114,11 +104,11 @@ comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_pa
 
   plot %>% layout(
     autosize = T,
-    title = paste("Comparative plot:", "<b>", run_name, "</b>", user.var, user.depth, "cm"),
+    title = paste("Comparative plot:", "<b>", run_name, "</b>", variable),
     plot_bgcolor = "white",
     hovermode = "x unified",
     xaxis = list(title = 'Date'),
-    yaxis = list(title = user.var),
+    yaxis = list(title = variable),
     legend = list(title = list(text = '<b> Run </b>'))
-  ) %>% return()
+  )
 }
