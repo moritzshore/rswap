@@ -397,7 +397,7 @@ match_mod_obs <- function(project_path, variable, observed_file_path, depth = NU
 #' @param observed_file_path (OPT) (string) path to custom observed data location.
 #' leave blank for default
 #' @param variable (REQ) (string) variable to be returned
-#' @param depth (REQ) (string) depth of variable. leave blank if variable has
+#' @param depth (OPT) (string) depth of variable. leave blank if variable has
 #' no depth
 #' @param verbose print status?
 #'
@@ -415,7 +415,7 @@ melt_all_runs <-
            custom_save_path = NULL,
            observed_file_path = NULL,
            variable,
-           depth,
+           depth = NULL,
            verbose = F) {
 
 
@@ -460,5 +460,8 @@ melt_all_runs <-
     observed_data$run = "observed"
 
     full_df <- rbind(past_run_df, present_run_df, observed_data)
+    full_df$variable = colnames(full_df)[2]
+    colnames(full_df)[2] <- "value"
+
     return(full_df)
   }
