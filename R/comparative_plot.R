@@ -10,29 +10,40 @@
 #' runs. It highlights the differences between changed parameters etc.
 #'
 #' @param project_path (REQ) (string) path to project directory
+#' @param vars (REQ) (string) variable compare
+#' @param depth (OPT) (numeric) depth of variable. leave blank if variable has
+#' no depth
 #' @param observed_file_path (OPT) (string) path to observed file, in case it is
 #' not located in the default location
-#' @param vars (REQ) (string) variable compare
-#' @param depth (OPt) (numeric) depth of variable. leave blank if variable has
-#' no depth
 #' @param verbose (OPT) (logical) print status?
 #'
-comparative_plot <- function(project_path, observed_file_path, vars, depth =  NULL, verbose = NULL) {
-
-  # supported non-depth variables
-  NODEPTH  = user.var %in% c("DRAINAGE")
-
-  if(NODEPTH==FALSE & is.na(user.depth)){
-    return("please enter depth for a depthwise variable!")
-  }
-
+#' @importFrom grDevices colorRampPalette
+#' @importFrom dplyr %>%
+#' @importFrom glue glue
+#'
+comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_path = NULL, verbose = NULL) {
 
   # a custom color pallette
   color_palette<-colorRampPalette(c("red","blue","green" ), )
 
+
+  if (observed_file_path %>% is.null()) {
+    observed_file_path <- glue("{project_path}/observed_data.xlsx")
+  }
+
+  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  observed_data = observed_data$data
+  obs_cols = observed_data[-1] %>% colnames() %>% paste0("obs",.)
+  colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
+
+  modelled_data <- read_swap_output(project_path)
+  modelled_data <- modelled_data$custom_depth
+
+  full_df = left_join(modelled_data, observed_data, by = "DATE")
+
   # grab data from model run
-  run_name = data[[1]]
-  full_df = data[[2]]
+  run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
+
 
   # combine the past runs, the current run
   master_df <- melt_all_runs(field, data, user.var)
