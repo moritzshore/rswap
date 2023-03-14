@@ -238,7 +238,7 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
 
   if (depth %>% is.null() == FALSE) {
     depth = depth %>% as.character()
-    depths <- depths[which(depth %in% depths)]
+    depths <- depths[which(depth == depths)]
     find2 <-
       stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
       unlist() %>% is.na()
