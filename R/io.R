@@ -385,3 +385,85 @@ match_mod_obs <- function(project_path, variable, observed_file_path, depth = NU
   }
   list(mod = modelled_data_filtered, obs = observed_data_filtered) %>% return()
 }
+
+#' Melt all runs
+#'
+#' Combines the past saved runs, with the current run, and the observed data
+#' so that the combination of them is easy to plot using ggplot etc.
+#'
+#' @param project_path path to project directory
+#' @param custom_save_path (OPT) (string) path to the custom save location.
+#' leave blank for default
+#' @param observed_file_path (OPT) (string) path to custom observed data location.
+#' leave blank for default
+#' @param variable (REQ) (string) variable to be returned
+#' @param depth (REQ) (string) depth of variable. leave blank if variable has
+#' no depth
+#' @verbose print status?
+#'
+#' @importFrom dplyr %>% select
+#' @importFrom stringr str_remove_all str_replace_all str_split
+#' @importFrom glue glue
+#' @importFrom purrr map map_df
+#' @importFrom vroom vroom
+#'
+#' @returns dataframe with columns "run" "DATE" "tag" "variable" "value"
+#'
+#' @export
+melt_all_runs <-
+  function(project_path,
+           custom_save_path = NULL,
+           observed_file_path = NULL,
+           variable,
+           depth,
+           verbose = F) {
+
+    # past runs -----
+    run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
+
+    if (observed_file_path %>% is.null()) {
+      observed_file_path <- glue("{project_path}/observed_data.xlsx")
+    }
+
+    if(custom_save_path %>% is.null()){
+      file_path =  paste0(project_path, "/rswap_saved/")
+    }else{
+      file_path = custom_save_path
+    }
+
+    past_run_names <-  list.files(path = file_path)
+    past_run_paths <-  list.files(path = file_path, full.names = T)
+
+    if(past_run_names %>% is_empty()){warning("no previous runs to melt!");return(NA)}
+
+
+    result_files <- paste0(past_run_paths, "/result_output.csv")
+    past_run_df <- result_files %>% map_df(., ~ vroom(.x, id = "path", show_col_types = F, delim = ",", comment = "*"))
+    new_col_names <- past_run_df %>% colnames() %>% str_remove_all("]") %>% str_remove_all("\\[") %>% str_replace_all("-", "_")
+    new_col_names<-new_col_names %>% str_replace_all("DATETIME", "DATE")
+    new_col_names<-new_col_names %>% str_replace_all("path", "RUN")
+    colnames(past_run_df) <- new_col_names
+    run_names <- past_run_df$RUN %>% str_split("/") %>% map(., 7) %>% unlist()
+    past_run_df<-past_run_df %>% select(-RUN)
+
+    # todo: fix rain/drain overlap!
+    past_run_df<-rswap::filter_swap_data(past_run_df, var = variable, depth = depth)
+    past_run_df$tag = "past"
+    past_run_df$run = run_names
+
+    present_run_df <- rswap::read_swap_output(project_path)
+    present_run_df<-rswap::filter_swap_data(present_run_df$custom_depth, var = variable, depth = depth)
+    present_run_df$tag = "present"
+    present_run_df$run = "current run"
+
+    observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+    observed_data<-rswap::filter_swap_data(observed_data$data, var = variable, depth = depth)
+    observed_data$tag = "observed"
+    observed_data$run = "observed"
+
+    full_df <- rbind(past_run_df, present_run_df, observed_data)
+    return(full_df)
+  }
+
+
+
