@@ -6,26 +6,29 @@
 \usage{
 get_performance(
   project_path,
-  stat,
-  variable,
-  depth,
+  stat = NULL,
+  variable = NULL,
+  depth = NULL,
   observed_file_path = NULL,
-  verbose = F
+  verbose = F,
+  addtional = NULL
 )
 }
 \arguments{
 \item{project_path}{\strong{(REQ)} \strong{(string)}
 path to the project directory / or custom save location.}
 
-\item{stat}{(REQ) (string) either "NSE" "PBIAS" "RMSE" "RSR" or "all" for all}
+\item{stat}{(opt) (string/vector) "NSE" "PBIAS" "RMSE" "RSR" or leave blank for all}
 
-\item{variable}{(REQ) (string/vector) variable name (ie. WC, H, TEMP). Use "all" for all available.}
+\item{variable}{(REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.}
 
-\item{depth}{(REQ) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. Use "all" for all available.}
+\item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.}
 
 \item{observed_file_path}{(OPT) (string) path to observed file. will default to "./project_path/observed_data.xlsx"}
 
 \item{verbose}{(OPT) (boolean) print status to console?}
+
+\item{addtional}{(OPT) (string) custom column name(s) to include in the analysis (untested)}
 }
 \value{
 (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
