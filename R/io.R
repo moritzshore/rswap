@@ -33,6 +33,16 @@ build_rswap_directory <- function(project_path){
   met_files <- file_list[which(not_numeric == FALSE)]
   met_status <- file.copy(from = met_files, to = temp_directory)
 
+  # copy in a template observed excel
+  template_observed = system.file("extdata/rswap_observed_data.xlsx", package="rswap")
+
+  # if the template does not yet exist in the project directory, copy it in there
+  if("rswap_observed_data.xlsx" %in% list.files(project_path) == FALSE){
+    obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.xlsx"))
+    cat("copying template sheet 'rswap_observed_data_xlsx' into project directory\n")
+    }
+
+
   # return the path to the temp directory
   return(temp_directory)
 }
@@ -136,7 +146,8 @@ load_observed <- function(path, verbose = F){
   # TODO: maybe this should be internal
   # TODO: install the template file via package!
 
-  data <- read_excel(path)
+  # skip 1 to remove the comment line
+  data <- read_excel(path, skip = 1)
 
   data$DATE <- data$DATE %>% as.Date()
 
