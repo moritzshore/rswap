@@ -399,7 +399,7 @@ match_mod_obs <- function(project_path, variable, observed_file_path, depth = NU
 #' @param variable (REQ) (string) variable to be returned
 #' @param depth (REQ) (string) depth of variable. leave blank if variable has
 #' no depth
-#' @verbose print status?
+#' @param verbose print status?
 #'
 #' @importFrom dplyr %>% select
 #' @importFrom stringr str_remove_all str_replace_all str_split
@@ -464,6 +464,3 @@ melt_all_runs <-
     full_df <- rbind(past_run_df, present_run_df, observed_data)
     return(full_df)
   }
-
-
-
