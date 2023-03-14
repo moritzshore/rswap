@@ -404,7 +404,7 @@ match_mod_obs <- function(project_path, variable, observed_file_path, depth = NU
 #' @importFrom dplyr %>% select
 #' @importFrom stringr str_remove_all str_replace_all str_split
 #' @importFrom glue glue
-#' @importFrom purrr map map_df
+#' @importFrom purrr map map_df is_empty
 #' @importFrom vroom vroom
 #'
 #' @returns dataframe with columns "run" "DATE" "tag" "variable" "value"
@@ -418,8 +418,6 @@ melt_all_runs <-
            depth,
            verbose = F) {
 
-    # past runs -----
-    run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
     if (observed_file_path %>% is.null()) {
       observed_file_path <- glue("{project_path}/observed_data.xlsx")
