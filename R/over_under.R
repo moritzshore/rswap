@@ -22,23 +22,23 @@ ribbonize <- function(.data, .x, .y, .type) {
   # ggplot(df) +
   #   geom_line(aes(x, y, linetype = type)) +
   #   geom_ribbon(data = ribbons, aes(x, ymin = ymin, ymax = ymax, fill = fill))
-  
+
   # Check there are only 2 level in .type
   levels <- .data %>%
     pull({{ .type }}) %>%
     unique()
-  
+
   stopifnot(length(levels) == 2)
-  
+
   # Check that there is exactly 1 observation per level in .type at every .x
   level_counts_by_x <- .data %>%
     filter(!is.na({{ .y }})) %>%
     group_by({{ .x }}) %>%
     count() %>%
     pull(n)
-  
+
   stopifnot(all(level_counts_by_x == 2))
-  
+
   bounds <- .data %>%
     mutate({{ .type }} := recode({{ .type }}, model = levels[1], observed = levels[2])) %>%
     pivot_wider(names_from = {{ .type }}, values_from = {{ .y }}) %>%
@@ -47,11 +47,11 @@ ribbonize <- function(.data, .x, .y, .type) {
       ymin = pmin(model, observed),
       fill = model >= observed
     )
-  
+
   intervals <- bounds %>%
     filter(ymax > ymin) %>%
     select(-model, -observed)
-  
+
   intersections <- bounds %>%
     mutate(lag_fill = lag(fill), lead_fill = lead(fill)) %>%
     filter(ymax == ymin) %>%
@@ -59,7 +59,7 @@ ribbonize <- function(.data, .x, .y, .type) {
     pivot_longer(lag_fill:lead_fill, names_to = NULL, values_to = "fill") %>%
     filter(!is.na(fill)) %>%
     distinct()
-  
+
   other_intersections <- bounds %>%
     transmute(
       x1 = {{ .x }},       y1 = model,
@@ -76,7 +76,7 @@ ribbonize <- function(.data, .x, .y, .type) {
       y = (u * (y3 - y4) - v * (y1 - y2)) / d
     ) %>%
     select(x, ymax = y, ymin = y)
-  
+
   bind_rows(
     intervals,
     intersections,
@@ -86,83 +86,153 @@ ribbonize <- function(.data, .x, .y, .type) {
     arrange({{ .x }})
 }
 
-# hacked together to get ribbonize() to work on it, but its far from pretty.
 
-plot_over_under <- function(field, data, user.var = "WC", user.depth = NA) {
+#' Plot over under
+#'
+#' Plots a graph showing where the model overestimates and underestimates for
+#' the given variable and depth(s).
+#' @param project_path (REQ) (string) path to project directory
+#' @param observed_file_path (OPT) (string) path to observed file, if it is not
+#' in the default location
+#' @param variable (REQ) (string) desired variable for graph
+#' @param depth (OPT) (numeric/vector) depth at which to plot. uses all available depths if left blank.
+#' @param verbose (OPT) (logical) print status?
+#' @importFrom ggplot2 ggplot
+#' @importFrom plotly ggplotly layout
+#' @importFrom dplyr %>% left_join
+#' @export
+plot_over_under <- function(project_path, observed_file_path = NULL, variable, depth = NULL, verbose = F) {
 
   # grabs the model data
-  run_name = data[[1]]
-  res = data[[2]]
-  NODEPTH  = user.var %in% c("DRAINAGE")
-  
-  if(NODEPTH==FALSE & is.na(user.depth)){
-    return("please enter depth for a depthwise variable!")
+
+  run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
+
+  if (observed_file_path %>% is.null()) {
+    observed_file_path <- glue("{project_path}/observed_data.xlsx")
   }
-  
-  # supported non depthwise variables
-  if(NODEPTH){
-    # find which column contains the observed/modelled data
-    obs_index <- colnames(res) %>% grepl(x=., paste0("obs",user.var)) %>% which()
-    mod_index <- colnames(res) %>% grepl(x=., paste0("\\b",user.var,"\\b")) %>% which()
-    if(length(obs_index)==0){return(paste("no obs data found for", user.var))}
-    if(length(mod_index)==0){return(paste("no modelled data found for", user.var))}
-  }else{ # otherwise, do it normally
-    # find which column contains the observed/modelled data
-    obs_index <- colnames(res) %>% grepl(x=., paste0("obs",user.var,"_",user.depth)) %>% which()
-    mod_index <- colnames(res) %>% grepl(x=., paste0("\\b",user.var,"_",user.depth,"\\b")) %>% which()
-    # if no column is found, return error.
-    if(length(obs_index)==0){return(paste("no obs data found for", user.var, "depth:", user.depth))}
-    if(length(mod_index)==0){return(paste("no modelled data found for", user.var, "depth:", user.depth))}
+
+  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+
+  if(depth %>% is.null()){
+    depth = get_depths(observed_data$data, variable = variable)
   }
-  
- 
-  # filter the data so that only the timeframe with observed data is retained.
-  res_filt <- res[which(!is.na(res[obs_index])),]
-  
-  # drop all the extra data other than the one variable we are interesed in
-  # c(1) is the DATE column, always!
-  res_crop <- res_filt[c(1, mod_index, obs_index)]
-  
-  # rename the columns
-  colnames(res_crop) <- c("DATE", "mod", "obs")
-  
-  # reformat the data to be compatible with the ribbonize function
-  mydf <- tibble(
-    x = c(1:length(res_crop$DATE),1:length(res_crop$DATE)),
-    y = c(res_crop$mod, res_crop$obs),
-    type = c(rep("model", length(res_crop$DATE)), rep("observed", length(res_crop$DATE)))
-  )
-  
-  # generate the ribbons
-  ribbons <- ribbonize(mydf, x, y, type)
-  
-  # replace the x axis with the date (must be in character format, no support
-  # for date...)
-  mydf2 <-
-    tibble(
-      x = as.character(c(res_crop$DATE, res_crop$DATE)),
+
+  index = 1
+  total = length(depth)
+
+  # special routine if depth is null
+  if(depth %>% is.null()){
+    rlist <-
+      match_mod_obs(
+        project_path = project_path,
+        variable = variable,
+        observed_file_path = observed_file_path,
+        verbose = verbose
+      )
+    modelled_data_filtered = rlist$mod
+    observed_data_filtered = rlist$obs
+
+    res_crop <- left_join(observed_data_filtered, modelled_data_filtered, by  = "DATE")
+
+    # rename the columns
+    colnames(res_crop) <- c("DATE", "mod", "obs")
+
+    # reformat the data to be compatible with the ribbonize function
+    mydf <- tibble(
+      x = c(1:length(res_crop$DATE),1:length(res_crop$DATE)),
       y = c(res_crop$mod, res_crop$obs),
-      type = mydf$type
+      type = c(rep("model", length(res_crop$DATE)), rep("observed", length(res_crop$DATE)))
     )
-  
-  # generate the plot. GGPLOT wont show linetype correctly so we need to pass
-  # it to plotly which does.
-  p <- ggplot(mydf2) +
-    geom_line(aes(x, y, linetype = type, color = type, group = type)) +
-    geom_ribbon(data = ribbons, aes(x, ymin = ymin, ymax = ymax, fill = fill), alpha = 0.4) +
-    guides(linetype = "none", fill = "none") +
-    scale_color_manual(values = c("black","black"))+
-    scale_linetype_manual(values = c(3, 1)) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-    theme(legend.title = element_blank())+
-    scale_x_discrete(name = "Date", breaks = mydf2$x[mydf2$x %>% substr(.,8,10) %>% grepl(x = ., "-01") %>% which()])+
-    labs(y = user.var)
-  
-  if(NODEPTH){
-    p=p+ggtitle(paste0(field,": ", run_name, "\nvar:", user.var))
-  }else{p=p+ggtitle(paste0(field,": ", run_name,"\ndepth: ",user.depth,"cm"))}
-  
-  p %>% ggplotly(tooltip = "none")  %>% layout(hovermode = "text",
-                                               legend = list(orientation = "h", y = 1.07, x = .6)) %>% return()
+
+    # generate the ribbons
+    ribbons <- ribbonize(mydf, x, y, type)
+
+    # replace the x axis with the date (must be in character format, no support
+    # for date...)
+    mydf2 <-
+      tibble(
+        x = as.character(c(res_crop$DATE, res_crop$DATE)),
+        y = c(res_crop$mod, res_crop$obs),
+        type = mydf$type
+      )
+
+    # generate the plot. GGPLOT wont show linetype correctly so we need to pass
+    # it to plotly which does.
+    p <- ggplot(mydf2) +
+      geom_line(aes(x, y, linetype = type, color = type, group = type)) +
+      geom_ribbon(data = ribbons, aes(x, ymin = ymin, ymax = ymax, fill = fill), alpha = 0.4) +
+      guides(linetype = "none", fill = "none") +
+      scale_color_manual(values = c("black","black"))+
+      scale_linetype_manual(values = c(3, 1)) +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+      theme(legend.title = element_blank())+
+      scale_x_discrete(name = "Date", breaks = mydf2$x[mydf2$x %>% substr(.,8,10) %>% grepl(x = ., "-01") %>% which()])+
+      labs(y =get_swap_units(variable))
+
+    p %>% ggplotly(tooltip = "y" )  %>%
+      layout(title = list(text = paste(run_name, variable), y = 0.99), hovermode = "x unified") %>%
+      print()
+  }else{
+    for (cdepth in depth) {
+
+      rlist <-
+        match_mod_obs(
+          project_path = project_path,
+          variable = variable,
+          observed_file_path = observed_file_path,
+          depth = cdepth,
+          verbose = verbose
+        )
+      modelled_data_filtered = rlist$mod
+      observed_data_filtered = rlist$obs
+
+      res_crop <- left_join(observed_data_filtered, modelled_data_filtered, by  = "DATE")
+
+      # rename the columns
+      colnames(res_crop) <- c("DATE", "mod", "obs")
+
+      # reformat the data to be compatible with the ribbonize function
+      mydf <- tibble(
+        x = c(1:length(res_crop$DATE),1:length(res_crop$DATE)),
+        y = c(res_crop$mod, res_crop$obs),
+        type = c(rep("model", length(res_crop$DATE)), rep("observed", length(res_crop$DATE)))
+      )
+
+      # generate the ribbons
+      ribbons <- ribbonize(mydf, x, y, type)
+
+      # replace the x axis with the date (must be in character format, no support
+      # for date...)
+      mydf2 <-
+        tibble(
+          x = as.character(c(res_crop$DATE, res_crop$DATE)),
+          y = c(res_crop$mod, res_crop$obs),
+          type = mydf$type
+        )
+
+      # generate the plot. GGPLOT wont show linetype correctly so we need to pass
+      # it to plotly which does.
+      p <- ggplot(mydf2) +
+        geom_line(aes(x, y, linetype = type, color = type, group = type)) +
+        geom_ribbon(data = ribbons, aes(x, ymin = ymin, ymax = ymax, fill = fill), alpha = 0.4) +
+        guides(linetype = "none", fill = "none") +
+        scale_color_manual(values = c("black","black"))+
+        scale_linetype_manual(values = c(3, 1)) +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+        theme(legend.title = element_blank())+
+        scale_x_discrete(name = "Date", breaks = mydf2$x[mydf2$x %>% substr(.,8,10) %>% grepl(x = ., "-01") %>% which()])+
+        labs(y =get_swap_units(variable))
+
+      p %>% ggplotly(tooltip = "y" )  %>%
+        layout(title = list(text = paste(run_name, variable, "depth:" ,cdepth, "cm"), y = 0.99), hovermode = "x unified") %>%
+        print()
+
+      # todo, clean up the graph
+      # todo tidy up this readline thing
+      if(index < total){
+        index = index+1
+        readline(prompt = paste0("hit enter for next depth (", depth[index], ")"))
+      }
+    }
+  }
 }
-                
