@@ -4,14 +4,25 @@
 \alias{soft_calibration_plot}
 \title{Soft Calibration Plot}
 \usage{
-soft_calibration_plot(project_path, vars, show = NULL)
+soft_calibration_plot(
+  project_path,
+  observed_file_path = NULL,
+  vars,
+  show = NULL,
+  verbose = F
+)
 }
 \arguments{
-\item{project_path}{path to project directory}
+\item{project_path}{(REQ) (string) path to project directory}
+
+\item{observed_file_path}{(OPT) (string) path to observed file, in case it is
+not located in the default location}
 
 \item{vars}{(REQ) (string/vector) list of variables to include in the plot}
 
 \item{show}{(OPT) (string/vector) list of variables to show by default}
+
+\item{verbose}{(OPT) (logical) print status?}
 }
 \description{
 Generates a 1-4 axis plot from desired variables. Designed to help

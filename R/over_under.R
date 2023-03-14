@@ -6,6 +6,15 @@
 
 
 # source: https://www.nsgrantham.com/fill-between-two-lines-ggplot2
+
+#' ribbionize
+#'
+#' author: Neal Grantham
+#' source: https://www.nsgrantham.com/fill-between-two-lines-ggplot2
+#' @keywords internal
+#' @importFrom dplyr %>% pull filter count group_by mutate select distinct
+#' @importFrom dplyr transmute arrange recode lead bind_rows
+#' @importFrom tidyr pivot_wider pivot_longer
 ribbonize <- function(.data, .x, .y, .type) {
   # Calculate the ribbons required for geom_ribbon().
   # For more info, visit nsgrantham.com/fill-between-two-lines-ggplot2
@@ -97,9 +106,10 @@ ribbonize <- function(.data, .x, .y, .type) {
 #' @param variable (REQ) (string) desired variable for graph
 #' @param depth (OPT) (numeric/vector) depth at which to plot. uses all available depths if left blank.
 #' @param verbose (OPT) (logical) print status?
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot geom_line geom_ribbon guides scale_color_manual
+#' @importFrom ggplot2 scale_linetype_manual theme element_text element_blank scale_x_discrete labs aes
 #' @importFrom plotly ggplotly layout
-#' @importFrom dplyr %>% left_join
+#' @importFrom dplyr %>% left_join pull count group_by
 #' @export
 plot_over_under <- function(project_path, observed_file_path = NULL, variable, depth = NULL, verbose = F) {
 

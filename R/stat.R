@@ -14,7 +14,7 @@
 #' @param observed_file_path (OPT) (string) path to observed file. will default to "./project_path/observed_data.xlsx"
 #' @param verbose (OPT) (boolean) print status to console?
 #' @param addtional (OPT) (string) custom column name(s) to include in the analysis (untested)
-#' @importFrom tibble %>%
+#' @importFrom dplyr %>% nth
 #' @importFrom glue glue
 #' @returns (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
 #' @export

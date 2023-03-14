@@ -1,3 +1,7 @@
+# TODO add cum. drain (could be better in dedicated graph)
+# TODO add total water (probably best in custom graph)
+
+
 
 #' Soft Calibration Plot
 #'
@@ -6,9 +10,12 @@
 #'
 #' currently supports "H", "WC", "DRAINAGE", "TEMP"
 #'
-#' @param project_path path to project directory
+#' @param project_path (REQ) (string) path to project directory
+#' @param observed_file_path (OPT) (string) path to observed file, in case it is
+#' not located in the default location
 #' @param vars (REQ) (string/vector) list of variables to include in the plot
 #' @param show (OPT) (string/vector) list of variables to show by default
+#' @param verbose (OPT) (logical) print status?
 #'
 #' @importFrom dplyr %>% left_join
 #' @importFrom plotly plot_ly layout add_trace
@@ -16,7 +23,7 @@
 #' @importFrom stringr str_split
 #' @importFrom grDevices colorRampPalette
 #' @export
-soft_calibration_plot <- function(project_path, vars, show = NULL){
+soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars, show = NULL, verbose = F){
 
   vars <- vars %>% toupper()
 
@@ -24,6 +31,10 @@ soft_calibration_plot <- function(project_path, vars, show = NULL){
     show = "RAIN"
   }else{
     show <- show %>% toupper()
+  }
+
+  if (observed_file_path %>% is.null()) {
+    observed_file_path <- glue("{project_path}/observed_data.xlsx")
   }
 
   # cant do more than 4 variables. (3+RAIN)
