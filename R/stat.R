@@ -15,6 +15,7 @@
 #' @param verbose (OPT) (boolean) print status to console?
 #' @param addtional (OPT) (string) custom column name(s) to include in the analysis (untested)
 #' @importFrom tibble %>%
+#' @importFrom glue glue
 #' @returns (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
 #' @export
 get_performance <-
@@ -26,43 +27,17 @@ get_performance <-
            verbose = F,
            addtional = NULL) {
 
-    if(variable %>% is.null()==FALSE){
-      variable <- variable %>% toupper()
-    }
-
-    if(observed_file_path %>% is.null()){
+    if (observed_file_path %>% is.null()) {
       observed_file_path <- glue("{project_path}/observed_data.xlsx")
     }
 
-    observed_data <- load_observed(path = observed_file_path, verbose = verbose)
-    modelled_data <- read_swap_output(project_path = project_path)
+    rlist <- match_mod_obs(project_path, variable, observed_file_path, depth, verbose, addtional)
 
-    observed_data_filtered <- filter_swap_data(data = observed_data$data, var = variable, depth = depth, addtional = addtional)
-    modelled_data_filtered <- filter_swap_data(modelled_data$custom_depth, variable, depth, addtional = addtional)
-
-    # sort them to be in consistent order
-    obs_new_order = observed_data_filtered %>% colnames() %>% sort()
-    mod_new_order = modelled_data_filtered %>% colnames() %>% sort()
-
-    modelled_data_filtered = modelled_data_filtered[,mod_new_order]
-
-    observed_data_filtered = observed_data_filtered[,obs_new_order]
+    modelled_data_filtered = rlist$mod
+    observed_data_filtered = rlist$obs
 
     obs_col_length = length(observed_data_filtered)
-    mod_col_length = modelled_data_filtered %>% length()
 
-    if(obs_col_length != mod_col_length){
-      print("OBS file:")
-      print(observed_data_filtered)
-      print("mod file:")
-      print(modelled_data_filtered)
-      stop("Illegal request: obs col length and mod col length differ, likely because observed data attributes does not match modelled")
-    }
-
-    if(obs_col_length == 1){
-      warning("No variable selected, returning empty dataframe. ")
-      return(observed_data_filtered)
-    }
 
     # from 2 because skip date col
     return_df <- data.frame()
