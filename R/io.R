@@ -316,3 +316,72 @@ get_depths <- function(data, variable = NULL) {
   }
   return(depths)
 }
+
+#' match mod obs
+#'
+#' internal function: matches observed and modelled dataframes and returns them
+#'
+#' @param project_path req
+#' @param variable req
+#' @param observed_file_path req
+#' @param depth req
+#' @param verbose req
+#' @param addtional req
+#'
+#' @importFrom tibble %>%
+#' @importFrom glue glue
+#' @returns list of modelled DF and observed DF, matched
+#' @keywords internal
+#' @export
+match_mod_obs <- function(project_path, variable, observed_file_path, depth = NULL, verbose = F, addtional = NULL) {
+
+  # todo remove export from this function
+  if (variable %>% is.null() == FALSE) {
+    variable <- variable %>% toupper()
+  }
+
+  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  modelled_data <- read_swap_output(project_path = project_path)
+
+  observed_data_filtered <-
+    filter_swap_data(
+      data = observed_data$data,
+      var = variable,
+      depth = depth,
+      addtional = addtional
+    )
+  modelled_data_filtered <-
+    filter_swap_data(
+      data = modelled_data$custom_depth,
+      var = variable,
+      depth = depth,
+      addtional = addtional
+    )
+
+  # sort them to be in consistent order
+  obs_new_order = observed_data_filtered %>% colnames() %>% sort()
+  mod_new_order = modelled_data_filtered %>% colnames() %>% sort()
+
+  modelled_data_filtered = modelled_data_filtered[, mod_new_order]
+
+  observed_data_filtered = observed_data_filtered[, obs_new_order]
+
+  obs_col_length = length(observed_data_filtered)
+  mod_col_length = modelled_data_filtered %>% length()
+
+  if (obs_col_length != mod_col_length) {
+    print("OBS file:")
+    print(observed_data_filtered)
+    print("mod file:")
+    print(modelled_data_filtered)
+    stop(
+      "Illegal request: obs col length and mod col length differ, likely because observed data attributes does not match modelled"
+    )
+  }
+
+  if (obs_col_length == 1) {
+    warning("No variable selected, returning empty dataframe. ")
+    return(observed_data_filtered)
+  }
+  list(mod = modelled_data_filtered, obs = observed_data_filtered) %>% return()
+}
