@@ -9,7 +9,7 @@ melt_all_runs(
   custom_save_path = NULL,
   observed_file_path = NULL,
   variable,
-  depth,
+  depth = NULL,
   verbose = F
 )
 }
@@ -24,7 +24,7 @@ leave blank for default}
 
 \item{variable}{(REQ) (string) variable to be returned}
 
-\item{depth}{(REQ) (string) depth of variable. leave blank if variable has
+\item{depth}{(OPT) (string) depth of variable. leave blank if variable has
 no depth}
 
 \item{verbose}{print status?}

@@ -11,6 +11,7 @@ comparative_plot(
   vars,
   depth = NULL,
   observed_file_path = NULL,
+  custom_save_path = NULL,
   verbose = NULL
 )
 }
@@ -24,6 +25,9 @@ no depth}
 
 \item{observed_file_path}{(OPT) (string) path to observed file, in case it is
 not located in the default location}
+
+\item{custom_save_path}{(OPT) (string) path to the custom save location.
+leave blank for default}
 
 \item{verbose}{(OPT) (logical) print status?}
 }
