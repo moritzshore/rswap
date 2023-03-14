@@ -4,13 +4,31 @@
 # user understand how the model is working.
 
 #' Soft Calibration Plot
+#'
 #' Generates a 1-4 axis plot from desired variables. Designed to help
 #' user understand how the model is working.
 #'
-#' @param project_path
+#' currently supports "H", "WC", "DRAINAGE", "TEMP"
+#'
+#' @param project_path path to project directory
 #' @param vars (REQ) (string/vector) list of variables to include in the plot
 #' @param show (OPT) (string/vector) list of variables to show by default
-soft_calibration_plot <- function(project_path, vars = NULL, show = NULL){
+#'
+#' @importFrom dplyr %>% left_join
+#' @importFrom plotly plot_ly layout add_trace
+#' @importFrom glue glue
+#' @importFrom stringr str_split
+#' @importFrom grDevices colorRampPalette
+#' @export
+soft_calibration_plot <- function(project_path, vars, show = NULL){
+
+  vars <- vars %>% toupper()
+
+  if(show %>% is.null){
+    show = "RAIN"
+  }else{
+    show <- show %>% toupper()
+  }
 
   # cant do more than 4 variables. (3+RAIN)
   if(length(vars)>3){return("too many variables, max 3")}
@@ -22,6 +40,7 @@ soft_calibration_plot <- function(project_path, vars = NULL, show = NULL){
   }
 
   # adds the unit to the ylax labels
+  # todo convert this to the utils function
   var_lab = vars
   for (i in c(1:length(vars))) {
     if( vars[i]  == "TEMP" ){
@@ -67,14 +86,27 @@ soft_calibration_plot <- function(project_path, vars = NULL, show = NULL){
   )
 
 
-  # the SWAP model results
-  results = data[[2]]
+
+  if (observed_file_path %>% is.null()) {
+    observed_file_path <- glue("{project_path}/observed_data.xlsx")
+  }
+
+  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  observed_data = observed_data$data
+  obs_cols = observed_data[-1] %>% colnames() %>% paste0("obs",.)
+  colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
+
+  modelled_data <- read_swap_output(project_path)
+  modelled_data <- modelled_data$custom_depth
+
+  results = left_join(modelled_data, observed_data, by = "DATE")
+
 
   # grabs the depths at which we have observed data for
-  depths = get_depths(results = data[[2]])
+  depths = get_depths(data = results)
 
   # grab run name
-  run_name = data[[1]]
+  run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
   # base plot using SWAP model results
   fig <- plot_ly(data = results)
@@ -336,5 +368,5 @@ soft_calibration_plot <- function(project_path, vars = NULL, show = NULL){
            hovermode = "x unified"
     )
   # print out the plot.
-  fig %>% print
+  fig %>% print()
 }
