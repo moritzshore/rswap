@@ -1,7 +1,3 @@
-# SWAPUI Soft-calibration plot
-# Author: Moritz Shore | moritz.shore@nibio.no | 9.1.23
-# Contents: Generates a 1-4 axis plot from desired variables. Designed to help
-# user understand how the model is working.
 
 #' Soft Calibration Plot
 #'
@@ -356,7 +352,7 @@ soft_calibration_plot <- function(project_path, vars, show = NULL){
     fig <- fig %>% layout(
       title = run_name, # no additional axis
       xaxis = list(title = '', domain = graph_domain), # graph margins
-      yaxis = list(title="RAIN" # name for the MAIN y axis
+      yaxis = list(title="RAIN (cm)" # name for the MAIN y axis
       )
     )
   }
