@@ -118,7 +118,7 @@ plot_over_under <- function(project_path, observed_file_path = NULL, variable, d
   run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
   if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/observed_data.xlsx")
+    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   }
 
   observed_data <- load_observed(path = observed_file_path, verbose = verbose)

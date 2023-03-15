@@ -34,7 +34,7 @@ soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars,
   }
 
   if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/observed_data.xlsx")
+    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   }
 
   # cant do more than 4 variables. (3+RAIN)
@@ -91,12 +91,6 @@ soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars,
     position = 0,
     title = var_lab[3]
   )
-
-
-
-  if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/observed_data.xlsx")
-  }
 
   observed_data <- load_observed(path = observed_file_path, verbose = verbose)
   observed_data = observed_data$data
