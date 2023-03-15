@@ -10,7 +10,8 @@ match_mod_obs(
   observed_file_path,
   depth = NULL,
   verbose = F,
-  addtional = NULL
+  addtional = NULL,
+  custom_path = F
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ match_mod_obs(
 \item{verbose}{req}
 
 \item{addtional}{req}
+
+\item{custom_path}{in case project path is not default}
 }
 \value{
 list of modelled DF and observed DF, matched

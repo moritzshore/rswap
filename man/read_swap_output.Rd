@@ -4,7 +4,7 @@
 \alias{read_swap_output}
 \title{Reads SWAP output of current path}
 \usage{
-read_swap_output(project_path)
+read_swap_output(project_path, custom_path = F)
 }
 \arguments{
 \item{project_path}{String, path to the project directory / or custom save location.}

@@ -11,7 +11,8 @@ get_performance(
   depth = NULL,
   observed_file_path = NULL,
   verbose = F,
-  addtional = NULL
+  addtional = NULL,
+  custom_path = F
 )
 }
 \arguments{
@@ -24,11 +25,13 @@ path to the project directory / or custom save location.}
 
 \item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.}
 
-\item{observed_file_path}{(OPT) (string) path to observed file. will default to "./project_path/observed_data.xlsx"}
+\item{observed_file_path}{(OPT) (string) path to observed file. will default to "./project_path/rswap_observed_data.xlsx"}
 
 \item{verbose}{(OPT) (boolean) print status to console?}
 
 \item{addtional}{(OPT) (string) custom column name(s) to include in the analysis (untested)}
+
+\item{custom_path}{(OPT) (boolean) in case the project path differs from default location}
 }
 \value{
 (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
