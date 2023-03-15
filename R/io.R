@@ -1,4 +1,9 @@
 # io functions
+# TODO error handling for missing data
+
+
+# TODO: translate stat plot, sensitivity functionaliy, autocal functionality
+# Then: the big autocal update: read in every variable with value, and be able to change the values
 
 #' Makes a temporary sub-directory workspace for the package to run in.
 #' @param project_path string, path to project directory
@@ -179,11 +184,14 @@ load_observed <- function(path, verbose = F){
 #' @importFrom stringr str_replace str_remove
 #' @importFrom tibble tibble
 #' @export
-read_swap_output <-  function(project_path){
+read_swap_output <-  function(project_path, custom_path = F){
 
   # TODO: pass list of files to read OR read and return all
-
-  read_path <- glue("{project_path}/rswap")
+  if(custom_path == FALSE){
+    read_path <- glue("{project_path}/rswap")
+  }else{
+    read_path = project_path
+  }
 
   result_output <- read.table(
     glue("{read_path}/result_output.csv"),
@@ -338,13 +346,21 @@ get_depths <- function(data, variable = NULL) {
 #' @param depth req
 #' @param verbose req
 #' @param addtional req
+#' @param custom_path in case project path is not default
 #'
 #' @importFrom tibble %>%
 #' @importFrom glue glue
 #' @returns list of modelled DF and observed DF, matched
 #' @keywords internal
 #' @export
-match_mod_obs <- function(project_path, variable, observed_file_path, depth = NULL, verbose = F, addtional = NULL) {
+match_mod_obs <-
+  function(project_path,
+           variable,
+           observed_file_path,
+           depth = NULL,
+           verbose = F,
+           addtional = NULL,
+           custom_path = F) {
 
   # todo remove export from this function
   if (variable %>% is.null() == FALSE) {
@@ -352,7 +368,7 @@ match_mod_obs <- function(project_path, variable, observed_file_path, depth = NU
   }
 
   observed_data <- load_observed(path = observed_file_path, verbose = verbose)
-  modelled_data <- read_swap_output(project_path = project_path)
+  modelled_data <- read_swap_output(project_path = project_path, custom_path = custom_path)
 
   observed_data_filtered <-
     filter_swap_data(
@@ -431,7 +447,7 @@ melt_all_runs <-
 
 
     if (observed_file_path %>% is.null()) {
-      observed_file_path <- glue("{project_path}/observed_data.xlsx")
+      observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
     }
 
     if(custom_save_path %>% is.null()){
