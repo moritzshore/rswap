@@ -64,10 +64,7 @@ plot_statistics <-
     # extract the run name from the data package
     run_name <- file %>% str_split("./") %>% unlist() %>% tail(1)
 
-      mod = read_swap_output(file, custom_path = T)
-      mod_filt <- filter_swap_data(mod$custom_depth, var = var, depth = depth)
-
-      if(length(stat)>1){stop("rswap ERROR: please pass only one stat value")}
+    if(length(stat)>1){stop("rswap ERROR: please pass only one stat value")}
 
       performance = get_performance(
         project_path = file,
@@ -254,7 +251,7 @@ plot_statistics <-
 
     if(depth %>% is.null() == FALSE){
       # dodge columns for the depths
-      plot <- plot+geom_col(aes(x=factor(run, level = stat_df$run %>% unique()), y = stat_df[2] %>% pull(), fill = var), position = "dodge")
+      plot <- plot+geom_col(aes(x=factor(run, level = run %>% unique()), y = stat_df[2] %>% pull(), fill = var), position = "dodge")
     }
 
     # mean line
