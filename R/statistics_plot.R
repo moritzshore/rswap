@@ -1,12 +1,26 @@
-# plot statistics
-
-# SWAPUI statistics plotting
-# Author: Moritz Shore | moritz.shore@nibio.no | 9.1.23
-# Contents: This function generates a plot of all the saved runs, allowing the
-#           user to see how well their runs are performing compared to previous
-#           attempts.
+#' Plot statistics
 #'
-#' @importFrom grDevices colorRampPalette
+#' This function generates a plot of all the saved runs, allowing the
+#' user to see how well their runs are performing compared to previous
+#' attempts.
+#' @param project_path (REQ) (string) path to project directory
+#' @param var (REQ) (string) variable to analyse
+#' @param depth (numeric/vector) (OPT) optional, leave blank for all
+#' @param graph (OPT) (string) either "default" "sorted" or "ggplot". leave
+#' blank for default
+#' @param stat (REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)
+#' @param observed_file_path (OPT) (string) pass if your observed file has a custom path. leave blank for default
+#' @param custom_save_path  (OPT) (string) pass if your saved runs have custom paths. leave blank for default
+#' @param verbose (OPT) (boolean) print status?
+#'
+#' @importFrom ggplot2 ggplot theme scale_color_manual geom_col aes geom_line geom_point labs ggtitle scale_fill_manual
+#' @importFrom dplyr %>% pull select all_of filter
+#' @importFrom stringr str_split
+#' @importFrom glue glue
+#' @importFrom plotly plot_ly add_trace layout hide_colorbar
+#' @importFrom grDevices palette
+#'
+#' @export
 plot_statistics <-
   function(project_path,
            var,
@@ -15,7 +29,7 @@ plot_statistics <-
            stat = "NSE",
            observed_file_path = NULL,
            custom_save_path = NULL,
-           verbose = NULL) {
+           verbose = F) {
 
 
   # extract the run name from the data package
@@ -31,7 +45,17 @@ plot_statistics <-
     observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   }
 
+  if(depth %>% is.null()){
+   obs_dat <- load_observed(observed_file_path)
+   depth <- get_depths(data = obs_dat$data, variable = var)
+  }
+
+
+  # get a path list of all the previous runs
+  # get the file infos to sort by creation date
   files = list.files(path = custom_save_path, full.names = T)
+  details = files %>% file.info()
+  files <- files[order(details$mtime, decreasing = T)]
 
   stat_df <- data.frame()
 
@@ -64,9 +88,21 @@ plot_statistics <-
   }
 
 
-  # get a path list of all the previous runs
-  # get the file infos to sort by creation date
-  details = files %>% file.info()
+
+  last_run <- get_performance(
+    project_path = project_path,
+    stat = stat,
+    variable = var,
+    depth = depth,
+    observed_file_path = observed_file_path,
+    verbose = verbose
+  )
+
+  last_run$run = "last_run"
+  last_run$mean = last_run$NSE %>% mean()
+
+  stat_df <- rbind(stat_df, last_run)
+
 
   # color palette
   palette <- colorRampPalette(c("dodgerblue4","dodgerblue2","deepskyblue"))
@@ -120,6 +156,8 @@ plot_statistics <-
       title = paste("Statistics for", var),
       plot_bgcolor = '#e5ecf6',
       autosize = T,
+      xaxis = list(categoryorder = "array",
+                   categoryarray = stat_df$run %>% unique()),
       yaxis = list(
         title = stat,
         zerolinecolor = '#ffff',
@@ -139,37 +177,39 @@ plot_statistics <-
     # plot
     fig2 <- plot_ly()
     # individual columns for each depth
-    if(!is.na(merged$depth[1])){
+    if(depth %>% is.null() == FALSE){
       fig2 <-
         fig2 %>% add_trace(
-          data = all_stat,
-          x = ~ path,
-          y = ~ get(user.stat),
-          name = ~ depth,
-          color = ~ depth,
-          colors = palette(length(get_depths(data[[2]]))),
+          data = stat_df,
+          x = ~ run,
+          y = ~ stat_df[2] %>% pull(),
+          name = ~ var,
+          color = ~ var,
+          colors = palette(length(get_depths(obs_dat$data, var))),
           type = 'bar'
         )
     }
     # mean line
     fig2 <-
       fig2 %>% add_trace(
-        data = best_run,
-        x = ~ path,
-        y = ~ get(user.stat),
+        data = stat_df,
+        x = ~ run,
+        y = ~ mean,
         name = "mean",
         mode = "lines+markers",
         type = "scatter"
       )
 
+   stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = T),]
+
     # cutoms layout and print
     fig2 %>% layout(
-      title = paste("Statistics for", user.var, "sorted by best mean", user.stat),
+      title = paste("Statistics for", var, "sorted by best mean", stat),
       autosize = T,
       xaxis = list(categoryorder = "array",
-                   categoryarray = best_run$path),
+                   categoryarray = stat_df_ordered$run %>% unique()),
       yaxis = list(
-        title = user.stat,
+        title = stat,
         zerolinecolor = '#ffff',
         zerolinewidth = 2,
         gridcolor = 'ffff'
@@ -183,51 +223,48 @@ plot_statistics <-
   # ggplot
   if(graph=="ggplot") {
     # find the best value
-    best_value = best_run[colnames(best_run)==user.stat] %>% max(na.rm=T)
+    best_value <- stat_df$mean %>% max()
     # find the run with the best value
-    best_run_name <- best_run$path[which(best_run[colnames(best_run)==user.stat] == best_value)]
+    best_run_name <- stat_df$run[which(stat_df$mean == best_value) %>% min()]
 
     # find the value of the last path
-    last_run_value <- best_run %>% filter(path == last_run) %>%  select(all_of(user.stat)) %>% pull()
-
+    last_run_value <- stat_df %>% filter(run == "last_run") %>%  select(all_of(stat)) %>% pull() %>% mean()
     # color red if best path
-    ifbest <- ifelse(unique(all_stat$path) == best_run_name, "red", "black")
+    ifbest <- ifelse(unique(stat_df$run) == best_run_name, "red", "black")
     # format bold if last path
-    iflast <- ifelse(unique(all_stat$path) == last_run, "bold", "plain")
+    iflast <- ifelse(unique(stat_df$run) == "last_run", "bold", "plain")
 
-    options(warn=-1)
-    # ggplot
-    plot = ggplot(data = all_stat)+
       # theme changes (x axis formatting and subtitle)
       # this is where the warning "Vectorized input to `element_text()` is not officially supported."
       # comes into play, but no fix can be found.
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, colour = ifbest, face = iflast),
+      plot<-ggplot(stat_df)+
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, colour = ifbest, face = iflast),
             plot.subtitle = element_text(color = "red"))+
 
       # scale color manual
       scale_color_manual(values = c("red"))+
       # scale fill according to our palette
-      scale_fill_manual(values=palette(length(get_depths(data[[2]]))))+
+      scale_fill_manual(values=palette(length(get_depths(obs_dat$data, var))))+
       # y lab
-      ylab(user.stat)+
-      ggtitle(paste0("Last run: ", last_run, " with a(n)  ", user.stat, " of ",round(last_run_value,2) ),
-              paste0( "The best run was \"", best_run_name,"\", with a(n) " ,user.stat, " of ", round(best_value,2)))
+      ylab(stat)+xlab("run")+
+      ggtitle(paste0("Last run had a(n) ", stat, " of ",round(last_run_value,2)),
+              paste0( "The best run was \"", best_run_name,"\", with a(n) " ,stat, " of ", round(best_value,2)))
     options(warn=1)
 
 
-    if(!is.na(merged$depth[1])){
+    if(depth %>% is.null() == FALSE){
       # dodge columns for the depths
-      plot = plot +geom_col(mapping = aes(x = path, y = get(user.stat), fill = factor(depth)), position = "dodge")
+      plot <- plot+geom_col(aes(x=factor(run, level = stat_df$run %>% unique()), y = stat_df[2] %>% pull(), fill = var), position = "dodge")
     }
 
     # mean line
-    plot = plot+geom_line(data = mean_stat, mapping = aes(path, y = get(user.stat), color = "mean"), group = 1, size = 1)+
+    plot = plot+geom_line(aes(x=run, y =mean, color = "mean"), group = 1, linewidth = 1)+
       # points on mean line
-      geom_point(data = mean_stat, aes(x = path, y = get(user.stat), color = "mean"), size = 2)
+      geom_point(aes(x = run, y = mean, color = "mean"), size = 2)
 
     # Warning message:
     #   Vectorized input to `element_text()` is not officially supported.
     # ℹ Results may be unexpected or may change in future versions of ggplot2.
-    plot %>% return()
+    plot %>% print()
   }
 }
