@@ -23,6 +23,11 @@ build_rswap_directory <- function(project_path){
   #TODO might want to check the options here, so you get ALL the files and none more
   file_list <- list.files(project_path, full.names = T, recursive = T)
 
+  # remove any files in directory /rswap_saved/ ... this is prone to failure, should make more
+  # robust! TODO
+  ignore <- file_list %>% grepl(x=., "/rswap_saved/") %>% which()
+  file_list<-file_list[-ignore]
+
   # vector of all the files i want to copy over
   file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv")
   match_string <- paste(file_types, collapse = "|")
