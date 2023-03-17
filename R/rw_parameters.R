@@ -26,6 +26,9 @@ outfile = "rswap.swp"
 #' @param project_path (REQ) (string) path where the swap file is located
 #' @param swap_file (OPT) (string) name of the swap file (will default to "swap.swp" if left blank)
 #'
+#' @importFrom dplyr %>%
+#' @importFrom stringr str_trim
+#'
 #' @returns cleaned up SWAP file in list form.
 #' @export
 clean_swp_file <- function(project_path, swap_file = "swap.swp") {
@@ -86,11 +89,17 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' @param swap_file (OPT) (string) name of the swap file to be used. defaults to swap.swp
 #' @param verbose (OPT) (boolean) print status?
 #'
+#' @importFrom dplyr %>% nth
+#' @importFrom stringr str_trim str_split
+#' @importFrom purrr map
+#' @importFrom tibble tibble
+#'
 #' @export
 parse_swp_file <-
   function(project_path,
            swap_file = "swap.swp",
            verbose = F) {
+
     path = paste0(project_path, "/", swap_file)
 
     swp <- clean_swp_file(project_path, swap_file = swap_file)
@@ -211,6 +220,7 @@ parse_swp_file <-
 #' @param outfile (OPT) (string) custom file name. defaults to rswap.swp
 #' @param verbose (OPT) (boolean) print status?
 #'
+#' @importFrom dplyr %>%
 #' @export
 #'
 #' @export
