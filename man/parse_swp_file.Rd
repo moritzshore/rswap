@@ -4,7 +4,12 @@
 \alias{parse_swp_file}
 \title{Parse swap file}
 \usage{
-parse_swp_file(project_path, swap_file = "swap.swp", verbose = F)
+parse_swp_file(
+  project_path,
+  swap_file = "swap.swp",
+  verbose = F,
+  create_temp_dir = F
+)
 }
 \arguments{
 \item{project_path}{(REQ) (string), path to project directory}

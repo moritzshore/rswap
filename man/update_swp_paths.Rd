@@ -4,20 +4,12 @@
 \alias{update_swp_paths}
 \title{updates the file paths in the swap main file}
 \usage{
-update_swp_paths(
-  temp_directory,
-  swap_file,
-  outfile_name = NULL,
-  swap_exe,
-  verbose
-)
+update_swp_paths(temp_directory, swap_file, swap_exe, verbose)
 }
 \arguments{
 \item{temp_directory}{path to the temp directory}
 
 \item{swap_file}{name of the swap file to be modified}
-
-\item{outfile_name}{name of the file to be written}
 
 \item{swap_exe}{path to swap.exe}
 

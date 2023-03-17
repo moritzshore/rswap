@@ -25,8 +25,11 @@ build_rswap_directory <- function(project_path){
 
   # remove any files in directory /rswap_saved/ ... this is prone to failure, should make more
   # robust! TODO
-  ignore <- file_list %>% grepl(x=., "/rswap_saved/") %>% which()
-  file_list<-file_list[-ignore]
+  ignore <- file_list %>% grepl(x=., "\\b/rswap_saved/\\b") %>% which()
+
+  if(length(ignore)>0){
+    file_list<-file_list[-ignore]
+  }
 
   # vector of all the files i want to copy over
   file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv")
@@ -57,8 +60,22 @@ build_rswap_directory <- function(project_path){
   return(temp_directory)
 }
 
-
+#' Changes a SWAP parameter
+#'
+#' passed a parameter dataframe, changes the right parameter, and returns the
+#' dataframe
+#'
+#' @param param dataframe consisting of the parameter values
+#' @param name name of the parameter to change
+#' @param value that the parameter should take on
+#'
+#' @returns modified parameter dataframe
+#'
+#' @importFrom glue glue
+#'
+#' @export
 change_swap_par <- function(param, name, value){
+  value <- glue(value, " ! changed by rswap {Sys.time()}")
   param$value[which(param$param == name)] = value
   return(param)
 }
@@ -66,7 +83,6 @@ change_swap_par <- function(param, name, value){
 #' updates the file paths in the swap main file
 #' @param temp_directory path to the temp directory
 #' @param swap_file name of the swap file to be modified
-#' @param outfile_name name of the file to be written
 #' @param swap_exe path to swap.exe
 #' @param verbose print status?
 #' @importFrom glue glue
@@ -75,7 +91,6 @@ change_swap_par <- function(param, name, value){
 update_swp_paths <-
   function(temp_directory,
            swap_file,
-           outfile_name = NULL,
            swap_exe,
            verbose) {
 
@@ -89,7 +104,7 @@ update_swp_paths <-
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
 
   for (par in update_par) {
-    val = glue("'{swap_main_file_path}' ! changed by rswap {Sys.time()}")
+    val = glue("'{swap_main_file_path}'")
     parameters = change_swap_par(parameters, par, val )
   }
 
@@ -141,11 +156,14 @@ save_run <- function(project_path, save_location = NULL, run_name = NULL, verbos
   # create the save folder for the individual run
   to_path = glue("{save_location}/{run_name}")
   dir.create(to_path, showWarnings = T)
+  dir.create(glue("{to_path}/tables/"), showWarnings = F)
+
 
   from_path = glue("{project_path}/rswap/")
+  from_copy = list.files(from_path, full.names = T, include.dirs = T, recursive = T)
 
-  from_copy = list.files(from_path, full.names = T)
-  to_copy = glue("{to_path}/{list.files(from_path)}")
+  to_files = list.files(from_path, full.names = F, include.dirs = T, recursive = T)
+  to_copy = glue("{to_path}/{to_files}")
 
   status = file.copy(from_copy, to_copy)
 

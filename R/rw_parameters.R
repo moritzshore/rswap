@@ -193,7 +193,9 @@ parse_swp_file <-
     }
 
     if (verbose) {
-      cat("tables have been saved in .csv format here:\n", table_path)
+      cat("tables have been saved in .csv format here:\n",
+          table_path,
+          "\n")
     }
 
     return(list(
@@ -260,7 +262,7 @@ write_swap_file <-
 
     tables <- list.files(table_path, full.names = T)
     for (table in tables) {
-      read<-read.csv(table, colClasses = "character") %>% tibble()
+      read <- read.csv(table, colClasses = "character") %>% tibble()
 
       read %>% tibble()
       write.table(
@@ -269,12 +271,13 @@ write_swap_file <-
         quote = F,
         row.names = F,
         col.names = T,
-        append = T, sep = " "
+        append = T,
+        sep = " "
       ) %>% suppressWarnings()
     }
 
-    if(verbose){
-      cat("swap file written to:\n",outpath)
+    if (verbose) {
+      cat("swap file written to:\n", temp_directory, "\n")
     }
     return(paste0(project_path, "/rswap/", outfile))
   }
