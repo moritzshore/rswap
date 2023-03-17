@@ -57,42 +57,59 @@ build_rswap_directory <- function(project_path){
   return(temp_directory)
 }
 
+
+change_swap_par <- function(param, name, value){
+  param$value[which(param$param == name)] = value
+  return(param)
+}
+
 #' updates the file paths in the swap main file
 #' @param temp_directory path to the temp directory
 #' @param swap_file name of the swap file to be modified
+#' @param outfile_name name of the file to be written
+#' @param swap_exe path to swap.exe
+#' @param verbose print status?
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @keywords internal
-update_swp_paths <- function(temp_directory, swap_file, swap_exe){
+update_swp_paths <-
+  function(temp_directory,
+           swap_file,
+           outfile_name = NULL,
+           swap_exe,
+           verbose) {
 
-  swap_file_lines <- readLines(glue("{temp_directory}/{swap_file}"))
+    # TODO this could be revamped
+    swap_exe_name = swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
+    path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
+    swap_main_file_path <- temp_directory %>% str_remove(path_without_swap)
 
-  swap_file_new <- swap_file_lines
+    res <- parse_swp_file(project_path, swap_file, verbose)
+    parameters = res$parameters
+    update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
 
-  project_line = swap_file_lines %>% grepl(x=., "PROJECT", fixed = T) %>% which()
-  pathwork_line = swap_file_lines %>% grepl(x=., "PATHWORK", fixed = T) %>% which()
-  pathatm_line = swap_file_lines %>% grepl(x=., "PATHATM", fixed = T) %>% which()
-  pathcrop_line = swap_file_lines %>% grepl(x=., "PATHCROP", fixed = T) %>% which()
-  pathdrain_line = swap_file_lines %>% grepl(x=., "PATHDRAIN", fixed = T) %>% which()
+  for (par in update_par) {
+    val = glue("'{swap_main_file_path}' ! changed by rswap {Sys.time()}")
+    parameters = change_swap_par(parameters, par, val )
+  }
 
-  # "tetves/rswap/
+    if (outfile_name %>% is.null()) {
+      outfile_name = "rswap.swp"
+    }
 
-  path_split = swap_exe %>% str_split("/", simplify = T)
-  swap_file_name = path_split[5]
-  path_without_swap <-  swap_exe %>% str_remove(swap_file_name)
-  swap_main_file_path <- temp_directory %>% str_remove(path_without_swap)
+  write_swap_file(
+    project_path,
+    parameters,
+    table_path = res$table_path,
+    outpath = temp_directory,
+    outfile = outfile_name,
+    verbose = verbose
+  )
 
-  swap_file_new[pathwork_line] <-  glue("  PATHWORK  = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
-  swap_file_new[pathatm_line] <-   glue("  PATHATM   = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
-  swap_file_new[pathcrop_line] <-  glue("  PATHCROP  = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
-  swap_file_new[pathdrain_line] <- glue("  PATHDRAIN = '{swap_main_file_path}' ! changed by rswap {Sys.time()}")
-
-  new_swap_file_name = glue("{temp_directory}rswap_{swap_file}")
-
-  writeLines(text = swap_file_new, con = new_swap_file_name )
-
-  return(new_swap_file_name)
+  return(glue("{temp_directory}{outfile_name}"))
 }
+
+
 
 #' Save a swap run
 #'

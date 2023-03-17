@@ -235,6 +235,8 @@ write_swap_file <-
 
     if (outpath %>% is.null()) {
       outpath = paste0(project_path, "/rswap/", outfile)
+    }else{
+      outpath = paste0(outpath, outfile)
     }
 
     write.table(
