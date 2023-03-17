@@ -4,7 +4,13 @@
 \alias{run_swap}
 \title{Runs the SWAP model}
 \usage{
-run_swap(project_path, swap_exe, swap_file, verbose = T, timeout = Inf)
+run_swap(
+  project_path,
+  swap_exe,
+  swap_file = "swap.swp",
+  verbose = T,
+  timeout = Inf
+)
 }
 \arguments{
 \item{project_path}{String, path to the project directory.}
