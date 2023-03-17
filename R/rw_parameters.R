@@ -1,0 +1,268 @@
+# read SWAP files
+
+
+# todo: deal with this: get the comments working
+# SWINCO = 1 ! Switch, type of initial soil moisture condition:
+#   ! 1 = pressure head as function of soil depth
+#   ! 2 = pressure head of each compartment is in hydrostatic equilibrium
+#   !     with initial groundwater level
+#   ! 3 = read final pressure heads from output file of previous Swap simulation
+#
+# path <- paste0(project_path, "/", swap_file)
+
+project_path = "C:/Users/mosh/Documents/tetves"
+create_path = "C:/Users/mosh/Documents/tetves/rswap"
+swap_file = "swap.swp"
+outfile = "rswap.swp"
+
+
+#' Clean swap file
+#'
+#' Returns a cleaned up SWAP file fit for manipulation
+#' Make sure each table in the swap main file ends with a '* End of table' marker!!!
+#'
+#' Not necessarily meant for manual use.
+#'
+#' @param project_path (REQ) (string) path where the swap file is located
+#' @param swap_file (OPT) (string) name of the swap file (will default to "swap.swp" if left blank)
+#'
+#' @returns cleaned up SWAP file in list form.
+#' @export
+clean_swp_file <- function(project_path, swap_file = "swap.swp") {
+  path = paste0(project_path, "/", swap_file)
+  swp <- readLines(path)
+
+  # checking to see if all "end of tables" are case sensitively correct
+  # this was not always the case
+  eot <- (swp %>% grepl(x = ., "* End of table")) %>% which()
+  eot_exact <-
+    (swp %>% grepl(x = ., "\\bEnd of table\\b")) %>% which()
+  if ((eot == eot_exact) %>% all() == FALSE) {
+    stop("please make sure that all tables end with the line '* End of table'")
+  }
+
+  # remove all the comment lines starting with *, except for the * End of lines
+  comment_lines = (swp %>% substr(x = ., 1, 1) == "*") %>% which()
+  comment_lines <- comment_lines[-which(comment_lines %in% eot)]
+  if (comment_lines %>% length() > 0) {
+    swp <- swp[-comment_lines]
+  }
+
+  # remove all the comment lines which start with "!"
+  comment_lines2 = (swp %>% str_trim() %>% substr(x = ., 1, 1) == "!") %>% which()
+  if (comment_lines2 %>% length() > 0) {
+    swp <- swp[-comment_lines2]
+  }
+
+  # remove any empty lines
+  empty_lines = (swp %>% str_trim() %>% substr(x = ., 1, 1) == "") %>% which()
+  if (empty_lines %>% length() > 0) {
+    swp <- swp[-empty_lines]
+  }
+
+  return(swp)
+}
+
+
+# todo: test if this works with ANY swap parameter file (drain, crop)
+# todo, figure out how to return a list of dataframes by appending.
+
+
+#' Parse swap file
+#'
+#' Reads the passed swap file and parses it. returns parameters and tables in a
+#' convienient format. can also write the file directly into the rswap directory
+#'
+#' Not necessarily meant for manual use.
+#'
+#' Make sure each table in the swap main file ends with a '* End of table' marker!!!
+#'
+#' Also this is designed to work with the same format as the example files. if
+#' you do something different with yours,  you might run into issues
+#'
+#' @param project_path (REQ) (string), path to project directory
+#' @param swap_file (OPT) (string), name of swap file to be used. defaults to
+#' swap.swp if left blank
+#' @param swap_file (OPT) (string) name of the swap file to be used. defaults to swap.swp
+#' @param verbose (OPT) (boolean) print status?
+#'
+#' @export
+parse_swp_file <-
+  function(project_path,
+           swap_file = "swap.swp",
+           verbose = F) {
+    path = paste0(project_path, "/", swap_file)
+
+    swp <- clean_swp_file(project_path, swap_file = swap_file)
+
+    # predefine for-loop vars
+    par_df <- data.frame()
+    tab_df <- list()
+    new_i = 0
+
+    table_path = paste0(project_path, "/rswap/tables")
+    dir.create(table_path, showWarnings = F)
+
+    # loop through the main swap file line by line
+    # why for loop and not vectorized?
+    # because required behavior depends on what lines come before and after!
+    for (i in c(1:length(swp))) {
+      # the line to be handled
+      line = swp[i]
+
+      # this is important for not double-reading tables later on
+      if (i < new_i) {
+        next()
+      }
+
+      # this line we dont want to deal with if it ever should come up
+      # it shoudnt... but template swap file is not very consistent
+      if (line == "* End of table") {
+        next()
+      }
+
+      # parameters  always have an equal sign in their line, so we can use this
+      # to identify them
+      is_param <- line %>% grepl(x = ., "=")
+
+      # the routine for if its a parameter:
+      if (is_param == TRUE) {
+        # extract the comment denoted by a !
+        comment = line %>% str_split("!") %>% unlist() %>% nth(2)
+        # split the data from the comment using "!" as an indicator
+        line_split = line %>% str_split("!") %>% unlist() %>% nth(1)
+        # split that line again, based off the equals sign. left of the
+        # equals sign is the parameter name, to the right is the value
+        param = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(1)
+        value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
+
+        # create a row in the final dataframe containing these 3 things,
+        # seperately
+        add_row = data.frame(param = param,
+                             value = value,
+                             comment = comment)
+
+        par_df <- rbind(par_df, add_row)
+        # routine for if its a table
+      } else{
+        header = line  %>%  str_split("!") %>% map(1)  %>% str_trim() %>% str_split("\\s+") %>%  unlist()
+        width = header %>% length()
+
+        # finds the next NON NUMERIC VALUE
+        swap_table_end = swp[i:length(swp)] %>% grepl(x = ., " End of table") %>% which() %>% min()
+
+        # super messy!
+        swap_table <- swp[i:(i + swap_table_end - 2)]
+        swap_table[1] <-
+          header %>% paste(collapse = " ") %>% str_trim()
+        swap_table2 <-
+          swap_table %>% str_trim() %>% str_split("\\s+")
+        base <- swap_table2 %>% map(1) %>% unlist()
+        for (j in c(2:width)) {
+          col <-  swap_table2 %>% map(j) %>% unlist()
+          base <- cbind(base, col)
+        }
+        swap_table3 <- base %>% as.data.frame()
+
+        colnames(swap_table3) <- header
+        swap_table3 <- swap_table3[-1, ]
+        swap_table3 <- swap_table3 %>% tibble()
+
+        table_name <- header %>% paste(collapse = "_")
+        write.table(
+          x = swap_table3,
+          file = paste0(table_path, "/", table_name, ".csv"),
+          sep = ",",
+          row.names = F,
+          col.names = T,
+          quote = F
+        )
+
+        # skip the next rows because you already read them in
+        new_i = i + swap_table_end
+      }
+    }
+
+    if (verbose) {
+      cat("tables have been saved in .csv format here:\n", table_path)
+    }
+
+    return(list(
+      parameters = (par_df %>% tibble()),
+      table_path = table_path
+    ))
+  }
+
+
+
+# todo, might consider making this one internal
+
+#' write swap file
+#'
+#' writes the swap file from the passed parameter dataframe, and the passed path
+#' to the tables stored as csv from the parse_swap_file() function
+#'
+#' @param project_path (REQ) (string) path to project directory
+#' @param parameters (REQ) (dataframe) dataframe of project parameters as created
+#' by the parse_swap_file() function
+#' @param table_path (REQ) (string) path to swap tables stored as csv as written
+#' by the parse_swap_fil function
+#' @param outpath (OPT) (string) custom write location, defaults to project_directory/rswap/
+#' @param outfile (OPT) (string) custom file name. defaults to rswap.swp
+#' @param verbose (OPT) (boolean) print status?
+#'
+#' @export
+#'
+#' @export
+write_swap_file <-
+  function(project_path,
+           parameters,
+           table_path,
+           outpath = NULL,
+           outfile = "rswap.swp",
+           verbose = F) {
+    version = "v1.0" # TODO version should be some kind of global variable)
+
+    if (outpath %>% is.null()) {
+      outpath = paste0(project_path, "/rswap/", outfile)
+    }
+
+    write.table(
+      x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
+      file = outpath,
+      quote = F,
+      col.names = F,
+      row.names = F,
+      append = F
+    )
+
+    par_write = paste(parameters$param, "=", parameters$value)
+    write.table(
+      par_write,
+      file =  outpath,
+      quote = F,
+      row.names = F,
+      col.names = F,
+      append = T
+    )
+
+    tables <- list.files(table_path, full.names = T)
+    for (table in tables) {
+      read<-read.csv(table, colClasses = "character") %>% tibble()
+
+      read %>% tibble()
+      write.table(
+        read,
+        file =  outpath,
+        quote = F,
+        row.names = F,
+        col.names = T,
+        append = T, sep = " "
+      ) %>% suppressWarnings()
+    }
+
+    if(verbose){
+      cat("swap file written to:\n",outpath)
+    }
+    return(paste0(project_path, "/rswap/", outfile))
+  }
