@@ -286,13 +286,12 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
   }else{relevant_var_cols=NULL}
 
 
-  depths = get_depths(data = data, var) %>% as.character()
 
   if (depth %>% is.null() == FALSE) {
     depth = depth %>% as.character()
-    depths <- depths[which(depth %in% depths)]
+
     find2 <-
-      stri_extract_all_regex(str = colz, pattern = paste(depths, collapse = "|")) %>%
+      stri_extract_all_regex(str = colz, pattern = paste(depth, collapse = "|")) %>%
       unlist() %>% is.na()
     relevant_depth_cols <- (find2 == FALSE) %>% which()
 
@@ -324,7 +323,6 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
     # if both depth and var were given, then
     union <- intersect(relevant_var_cols, relevant_depth_cols)
   }
-
 
   perf_mod <- data %>% select(DATE, all_of(union), all_of(addtional))
 

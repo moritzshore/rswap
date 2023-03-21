@@ -233,8 +233,8 @@ plot_over_under <- function(project_path, observed_file_path = NULL, variable, d
         scale_x_discrete(name = "Date", breaks = mydf2$x[mydf2$x %>% substr(.,8,10) %>% grepl(x = ., "-01") %>% which()])+
         labs(y =get_swap_units(variable))
 
-      p %>% ggplotly(tooltip = "y" )  %>%
-        layout(title = list(text = paste(run_name, variable, "depth:" ,cdepth, "cm"), y = 0.99), hovermode = "x unified") %>%
+      p %>% ggplotly(tooltip = "y")  %>%
+        layout(title = list(text = paste(run_name, variable, "depth:", cdepth, "cm"), y = 0.99), hovermode = "x unified") %>%
         print()
 
       # todo, clean up the graph
