@@ -4,12 +4,7 @@
 \alias{parse_swp_file}
 \title{Parse swap file}
 \usage{
-parse_swp_file(
-  project_path,
-  swap_file = "swap.swp",
-  verbose = F,
-  create_temp_dir = F
-)
+parse_swp_file(project_path, swap_file = "swap.swp", verbose = F)
 }
 \arguments{
 \item{project_path}{(REQ) (string), path to project directory}
@@ -17,6 +12,11 @@ parse_swp_file(
 \item{swap_file}{(OPT) (string) name of the swap file to be used. defaults to swap.swp}
 
 \item{verbose}{(OPT) (boolean) print status?}
+}
+\value{
+SWAP parameters in a dataframe format and path to where the tables
+were saved in a csv format (until i figure out how to return an array of
+dataframes)
 }
 \description{
 Reads the passed swap file and parses it. returns parameters and tables in a

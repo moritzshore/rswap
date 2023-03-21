@@ -7,7 +7,7 @@
 run_swap(
   project_path,
   swap_exe,
-  swap_file = "swap.swp",
+  swap_file = "rswap.swp",
   verbose = T,
   timeout = Inf
 )

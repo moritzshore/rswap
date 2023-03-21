@@ -16,6 +16,7 @@
 build_rswap_directory <- function(project_path){
 
   temp_directory <- glue("{project_path}/rswap/")
+
   # create the hidden temp directory
   dir.create(temp_directory, showWarnings = F, mode = "0777")
 
@@ -80,27 +81,32 @@ change_swap_par <- function(param, name, value){
   return(param)
 }
 
+#' Update swp main file paths
+#'
 #' updates the file paths in the swap main file
-#' @param temp_directory path to the temp directory
-#' @param swap_file name of the swap file to be modified
+#' @param project_path path to the temp directory
 #' @param swap_exe path to swap.exe
+#' @param parameters SWAP main file parameters in dataframe format
 #' @param verbose print status?
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @keywords internal
+#' @returns swap parameter dataframe
+#'
 update_swp_paths <-
-  function(temp_directory,
-           swap_file,
+  function(project_path,
            swap_exe,
+           parameters,
            verbose) {
+
+    rswap_dir <- project_path %>% paste0(.,"/rswap/")
 
     # TODO this could be revamped
     swap_exe_name = swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
-    swap_main_file_path <- temp_directory %>% str_remove(path_without_swap)
 
-    res <- parse_swp_file(project_path, swap_file, verbose)
-    parameters = res$parameters
+    swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
+
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
 
   for (par in update_par) {
@@ -108,20 +114,7 @@ update_swp_paths <-
     parameters = change_swap_par(parameters, par, val )
   }
 
-    if (outfile_name %>% is.null()) {
-      outfile_name = "rswap.swp"
-    }
-
-  write_swap_file(
-    project_path,
-    parameters,
-    table_path = res$table_path,
-    outpath = temp_directory,
-    outfile = outfile_name,
-    verbose = verbose
-  )
-
-  return(glue("{temp_directory}{outfile_name}"))
+  return(parameters)
 }
 
 

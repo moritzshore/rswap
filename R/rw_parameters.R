@@ -94,11 +94,17 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' @importFrom purrr map
 #' @importFrom tibble tibble
 #'
+#' @returns SWAP parameters in a dataframe format and path to where the tables
+#' were saved in a csv format (until i figure out how to return an array of
+#' dataframes)
+#'
 #' @export
 parse_swp_file <-
   function(project_path,
            swap_file = "swap.swp",
            verbose = F) {
+      temp_directory <- build_rswap_directory(project_path)
+
 
     path = paste0(project_path, "/", swap_file)
 
@@ -204,42 +210,33 @@ parse_swp_file <-
     ))
   }
 
-
-
-# todo, might consider making this one internal
+# todo, should be internal
 
 #' write swap file
 #'
 #' writes the swap file from the passed parameter dataframe, and the passed path
 #' to the tables stored as csv from the parse_swap_file() function
 #'
-#' @param project_path (REQ) (string) path to project directory
 #' @param parameters (REQ) (dataframe) dataframe of project parameters as created
 #' by the parse_swap_file() function
 #' @param table_path (REQ) (string) path to swap tables stored as csv as written
 #' by the parse_swap_fil function
-#' @param outpath (OPT) (string) custom write location, defaults to project_directory/rswap/
-#' @param outfile (OPT) (string) custom file name. defaults to rswap.swp
+#' @param outpath (REQ) (string) where to write the swap file (and what to call it)
 #' @param verbose (OPT) (boolean) print status?
 #'
 #' @importFrom dplyr %>%
 #' @export
 #'
-#' @export
 write_swap_file <-
-  function(project_path,
-           parameters,
+  function(parameters,
            table_path,
-           outpath = NULL,
-           outfile = "rswap.swp",
+           outpath,
            verbose = F) {
     version = "v1.0" # TODO version should be some kind of global variable)
 
-    if (outpath %>% is.null()) {
-      outpath = paste0(project_path, "/rswap/", outfile)
-    }else{
-      outpath = paste0(outpath, outfile)
-    }
+
+    # create a temp directory to work in
+    temp_directory <- build_rswap_directory(project_path)
 
     write.table(
       x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
@@ -253,7 +250,7 @@ write_swap_file <-
     par_write = paste(parameters$param, "=", parameters$value)
     write.table(
       par_write,
-      file =  outpath,
+      file = outpath,
       quote = F,
       row.names = F,
       col.names = F,
@@ -267,7 +264,7 @@ write_swap_file <-
       read %>% tibble()
       write.table(
         read,
-        file =  outpath,
+        file = outpath,
         quote = F,
         row.names = F,
         col.names = T,
@@ -277,7 +274,7 @@ write_swap_file <-
     }
 
     if (verbose) {
-      cat("swap file written to:\n", temp_directory, "\n")
+      cat("swap file written to:\n", outpath, "\n")
     }
-    return(paste0(project_path, "/rswap/", outfile))
+    return(outpath)
   }

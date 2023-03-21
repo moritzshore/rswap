@@ -4,27 +4,16 @@
 \alias{write_swap_file}
 \title{write swap file}
 \usage{
-write_swap_file(
-  project_path,
-  parameters,
-  table_path,
-  outpath = NULL,
-  outfile = "rswap.swp",
-  verbose = F
-)
+write_swap_file(parameters, table_path, outpath, verbose = F)
 }
 \arguments{
-\item{project_path}{(REQ) (string) path to project directory}
-
 \item{parameters}{(REQ) (dataframe) dataframe of project parameters as created
 by the parse_swap_file() function}
 
 \item{table_path}{(REQ) (string) path to swap tables stored as csv as written
 by the parse_swap_fil function}
 
-\item{outpath}{(OPT) (string) custom write location, defaults to project_directory/rswap/}
-
-\item{outfile}{(OPT) (string) custom file name. defaults to rswap.swp}
+\item{outpath}{(REQ) (string) where to write the swap file (and what to call it)}
 
 \item{verbose}{(OPT) (boolean) print status?}
 }

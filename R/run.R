@@ -15,37 +15,51 @@
 #' @importFrom dplyr %>%
 #' @export
 #'
-run_swap <- function(project_path, swap_exe, swap_file, verbose = T, timeout = Inf){
+run_swap <- function(project_path, swap_exe, swap_file = "rswap.swp",
+                     verbose = T, timeout = Inf) {
 
-  # create a temp directory to work in
-  temp_directory <- build_rswap_directory(project_path)
+    # reads in the swap parameters and tables
+    parse_result <- parse_swp_file(project_path = project_path,
+                                   swap_file = swap_file, verbose = verbose)
 
-  # update the swap main file with the new paths to the input files
-  file_path <- update_swp_paths(temp_directory, swap_file, swap_exe)
+    # changes the paths in the swap main file to reflect the temporary location
+    params <- update_swp_paths(project_path, swap_exe,
+                                  parse_result$parameters, verbose)
 
-  # parse the working directory from the given swap path
-  swap_path_split = swap_exe %>% str_split("swap.exe", simplify = T)
-  swap_wd <- swap_path_split[,1]
 
-  # remove the working directory from the path of the swap main file
-  fixed_path <- file_path %>% str_remove(swap_wd)
+    # builds a directory for performing package actions, and returns the path
+    rswap_directory <- build_rswap_directory(project_path)
 
-  # KILL swap before running to avoid file locking issues.
-  #system('taskkill /IM  "swap.exe" /F', show.output.on.console = verbose)
+    # location for where the swap file is to be written
+    outpath <- paste0(rswap_directory, swap_file)
 
-  # run the model
-  msg <- run( command = "swap.exe", wd = swap_wd, args = fixed_path,
-              error_on_status = F,
-              timeout = timeout,
-              echo_cmd = verbose,
-              echo = verbose
-  )
+    rswap_file <- write_swap_file(parameters = params,
+                                  table_path = parse_result$table_path,
+                                  outpath = outpath, verbose = verbose)
 
-  # TODO improve this
-  if (msg$status != "100") {
-    warning(glue("SWAP error, code {msg$status}"))
+    # parse the working directory from the given swap path
+    swap_path_split = swap_exe %>% str_split("swap.exe", simplify = T)
+    swap_wd <- swap_path_split[, 1]
+
+    # remove the working directory from the path of the swap main file
+    fixed_path <- rswap_file %>% str_remove(swap_wd)
+
+    # run the model
+    msg <- run(
+      command = "swap.exe",
+      wd = swap_wd,
+      args = fixed_path,
+      error_on_status = F,
+      timeout = timeout,
+      echo_cmd = verbose,
+      echo = verbose
+    )
+
+    # TODO improve this
+    if (msg$status != "100") {
+      warning(glue("SWAP error, code {msg$status}"))
+    }
+
+    # return status of run
+    return(msg$status)
   }
-
-  # return status of run
-  return(msg$status)
-}
