@@ -46,7 +46,10 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 
   # remove all the comment lines starting with *, except for the * End of lines
   comment_lines = (swp %>% substr(x = ., 1, 1) == "*") %>% which()
-  comment_lines <- comment_lines[-which(comment_lines %in% eot)]
+  if(length(eot)>1){
+    comment_lines <- comment_lines[-which(comment_lines %in% eot)]
+
+  }
   if (comment_lines %>% length() > 0) {
     swp <- swp[-comment_lines]
   }
@@ -103,6 +106,7 @@ parse_swp_file <-
   function(project_path,
            swap_file = "swap.swp",
            verbose = F) {
+
       temp_directory <- build_rswap_directory(project_path)
 
 
@@ -234,9 +238,12 @@ write_swap_file <-
            verbose = F) {
     version = "v1.0" # TODO version should be some kind of global variable)
 
+    removed <- file.remove(outpath) %>% suppressWarnings()
 
-    # create a temp directory to work in
-    temp_directory <- build_rswap_directory(project_path)
+    if(removed & verbose){
+      cat("overwriting file:\n", outpath, "\n")
+    }
+
 
     write.table(
       x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
@@ -271,6 +278,19 @@ write_swap_file <-
         append = T,
         sep = " "
       ) %>% suppressWarnings()
+
+      eol_table <- data.frame("* End of table")
+
+      write.table(
+        eol_table,
+        file = outpath,
+        quote = F,
+        row.names = F,
+        col.names = F,
+        append = T,
+        sep = " "
+      ) %>% suppressWarnings()
+
     }
 
     if (verbose) {
