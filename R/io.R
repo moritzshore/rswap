@@ -156,9 +156,9 @@ save_run <- function(project_path, save_location = NULL, run_name = NULL, verbos
   from_copy = list.files(from_path, full.names = T, include.dirs = T, recursive = T)
 
   to_files = list.files(from_path, full.names = F, include.dirs = T, recursive = T)
-  to_copy = glue("{to_path}/{to_files}")
+  to_copy = to_path
 
-  status = file.copy(from_copy, to_copy)
+  status = file.copy(from_copy, to_copy, overwrite = T, recursive = T, copy.mode = T, copy.date = T)
 
   if (verbose) {
     if (any(status == FALSE)) {
