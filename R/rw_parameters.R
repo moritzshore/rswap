@@ -298,3 +298,71 @@ write_swap_file <-
     }
     return(outpath)
   }
+
+
+#' Set SWAP output
+#'
+#' by changing the inlist_csv function. if you depths for variables differ,
+#' you need to change the "INLIST_CSV" parameter manually with change_swap_par()
+#'
+#' @param parameters parsed parameter DF
+#' @param variables  variables desired for output
+#' @param depths depths depth at which to output them
+#' @param verbose print status?
+#'
+#' @importFrom glue glue
+#'
+#' @returns parameter dataframe with modified INLIST_CSV parameter.
+#'
+#' @export
+#'
+set_swap_output <- function(parameters, variables, depths, verbose = F){
+
+  # template:
+ # INLIST_CSV = 'rain,snow,drainage,DSTOR,TEMP[-15,-40,-70],WC[-15,-40,-70],H[-10,-20,-30]'
+
+  # todo need to expand these... or something
+  depthwise <- c("TEMP", "WC", "H")
+  nodepth <- c("rain", "snow", "drainage", "DSTOR")
+
+  string <- "["
+  for (d in depths) {
+    if(d == last(depths)){
+      string <- glue("{string}-{d}]")
+
+    }else{
+      string <- glue("{string}-{d},")
+    }
+  }
+
+
+  outstring <- "'"
+  for (var in variables) {
+    if (var %in% depthwise) {
+      if (var == last(variables)) {
+        add_var <- glue("{var}{string}'")
+
+      } else{
+        add_var <- glue("{var}{string},")
+      }
+    }else if(var %in% nodepth){
+      if(var == last(variables)){
+        add_var <- glue("{var}'")
+      }else{
+        add_var <- glue("{var},")
+      }
+    }else{
+      stop(glue("variable {var} not supported yet"))
+    }
+
+    outstring <- glue("{outstring}{add_var}")
+  }
+
+  parameters <- change_swap_par(parameters, "INLIST_CSV", outstring)
+
+  if(verbose){
+    cat(glue("...updating parameter: INLIST_CSV = {outstring}\n"))
+  }
+  return(parameters)
+
+}
