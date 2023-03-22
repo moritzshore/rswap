@@ -321,8 +321,8 @@ set_swap_output <- function(parameters, variables, depths, verbose = F){
     }
   }
 
-
-  outstring <- "'"
+  # rain must always be present! (for the soft calibration plot)
+  outstring <- "'RAIN,"
   for (var in variables) {
     if (var %in% depthwise) {
       if (var == last(variables)) {
