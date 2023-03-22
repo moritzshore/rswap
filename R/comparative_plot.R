@@ -10,7 +10,7 @@
 #' runs. It highlights the differences between changed parameters etc.
 #'
 #' @param project_path (REQ) (string) path to project directory
-#' @param vars (REQ) (string) variable compare
+#' @param variable (REQ) (string) variable to compare
 #' @param depth (OPT) (numeric) depth of variable. leave blank if variable has
 #' no depth
 #' @param observed_file_path (OPT) (string) path to observed file, in case it is
@@ -26,7 +26,9 @@
 #' @importFrom ggpubr color_palette
 #' @importFrom plotly plot_ly
 #'
-comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_path = NULL,custom_save_path = NULL, verbose = NULL) {
+#' @export
+#'
+comparative_plot <- function(project_path, variable, depth =  NULL, observed_file_path = NULL,custom_save_path = NULL, verbose = F) {
 
   # a custom color pallette
   color_palette<-colorRampPalette(c("red","blue","green" ), )
@@ -104,7 +106,7 @@ comparative_plot <- function(project_path, vars, depth =  NULL, observed_file_pa
 
   plot %>% layout(
     autosize = T,
-    title = paste("Comparative plot:", "<b>", run_name, "</b>", variable),
+    title = paste("Comparative plot:", "<b>", run_name, "</b>", variable, depth, "cm"),
     plot_bgcolor = "white",
     hovermode = "x unified",
     xaxis = list(title = 'Date'),
