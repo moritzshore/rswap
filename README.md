@@ -15,6 +15,8 @@ remotes::install_github("moritzshore/rswap")
 library(rswap)
 ```
 
+for help on any specific function, use ```> ?functionname```
+
 ## How to run SWAP?
 The SWAP model can be run using the 'run_swap()' function. It needs to know where your model setup is located, as well as where your SWAP.exe is.
 ```
@@ -90,14 +92,39 @@ get_depths(observed_data$data)
 
 ## Visuals
 
-There are a vareity of functions used to visualize your SWAP data, such as `plot_over_under()`
+There are a variety of functions used to visualize your SWAP data, such as `plot_over_under()`
 ```
-plot_over_under(project_path,variable = "WC", depth = c(15, 40, 70))
+plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 ```
-`plot_over_und()` can be passed a `variable`, as well as a vector `depth` for any number of available depths.
+`plot_over_und()` can be passed a `variable`, as well as a vector `depth`.
 
+
+<p align="center">
 <img src="R/figures/overunder.png" width=60% height=60%>
+</p>
 
+
+For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
+```
+> soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
+```
+This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is avaiable, they will be displayed as well.  
+
+
+<p align="center">
+<img src="R/figures/softcalplot.png" width=60% height=60%>
+</p>
+
+## Model performance
+
+A few functions focus on assesing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
+```
+> get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
+
+    var  NSE
+1 WC_15 0.63
+
+```
 
 
 
@@ -110,6 +137,9 @@ plot_over_under(project_path,variable = "WC", depth = c(15, 40, 70))
 - add an init() function to create the observed_template file, amongmay other things
 - add documentation in the excel sheet (and switch to supporting .csv instead!)
 - add support for multiple variables at differing depths for `autoset_output`
+- fix the x-axis on the over/under plot.
+- change the name of the `soft_calibration_plot`
+- `get_performance()` returns a tibble instead
 
 
 ## Suggestions for a good README
