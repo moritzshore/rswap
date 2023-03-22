@@ -15,7 +15,7 @@ remotes::install_github("moritzshore/rswap")
 library(rswap)
 ```
 
-## How to use?
+## How to run SWAP?
 The SWAP model can be run using the 'run_swap()' function. It needs to know where your model setup is located, as well as where your SWAP.exe is.
 ```
 run_swap(project_path, swap_exe)
@@ -25,6 +25,8 @@ run_swap(project_path, swap_exe)
 - `swap_file` can be set to a custom name for your SWAP main file (*.swp)
 - `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later)
 - `timeout` max allowed runtime of SWAP model before it times out
+
+## How to access the data?
 
 To read the output of your executed SWAP run, you can use the following command
 ```
@@ -80,6 +82,26 @@ which will return a dataframe of the user-entered observed data:
 > observed_data$observed_variables
 [1] "WC"       "H"        "DRAINAGE" "TEMP" 
 ```
+To find out what depths your observed variables have, you can use the following command:
+```
+get_depths(observed_data$data)
+```
+..this can also be filtered by a specific variable by passing `variable`
+
+## Visuals
+
+There are a vareity of functions used to visualize your SWAP data, such as `plot_over_under()`
+```
+plot_over_under(project_path,variable = "WC", depth = c(15, 40, 70))
+```
+`plot_over_und()` can be passed a `variable`, as well as a vector `depth` for any number of available depths.
+
+<img src="R/figures/overunder.png" width=60% height=60%>
+
+
+
+
+
 
 ## Roadmap
 - Linux Support
@@ -87,6 +109,7 @@ which will return a dataframe of the user-entered observed data:
 - Parsing support for all swap files, not just the main file.
 - add an init() function to create the observed_template file, amongmay other things
 - add documentation in the excel sheet (and switch to supporting .csv instead!)
+- add support for multiple variables at differing depths for `autoset_output`
 
 
 ## Suggestions for a good README
