@@ -21,7 +21,7 @@
 #'
 run_swap <- function(project_path,
                      swap_exe,
-                     swap_file = "rswap.swp",
+                     swap_file = "swap.swp",
                      autoset_output = F,
                      verbose = T,
                      timeout = Inf) {
