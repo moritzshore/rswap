@@ -1,12 +1,11 @@
 Package: rswap
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: rswap: An R interface for the SWAP model
+Version: 1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Moritz", "Shore", , "moritz.shore@nibio.no", role = "cre",
+           comment = c(ORCID = "0000-0002-7586-997X"))
+Description: This package contains various functions for interfacing with the SWAP model. In its current form, the primary focus is towards calibrating the model. The provided functions aim to assist in changing parameters, determining model performance, and visualizing dynamics and changes. The package is very much still in a development phase, and will hopefully be expanded towards sensitivity analysis, autocalibration, PEST integration, scenario analysis, and much more. 
+License: use_gpl3_license()
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
