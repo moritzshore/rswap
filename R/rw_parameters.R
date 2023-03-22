@@ -1,20 +1,4 @@
-# read SWAP files
-
-
-# todo: deal with this: get the comments working
-# SWINCO = 1 ! Switch, type of initial soil moisture condition:
-#   ! 1 = pressure head as function of soil depth
-#   ! 2 = pressure head of each compartment is in hydrostatic equilibrium
-#   !     with initial groundwater level
-#   ! 3 = read final pressure heads from output file of previous Swap simulation
-#
-# path <- paste0(project_path, "/", swap_file)
-
-project_path = "C:/Users/mosh/Documents/tetves"
-create_path = "C:/Users/mosh/Documents/tetves/rswap"
-swap_file = "swap.swp"
-outfile = "rswap.swp"
-
+# Reading and writing parameters
 
 #' Clean swap file
 #'
@@ -203,7 +187,7 @@ parse_swp_file <-
     }
 
     if (verbose) {
-      cat("tables have been saved in .csv format here:\n",
+      cat("...tables have been saved in .csv format here:\n",
           table_path,
           "\n")
     }
@@ -241,7 +225,7 @@ write_swap_file <-
     removed <- file.remove(outpath) %>% suppressWarnings()
 
     if(removed & verbose){
-      cat("overwriting file:\n", outpath, "\n")
+      cat("...overwriting file:\n", outpath, "\n")
     }
 
 
@@ -294,7 +278,7 @@ write_swap_file <-
     }
 
     if (verbose) {
-      cat("swap file written to:\n", outpath, "\n")
+      cat("...swap file written to:\n", outpath, "\n")
     }
     return(outpath)
   }
@@ -311,7 +295,7 @@ write_swap_file <-
 #' @param verbose print status?
 #'
 #' @importFrom glue glue
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% last
 #'
 #' @returns parameter dataframe with modified INLIST_CSV parameter.
 #'
@@ -363,7 +347,7 @@ set_swap_output <- function(parameters, variables, depths, verbose = F){
   parameters <- change_swap_par(parameters, "INLIST_CSV", outstring)
 
   if(verbose){
-    cat(glue("...updating parameter: INLIST_CSV = {outstring}\n"))
+    cat(glue("...updating parameter:\n INLIST_CSV = {outstring} \n"))
   }
   return(parameters)
 

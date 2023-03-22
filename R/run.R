@@ -22,7 +22,7 @@
 run_swap <- function(project_path,
                      swap_exe,
                      swap_file = "rswap.swp",
-                     auto_detect_output = F,
+                     autoset_output = F,
                      verbose = T,
                      timeout = Inf) {
   # builds a directory for performing package actions, and returns the path
@@ -38,6 +38,7 @@ run_swap <- function(project_path,
   params <- update_swp_paths(project_path, swap_exe,
                              parse_result$parameters, verbose)
 
+
   if (autoset_output) {
     obs <- load_observed(path = observed)
     variables <- obs$observed_variables
@@ -49,9 +50,12 @@ run_swap <- function(project_path,
     inlistcsv <- inlistcsv %>% str_split("!") %>% unlist()
     inlistcsv <- inlistcsv[1]
 
+
+
+    # print
     if (verbose) {
       cat(
-        "...autosetting SWAP output to match observed files:\n",
+        "\n...autosetting SWAP output to match observed files:\n",
         "INLIST_CSV = ",
         inlistcsv,
         "\n"
@@ -59,6 +63,14 @@ run_swap <- function(project_path,
     }
   }
 
+
+  # change console output based on verbose flag
+  if (verbose) {
+    params <- change_swap_par(params, "SWSCRE", 2)
+  }else{
+    params <- change_swap_par(params, "SWSCRE", 0)
+
+  }
   # location for where the swap file is to be written
   outpath <- paste0(rswap_directory, swap_file)
 
