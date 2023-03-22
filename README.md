@@ -1,6 +1,6 @@
 # rswap
 
-rswap is an R-package designed to help interface and work with the [SWAP model](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, autocalibration / PEST integration, scenario analysis, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with the [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, autocalibration / PEST integration, scenario analysis, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ## How to install?
 
@@ -125,8 +125,23 @@ A few functions focus on assesing model performance by comparing modelling value
 1 WC_15 0.63
 
 ```
+This function is very flexible, and can be passed any number of `variables` and `depths`. 
 
+## Saving model runs
+While calibrating a model it can be useful to keep track of different model runs, while changing parameters. `rswap` aids this proccess with a vareity of functions, such as
+```
+save_run(project_path)
+```
+(It is possible to give your model run a name by passing the parameter `run_name`)
 
+This function saves your entire model set up in a directory (by default: `project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
+
+## Comparing model runs
+
+Once you have saved at least one run, you can compare them using the 
+```
+WIP
+```
 
 
 
@@ -138,36 +153,16 @@ A few functions focus on assesing model performance by comparing modelling value
 - add documentation in the excel sheet (and switch to supporting .csv instead!)
 - add support for multiple variables at differing depths for `autoset_output`
 - fix the x-axis on the over/under plot.
-- change the name of the `soft_calibration_plot`
 - `get_performance()` returns a tibble instead
+- give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
 
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
 ## Badges
 On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
 ## Support
 Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
 
 ## Contributing
 State if you are open to contributions and what your requirements are for accepting them.
