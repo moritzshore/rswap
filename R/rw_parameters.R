@@ -311,6 +311,7 @@ write_swap_file <-
 #' @param verbose print status?
 #'
 #' @importFrom glue glue
+#' @importFrom dplyr %>%
 #'
 #' @returns parameter dataframe with modified INLIST_CSV parameter.
 #'
@@ -321,9 +322,10 @@ set_swap_output <- function(parameters, variables, depths, verbose = F){
   # template:
  # INLIST_CSV = 'rain,snow,drainage,DSTOR,TEMP[-15,-40,-70],WC[-15,-40,-70],H[-10,-20,-30]'
 
+  variables <- variables %>% toupper()
   # todo need to expand these... or something
   depthwise <- c("TEMP", "WC", "H")
-  nodepth <- c("rain", "snow", "drainage", "DSTOR")
+  nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
 
   string <- "["
   for (d in depths) {
