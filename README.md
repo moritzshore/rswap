@@ -103,6 +103,8 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 <img src="R/figures/overunder.png" width=60% height=60%>
 </p>
 
+(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
+
 
 For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
 ```
@@ -125,12 +127,12 @@ A few functions focus on assesing model performance by comparing modelling value
 1 WC_15 0.63
 
 ```
-This function is very flexible, and can be passed any number of `variables` and `depths`. 
+This function is very flexible, and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
 ## Saving model runs
 While calibrating a model it can be useful to keep track of different model runs, while changing parameters. `rswap` aids this proccess with a vareity of functions, such as
 ```
-save_run(project_path)
+save_run(project_path, run_name = "COFRED = 0.35")
 ```
 (It is possible to give your model run a name by passing the parameter `run_name`)
 
@@ -140,14 +142,20 @@ This function saves your entire model set up in a directory (by default: `projec
 
 Once you have saved at least one run, you can compare them using the 
 ```
-WIP
+comparative_plot(project_path, variable = "WC", depth = 15)
 ```
 
+<p align="center">
+<img src="R/figures/compareplot.png" width=60% height=60%>
+</p>
+
+Once again, this function is quite flexible, and can be passed any available `variable` or `depth`
 
 
 ## Roadmap
 - Linux Support
 - Sensitivity Analysis
+- autocalibration / PEST support
 - Parsing support for all swap files, not just the main file.
 - add an init() function to create the observed_template file, amongmay other things
 - add documentation in the excel sheet (and switch to supporting .csv instead!)
@@ -155,6 +163,7 @@ WIP
 - fix the x-axis on the over/under plot.
 - `get_performance()` returns a tibble instead
 - give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
+- move change_swap_parameter() from io.R to rw_parameters.R
 
 
 ## Badges
