@@ -223,6 +223,7 @@ Supported statistical performance indicator functions commonly used in hydrologi
 - wrapper function to `combine parse_swp_file()` and `change_swap_par()`\
 - add NA support to the over-under plot.
 - fix path support
+- better * end of table recognition
 
 ## Support and Contributing
 
