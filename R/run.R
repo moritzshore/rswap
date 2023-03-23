@@ -104,6 +104,8 @@ run_swap <- function(project_path,
     warning(glue("SWAP error, code {msg$status}"))
   }
 
+
+
   # return status of run
   return(msg$status)
 }
