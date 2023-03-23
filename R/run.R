@@ -39,12 +39,36 @@ run_swap <- function(project_path,
                              parse_result$parameters, verbose)
 
 
+  observed_path <- paste0(rswap_directory, "/rswap_observed_data.xlsx")
+
   if (autoset_output) {
-    obs <- load_observed(path = observed)
+    obs <- load_observed(path = observed_path)
     variables <- obs$observed_variables
     depths <- get_depths(data = obs$data) %>% sort()
     # sets the "INLIST_CSV" parameters
+
+    # add the critical output params if they are not present.
+    if("INLIST_CSV" %in% params$param == FALSE){
+      add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
+      params <- rbind(params, add)
+    }
+
+    # add the critical output params if they are not present.
+    if("SWCSV_TZ" %in% params$param == FALSE){
+      add <- data.frame(param = "SWCSV_TZ", value = "1", comment = glue("added by rswap on {Sys.time()}"))
+      params <- rbind(params, add)
+    }
+
+    # add the critical output params if they are not present.
+    if("INLIST_CSV_TZ " %in% params$param == FALSE){
+      add <- data.frame(param = "INLIST_CSV_TZ ", value = "'WC,H,TEMP'", comment = glue("added by rswap on {Sys.time()}"))
+      params <- rbind(params, add)
+    }else{
+      params$value[which(params$param=="INLIST_CSV_TZ")] = 'WC,H,TEMP'
+    }
+
     params <- set_swap_output(params, variables, depths, verbose)
+
 
     inlistcsv <- params$value[which(params$param == "INLIST_CSV")]
     inlistcsv <- inlistcsv %>% str_split("!") %>% unlist()
