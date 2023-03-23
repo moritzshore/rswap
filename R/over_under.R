@@ -208,6 +208,10 @@ plot_over_under <- function(project_path, observed_file_path = NULL, variable, d
         type = c(rep("model", length(res_crop$DATE)), rep("observed", length(res_crop$DATE)))
       )
 
+      if(any(mydf$y %>% is.na())){
+        stop("this graph currently doesnt support NA-values... I am working on it.")
+      }
+
       # generate the ribbons
       ribbons <- ribbonize(mydf, x, y, type)
 
