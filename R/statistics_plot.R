@@ -31,6 +31,11 @@ plot_statistics <-
            custom_save_path = NULL,
            verbose = F) {
 
+  graph = graph %>% tolower()
+  if (graph %in% c("ggplot", "default", "sorted") == FALSE) {
+      graph = "default"
+      warning("graph type not recognized! supported are:\n 'default', 'sorted', ggplot'")
+    }
 
   # extract the run name from the data package
   current_run <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
@@ -45,11 +50,11 @@ plot_statistics <-
     observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   }
 
+  obs_dat <- load_observed(observed_file_path)
+
   if(depth %>% is.null()){
-   obs_dat <- load_observed(observed_file_path)
    depth <- get_depths(data = obs_dat$data, variable = var)
   }
-
 
   # get a path list of all the previous runs
   # get the file infos to sort by creation date
@@ -84,8 +89,6 @@ plot_statistics <-
       stat_df <- rbind(stat_df, performance)
   }
 
-
-
   last_run <- get_performance(
     project_path = project_path,
     stat = stat,
@@ -100,7 +103,6 @@ plot_statistics <-
 
   stat_df <- rbind(stat_df, last_run)
 
-
   # color palette
   palette <- colorRampPalette(c("dodgerblue4","dodgerblue2","deepskyblue"))
 
@@ -112,8 +114,6 @@ plot_statistics <-
     #TODO implement behavior for others (EZ just use max instead for some)
     stop("stats other than NSE not supported YET")
   }
-
-
 
   # plotting -----
 
@@ -171,13 +171,15 @@ plot_statistics <-
   # plotted sorted to best user.stat
   if(graph=="sorted"){
 
+    stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = T),]
+
     # plot
     fig2 <- plot_ly()
     # individual columns for each depth
     if(depth %>% is.null() == FALSE){
       fig2 <-
         fig2 %>% add_trace(
-          data = stat_df,
+          data = stat_df_ordered,
           x = ~ run,
           y = ~ stat_df[2] %>% pull(),
           name = ~ var,
@@ -189,7 +191,7 @@ plot_statistics <-
     # mean line
     fig2 <-
       fig2 %>% add_trace(
-        data = stat_df,
+        data = stat_df_ordered,
         x = ~ run,
         y = ~ mean,
         name = "mean",
@@ -197,7 +199,6 @@ plot_statistics <-
         type = "scatter"
       )
 
-   stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = T),]
 
     # cutoms layout and print
     fig2 %>% layout(

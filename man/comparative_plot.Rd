@@ -8,17 +8,17 @@ runs. It highlights the differences between changed parameters etc.}
 \usage{
 comparative_plot(
   project_path,
-  vars,
+  variable,
   depth = NULL,
   observed_file_path = NULL,
   custom_save_path = NULL,
-  verbose = NULL
+  verbose = F
 )
 }
 \arguments{
 \item{project_path}{(REQ) (string) path to project directory}
 
-\item{vars}{(REQ) (string) variable compare}
+\item{variable}{(REQ) (string) variable to compare}
 
 \item{depth}{(OPT) (numeric) depth of variable. leave blank if variable has
 no depth}
