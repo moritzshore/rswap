@@ -102,7 +102,8 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 <p align="center">
 <img src="R/figures/overunder.png" width=60% height=60%>
 </p>
-(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2)
+
+(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
 
 
 For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
@@ -126,7 +127,7 @@ A few functions focus on assesing model performance by comparing modelling value
 1 WC_15 0.63
 
 ```
-This function is very flexible, and can be passed any number of `variables` and `depths`. 
+This function is very flexible, and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
 ## Saving model runs
 While calibrating a model it can be useful to keep track of different model runs, while changing parameters. `rswap` aids this proccess with a vareity of functions, such as
