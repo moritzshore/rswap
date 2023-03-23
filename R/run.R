@@ -75,7 +75,6 @@ run_swap <- function(project_path,
     inlistcsv <- inlistcsv[1]
 
 
-
     # print
     if (verbose) {
       cat(
@@ -126,6 +125,9 @@ run_swap <- function(project_path,
   # TODO improve this
   if (msg$status != "100") {
     warning(glue("SWAP error, code {msg$status}"))
+    if (msg$status == "2") {
+      warning(glue("SWAP model timed out, with timeout {timeout}"))
+    }
   }
 
 
