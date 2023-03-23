@@ -171,7 +171,7 @@ plot_statistics <-
   # plotted sorted to best user.stat
   if(graph=="sorted"){
 
-    stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = T),]
+    stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = F),]
 
     # plot
     fig2 <- plot_ly()
@@ -181,7 +181,7 @@ plot_statistics <-
         fig2 %>% add_trace(
           data = stat_df_ordered,
           x = ~ run,
-          y = ~ stat_df[2] %>% pull(),
+          y = ~ NSE,
           name = ~ var,
           color = ~ var,
           colors = palette(length(get_depths(obs_dat$data, var))),
@@ -220,6 +220,7 @@ plot_statistics <-
 
   # ggplot
   if(graph=="ggplot") {
+
     # find the best value
     best_value <- stat_df$mean %>% max()
     # find the run with the best value
@@ -247,7 +248,6 @@ plot_statistics <-
       ylab(stat)+xlab("run")+
       ggtitle(paste0("Last run had a(n) ", stat, " of ",round(last_run_value,2)),
               paste0( "The best run was \"", best_run_name,"\", with a(n) " ,stat, " of ", round(best_value,2)))
-    options(warn=1)
 
 
     if(depth %>% is.null() == FALSE){
@@ -256,7 +256,7 @@ plot_statistics <-
     }
 
     # mean line
-    plot = plot+geom_line(aes(x=run, y =mean, color = "mean"), group = 1, linewidth = 1)+
+    plot = plot+geom_line(aes(x=factor(run, level = run %>% unique()), y =mean, color = "mean"), group = 1, linewidth = 1)+
       # points on mean line
       geom_point(aes(x = run, y = mean, color = "mean"), size = 2)
 
