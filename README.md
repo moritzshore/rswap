@@ -151,6 +151,64 @@ comparative_plot(project_path, variable = "WC", depth = 15)
 
 Once again, this function is quite flexible, and can be passed any available `variable` or `depth`
 
+You can compare the performance of your various model runs by using the `plot_statistics()` function. 
+
+```
+plot_statistics(project_path, var = "WC", depth = c(15,40,70))
+```
+<p align="center">
+<img src="R/figures/stat_plot1.png" width=60% height=60%>
+</p>
+
+This plot is equally flexible, and can be passed any variable and any amount of depths. the graph type can be switched between `default`, `sorted` and `ggplot`
+
+## Modification of Parameters and SWAP input files.
+
+changing a parameter in rswap can be done using the `parse_swap_file()` function. 
+```
+parsed <- parse_swp_file(project_path, swap_file)
+```
+This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a "list of dataframes" to work in R, instead of just writing tables #TODO!)
+
+You can modify the dataframe how you wish, with whatever tools you would like, however rswap does have a simply dedicated function to do this for you. 
+```
+parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
+```
+This function takes in the dataframe parsed by the previous function, and returns that same dataframe with the modified parameter.
+
+If you would like to run swap with the modified parameter set, you first would write the new SWAP main file:
+```
+write_swap_file(parameters = parameters, table_path = parsed$table_path, outpath = paste0(project_path, "/modified.swp"))
+```
+
+And to run this modified SWAP main file, you would of course use `run_swap()` with the corresponding `project_path` and `swap_file` parameters. 
+
+## Miscellaneous functions
+
+The aformentioned functions rely on more basic general functions which, while are desinged for internal use, can possibly also be of assitance to the end user. These are listed below. 
+
+Supported statistical performance indicator functions commonly used in hydrological modelling. 
+
+>`NSE() # statistical performance calculation`
+
+>`PBIAS() # statistical performance calculation`
+
+>`RMSE() # statistical performance calculation`
+
+>`RSR() # statistical performance calculation`
+
+>`clean_swp_file() # returns swap main file sans comments`\
+
+> `filter_swap_data() # filters SWAP data (observed or modelled) by var and depth`
+
+>`get_swap_units() # returns unit of SWAP variable. (WIP)`
+
+>`match_mod_obs() # matches dataframe structure of observed and modelled ` 
+
+>`melt_all_runs() # melts together all saved runs + current into` [tidy](https://towardsdatascience.com/what-is-tidy-data-d58bb9ad2458) `format` 
+
+>
+
 
 ## Roadmap
 - Linux Support
@@ -164,6 +222,9 @@ Once again, this function is quite flexible, and can be passed any available `va
 - `get_performance()` returns a tibble instead
 - give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
 - move change_swap_parameter() from io.R to rw_parameters.R
+- add a "filename" par to write_swap_output()
+- wrapper function to `combine parse_swp_file()` and `change_swap_par()`
+
 
 
 ## Badges
