@@ -33,7 +33,7 @@ build_rswap_directory <- function(project_path){
   }
 
   # vector of all the files i want to copy over
-  file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv")
+  file_types <- c("*.crp", "*.met", "*.swp", "*.dra", "layer*n.csv", "*.xlsx")
   match_string <- paste(file_types, collapse = "|")
 
   # find out the index of the required files and copy only those over to the temp directory
