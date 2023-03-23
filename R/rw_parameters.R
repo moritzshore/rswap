@@ -75,6 +75,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' swap.swp if left blank
 #' @param swap_file (OPT) (string) name of the swap file to be used. defaults to swap.swp
 #' @param verbose (OPT) (boolean) print status?
+#' @quiet prints important warning by default, use quiet=TRUE to silence.
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom stringr str_trim str_split
@@ -89,9 +90,14 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 parse_swp_file <-
   function(project_path,
            swap_file = "swap.swp",
-           verbose = F) {
+           verbose = F,
+           quiet = F) {
 
-      temp_directory <- build_rswap_directory(project_path)
+    if(quiet == FALSE){
+      cat("Warning:\nall TABLES in the swap file must end with exactly this line:\n\n    -->   '* End of table'   <--\n\notherwise this function will not work!\n(turn this warning off with quiet = T)\n")
+    }
+
+    temp_directory <- build_rswap_directory(project_path)
 
 
     path = paste0(project_path, "/", swap_file)
@@ -102,6 +108,8 @@ parse_swp_file <-
     par_df <- data.frame()
     tab_df <- list()
     new_i = 0
+    special_cases<-c("OUTDATINT", "OUTDAT")
+
 
     table_path = paste0(project_path, "/rswap/tables")
     dir.create(table_path, showWarnings = F)
@@ -117,6 +125,12 @@ parse_swp_file <-
       if (i < new_i) {
         next()
       }
+
+      # special case for outdatint =
+      # why special case? OUTDATINT is the only Table that has an equal sign,
+      # so by my parsing rules, it is both a parameter and a table (annoying!)
+      # with this special case it is parsed as a table, but saved as a parameter
+
 
       # this line we dont want to deal with if it ever should come up
       # it shoudnt... but template swap file is not very consistent
@@ -137,8 +151,15 @@ parse_swp_file <-
         # split that line again, based off the equals sign. left of the
         # equals sign is the parameter name, to the right is the value
         param = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(1)
-        value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
 
+        if(param %in% special_cases){
+          swap_table_end = swp[i:length(swp)] %>% grepl(x = ., " End of table") %>% which() %>% min()
+          value <- swp[(i+1):(i+swap_table_end-2)] %>% paste(collapse = " ") %>% str_trim()
+          new_i <- i + swap_table_end
+        }else{
+          value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
+
+        }
         # create a row in the final dataframe containing these 3 things,
         # seperately
         add_row = data.frame(param = param,
