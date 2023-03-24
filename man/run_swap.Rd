@@ -6,26 +6,26 @@
 \usage{
 run_swap(
   project_path,
-  swap_exe,
   swap_file = "swap.swp",
   autoset_output = F,
-  verbose = T,
-  timeout = Inf
+  verbose = F,
+  timeout = Inf,
+  quiet = F
 )
 }
 \arguments{
 \item{project_path}{String, path to the project directory.}
-
-\item{swap_exe}{String, path to the swap executable (optional, will try to auto find if none is poath)}
 
 \item{autoset_output}{If set to true, rswap will automatically detect
 your observed data provided in the observed file and match it to the SWAP
 output. if this is set to false, then INLIST csv must be set by the user either
 manually or with set_swap_output() or change_swap_par()}
 
-\item{verbose}{logical}
+\item{verbose}{logical, print status?}
 
 \item{timeout}{number of seconds before run timeout (optional, unlimited by default)}
+
+\item{quiet}{logical, turn off warnings?}
 
 \item{string}{name of the *.swp main file}
 }

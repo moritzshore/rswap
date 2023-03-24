@@ -75,7 +75,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' swap.swp if left blank
 #' @param swap_file (OPT) (string) name of the swap file to be used. defaults to swap.swp
 #' @param verbose (OPT) (boolean) print status?
-#' @quiet prints important warning by default, use quiet=TRUE to silence.
+#' @param quiet prints important warning by default, use quiet=TRUE to silence.
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom stringr str_trim str_split
