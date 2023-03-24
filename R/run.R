@@ -8,7 +8,8 @@
 #' your observed data provided in the observed file and match it to the SWAP
 #' output. if this is set to false, then INLIST csv must be set by the user either
 #' manually or with set_swap_output() or change_swap_par()
-#' @param verbose logical
+#' @param verbose logical, print status?
+#' @param quiet logical, turn off warnings?
 #' @param timeout number of seconds before run timeout (optional, unlimited by default)
 #'
 #' @return returns name of run (change this!)
@@ -22,16 +23,17 @@ run_swap <- function(project_path,
                      swap_file = "swap.swp",
                      autoset_output = F,
                      verbose = F,
-                     timeout = Inf) {
+                     timeout = Inf,
+                     quiet = F) {
 
 
+  # Parse paths
   seperated <- project_path %>% str_split("/") %>% unlist()
-
   project <- seperated %>% tail(1)
-
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
-
   swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
+  swap_file_path <- glue("{project}/rswap/{swap_file}")
+
 
   if(file.exists(swap_exe)==FALSE){
    stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
@@ -44,21 +46,23 @@ run_swap <- function(project_path,
   # reads in the swap parameters and tables
   parse_result <- parse_swp_file(project_path = project_path,
                                  swap_file = swap_file,
-                                 verbose = verbose)
+                                 verbose = verbose,
+                                 quiet = quiet)
 
   # changes the paths in the swap main file to reflect the temporary location
   params <- update_swp_paths(project_path, swap_exe,
                              parse_result$parameters, verbose)
 
 
-
+  # load observed data
   observed_path <- paste0(rswap_directory, "rswap_observed_data.xlsx")
   if(file.exists(observed_path) == FALSE){
     warning("Observed file not found!\n",observed_path )
   }
 
-
+  # routine for automatically setting output (could be improved)
   if (autoset_output) {
+
     obs <- load_observed(path = observed_path)
     variables <- obs$observed_variables
     depths <- get_depths(data = obs$data) %>% sort()
@@ -83,7 +87,7 @@ run_swap <- function(project_path,
       params$value[which(params$param=="INLIST_CSV_TZ")] = "'WC,H,TEMP'"
     }
 
-
+    # Set output wrapper function
     params <- set_swap_output(params, variables, depths, verbose)
 
     # print
@@ -100,17 +104,17 @@ run_swap <- function(project_path,
     params <- change_swap_par(params, "SWSCRE", 0)
 
   }
+
   # location for where the swap file is to be written
   outpath <- paste0(rswap_directory, swap_file)
 
+  # Write swap file
   rswap_file <- write_swap_file(
     parameters = params,
     table_path = parse_result$table_path,
     outpath = outpath,
     verbose = verbose
   )
-
-  swap_file_path <- glue("{project}/rswap/{swap_file}")
 
   # run the model
   msg <- run(
@@ -123,15 +127,13 @@ run_swap <- function(project_path,
     echo = verbose
   )
 
-  # TODO improve this
+  # TODO expand this
   if (msg$status != "100") {
     warning(glue("SWAP error, code {msg$status}"))
     if (msg$status == "2") {
       warning(glue("SWAP model timed out, with timeout {timeout}"))
     }
   }
-
-
 
   # return status of run
   return(msg$status)
