@@ -1,10 +1,10 @@
 # rswap <img src="R/figures/rswap.png" align="right" width=20% height=20% />
 
-rswap is an R-package designed to help interface and work with the [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, autocalibration / PEST integration, scenario analysis, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ## How to install?
 
-You can install the `rswap` from GitHub: 
+You can install `rswap` from GitHub: 
 
 ```r
 # install remotes, if not already present
@@ -18,7 +18,7 @@ library(rswap)
 for help on any specific function, use ```> ?functionname```
 
 ## How to run SWAP?
-The SWAP model can be run using the 'run_swap()' function. It needs to know where your model setup is located. The `swap.exe` must be located in the parent directory of `project_path`!
+The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located. The `swap.exe` must be located in the parent directory of `project_path`!
 
 ```
 run_swap(project_path)
@@ -27,8 +27,7 @@ run_swap(project_path)
 `run_swap()` can be further customized with the following parameters:
 - `swap_file` can be set to a custom name for your SWAP main file (*.swp)
 - `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later)
-- `timeout` max allowed runtime of SWAP model before it times out
-
+- `timeout` sets the max allowed runtime of SWAP
 ## How to access the data?
 
 To read the output of your executed SWAP run, you can use the following command
@@ -79,7 +78,7 @@ which will return a dataframe of the user-entered observed data:
 # i 158 more rows
 # i Use `print(n = ...)` to see more rows
 ```
-...as well as a vector for the detected variabvles
+...as well as a vector for the detected variables
 ```
 > observed_data$observed_variables
 [1] "WC"       "H"        "DRAINAGE" "TEMP" 
@@ -103,8 +102,7 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 <img src="R/figures/overunder.png" width=60% height=60%>
 </p>
 
-(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
-
+>(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
 
 For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
 ```
@@ -134,8 +132,6 @@ While calibrating a model it can be useful to keep track of different model runs
 ```
 save_run(project_path, run_name = "COFRED = 0.35")
 ```
-(It is possible to give your model run a name by passing the parameter `run_name`)
-
 This function saves your entire model set up in a directory (by default: `project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
 
 ## Comparing model runs
@@ -170,7 +166,7 @@ parsed <- parse_swp_file(project_path, swap_file)
 ```
 This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a "list of dataframes" to work in R, instead of just writing tables #TODO!)
 
-You can modify the dataframe how you wish, with whatever tools you would like, however rswap does have a simply dedicated function to do this for you. 
+You can modify the dataframe how you wish, with whatever tools you would like, however rswap does have a simple dedicated function to do this for you. 
 ```
 parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
 ```
@@ -224,12 +220,13 @@ Supported statistical performance indicator functions commonly used in hydrologi
 - add NA support to the over-under plot.
 - fix path support
 - better * end of table recognition
+- Expand and improve documentation
 
 ## Support and Contributing
 
 If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: moritz.shore@nibio.no)
 The same goes for if you have any suggestions for improvement.
-If would you like to contribute to the project, let me know! Very open towards collaborative improvement.
+If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)
 
 ## References
 
