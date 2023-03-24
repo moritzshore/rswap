@@ -18,9 +18,10 @@ library(rswap)
 for help on any specific function, use ```> ?functionname```
 
 ## How to run SWAP?
-The SWAP model can be run using the 'run_swap()' function. It needs to know where your model setup is located, as well as where your SWAP.exe is.
+The SWAP model can be run using the 'run_swap()' function. It needs to know where your model setup is located. The `swap.exe` must be located in the parent directory of `project_path`!
+
 ```
-run_swap(project_path, swap_exe)
+run_swap(project_path)
 ```
 
 `run_swap()` can be further customized with the following parameters:
@@ -35,7 +36,6 @@ To read the output of your executed SWAP run, you can use the following command
 modelled_data <- read_swap_output(project_path = project_path)
 ```
 `read_swap_output()` returns two dataframes, `daily_output` which contains depthwise values of various variables:
-
 ```
 > modelled_data$daily_output
 # A tibble: 17,520 x 5
