@@ -3,7 +3,6 @@
 #' Runs the SWAP model
 #'
 #' @param project_path String, path to the project directory.
-#' @param swap_exe String, path to the swap executable (optional, will try to auto find if none is poath)
 #' @param string name of the *.swp main file
 #' @param autoset_output If set to true, rswap will automatically detect
 #' your observed data provided in the observed file and match it to the SWAP
@@ -20,11 +19,24 @@
 #' @export
 #'
 run_swap <- function(project_path,
-                     swap_exe,
                      swap_file = "swap.swp",
                      autoset_output = F,
-                     verbose = T,
+                     verbose = F,
                      timeout = Inf) {
+
+
+  seperated <- project_path %>% str_split("/") %>% unlist()
+
+  project <- seperated %>% tail(1)
+
+  work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
+
+  swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
+
+  if(file.exists(swap_exe)==FALSE){
+   stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
+  }
+
   # builds a directory for performing package actions, and returns the path
   rswap_directory <- build_rswap_directory(project_path)
 
@@ -39,13 +51,17 @@ run_swap <- function(project_path,
                              parse_result$parameters, verbose)
 
 
-  observed_path <- paste0(rswap_directory, "/rswap_observed_data.xlsx")
+
+  observed_path <- paste0(rswap_directory, "rswap_observed_data.xlsx")
+  if(file.exists(observed_path) == FALSE){
+    warning("Observed file not found!\n",observed_path )
+  }
+
 
   if (autoset_output) {
     obs <- load_observed(path = observed_path)
     variables <- obs$observed_variables
     depths <- get_depths(data = obs$data) %>% sort()
-    # sets the "INLIST_CSV" parameters
 
     # add the critical output params if they are not present.
     if("INLIST_CSV" %in% params$param == FALSE){
@@ -60,32 +76,22 @@ run_swap <- function(project_path,
     }
 
     # add the critical output params if they are not present.
-    if("INLIST_CSV_TZ " %in% params$param == FALSE){
+    if("INLIST_CSV_TZ" %in% params$param == FALSE){
       add <- data.frame(param = "INLIST_CSV_TZ ", value = "'WC,H,TEMP'", comment = glue("added by rswap on {Sys.time()}"))
       params <- rbind(params, add)
     }else{
-      params$value[which(params$param=="INLIST_CSV_TZ")] = 'WC,H,TEMP'
+      params$value[which(params$param=="INLIST_CSV_TZ")] = "'WC,H,TEMP'"
     }
 
+
     params <- set_swap_output(params, variables, depths, verbose)
-
-
-    inlistcsv <- params$value[which(params$param == "INLIST_CSV")]
-    inlistcsv <- inlistcsv %>% str_split("!") %>% unlist()
-    inlistcsv <- inlistcsv[1]
-
 
     # print
     if (verbose) {
       cat(
-        "\n...autosetting SWAP output to match observed files:\n",
-        "INLIST_CSV = ",
-        inlistcsv,
-        "\n"
-      )
+        "\n...autosetting SWAP output to match observed files\n")
     }
   }
-
 
   # change console output based on verbose flag
   if (verbose) {
@@ -104,18 +110,13 @@ run_swap <- function(project_path,
     verbose = verbose
   )
 
-  # parse the working directory from the given swap path
-  swap_path_split = swap_exe %>% str_split("swap.exe", simplify = T)
-  swap_wd <- swap_path_split[, 1]
-
-  # remove the working directory from the path of the swap main file
-  fixed_path <- rswap_file %>% str_remove(swap_wd)
+  swap_file_path <- glue("{project}/rswap/{swap_file}")
 
   # run the model
   msg <- run(
     command = "swap.exe",
-    wd = swap_wd,
-    args = fixed_path,
+    wd = work_dir,
+    args = swap_file_path,
     error_on_status = F,
     timeout = timeout,
     echo_cmd = verbose,

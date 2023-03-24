@@ -94,11 +94,10 @@ parse_swp_file <-
            quiet = F) {
 
     if(quiet == FALSE){
-      cat("Warning:\nall TABLES in the swap file must end with exactly this line:\n\n    -->   '* End of table'   <--\n\notherwise this function will not work!\n(turn this warning off with quiet = T)\n")
+      cat("Warning:\nall TABLES in the swap file must end with exactly this line:\n\n    -->   '* End of table'   <--\n\notherwise this function will not work!\n(turn this warning off with quiet = T)\n ..I am working on improving this\n")
     }
 
     temp_directory <- build_rswap_directory(project_path)
-
 
     path = paste0(project_path, "/", swap_file)
 
