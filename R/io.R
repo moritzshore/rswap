@@ -214,17 +214,23 @@ load_observed <- function(project_path, verbose = F){
 
 #' Reads SWAP output of current path
 #' @param project_path String, path to the project directory / or custom save location.
+#' @param archived Flag, needs to be true when reading from the rswap_saved archive
 #' @importFrom glue glue
 #' @importFrom stringr str_replace str_remove
 #' @importFrom tibble tibble
 #' @export
-read_swap_output <-  function(project_path, custom_path = F){
+read_swap_output <-  function(project_path, archived = F){
 
-  # TODO: pass list of files to read OR read and return all
-  if(custom_path == FALSE){
-    read_path <- glue("{project_path}/rswap")
+  if(archived){
+    path <- glue("{project_path}/result_output.csv")
   }else{
-    read_path = project_path
+    path <- glue("{project_path}/rswap/result_output.csv")
+  }
+
+  if(archived){
+    path_tz <- glue("{project_path}/result_output_tz.csv")
+  }else{
+    path_tz <- glue("{project_path}/rswap/result_output_tz.csv")
   }
 
   result_output <- read.table(
@@ -373,10 +379,9 @@ get_depths <- function(data, variable = NULL) {
 #'
 #' @param project_path req
 #' @param variable req
-#' @param depth req
-#' @param verbose req
-#' @param addtional req
-#' @param custom_path in case project path is not default
+#' @param depth opt
+#' @param verbose opt
+#' @param archived
 #'
 #' @importFrom tibble %>%
 #' @importFrom glue glue
@@ -388,8 +393,7 @@ match_mod_obs <-
            variable,
            depth = NULL,
            verbose = F,
-           addtional = NULL,
-           custom_path = F) {
+           archived = FALSE) {
 
   # todo remove export from this function
   if (variable %>% is.null() == FALSE) {

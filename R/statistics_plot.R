@@ -45,7 +45,7 @@ plot_statistics <-
 
   # get a path list of all the previous runs
   # get the file infos to sort by creation date
-  files = list.files(path = custom_save_path, full.names = T)
+  files = list.files(path = save_path, full.names = T)
   details = files %>% file.info()
   files <- files[order(details$mtime, decreasing = T)]
 
@@ -60,11 +60,11 @@ plot_statistics <-
 
       performance = get_performance(
         project_path = file,
+        archived = TRUE,
         stat = stat,
         variable = var,
         depth = depth,
-        verbose = verbose,
-        custom_path = T
+        verbose = verbose
       )
 
       mean_perf <- performance[2] %>% pull() %>% mean() %>% round(4)

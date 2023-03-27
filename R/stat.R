@@ -19,6 +19,7 @@
 #' @export
 get_performance <-
   function(project_path,
+           archived = FALSE,
            stat = NULL,
            variable = NULL,
            depth = NULL,
