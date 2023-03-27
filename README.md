@@ -32,7 +32,7 @@ run_swap(project_path)
 
 To read the output of your executed SWAP run, you can use the following command
 ```
-modelled_data <- read_swap_output(project_path = project_path)
+modelled_data <- read_swap_output(project_path)
 ```
 `read_swap_output()` returns two dataframes, `daily_output` which contains depthwise values of various variables:
 ```
@@ -64,7 +64,7 @@ As rswap heavily revolves around calibration, observed data is of high importanc
 
 To load your observed file, you can use the following command:
 ```
-observed_data <- load_observed(observed_file_path)
+observed_data <- load_observed(project_path)
 ```
 which will return a dataframe of the user-entered observed data:
 ```
