@@ -183,8 +183,6 @@ And to run this modified SWAP main file, you would of course use `run_swap()` wi
 
 The aformentioned functions rely on more basic general functions which, while are desinged for internal use, can possibly also be of assitance to the end user. These are listed below. 
 
-Supported statistical performance indicator functions commonly used in hydrological modelling. 
-
 >`NSE() # statistical performance calculation`
 
 >`PBIAS() # statistical performance calculation`
