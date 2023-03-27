@@ -260,7 +260,7 @@ read_swap_output <-  function(project_path, archived = F){
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
 
   r_frame %>% return()
-  result_output_tz.csv}
+  }
 
 #' Filter swap data
 #'
