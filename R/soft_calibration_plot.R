@@ -11,8 +11,6 @@
 #' currently supports "H", "WC", "DRAINAGE", "TEMP"
 #'
 #' @param project_path (REQ) (string) path to project directory
-#' @param observed_file_path (OPT) (string) path to observed file, in case it is
-#' not located in the default location
 #' @param vars (REQ) (string/vector) list of variables to include in the plot
 #' @param show (OPT) (string/vector) list of variables to show by default
 #' @param verbose (OPT) (logical) print status?
@@ -23,7 +21,7 @@
 #' @importFrom stringr str_split
 #' @importFrom grDevices colorRampPalette
 #' @export
-soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars, show = NULL, verbose = F){
+soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
 
   vars <- vars %>% toupper()
 
@@ -33,9 +31,9 @@ soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars,
     show <- show %>% toupper()
   }
 
-  if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-  }
+
+  observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+
 
   # cant do more than 4 variables. (3+RAIN)
   if(length(vars)>3){return("too many variables, max 3")}
@@ -92,7 +90,7 @@ soft_calibration_plot <- function(project_path, observed_file_path = NULL, vars,
     title = var_lab[3]
   )
 
-  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  observed_data <- load_observed(project_path, verbose = verbose)
   observed_data = observed_data$data
   obs_cols = observed_data[-1] %>% colnames() %>% paste0("obs",.)
   colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols

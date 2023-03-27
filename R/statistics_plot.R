@@ -9,7 +9,6 @@
 #' @param graph (OPT) (string) either "default" "sorted" or "ggplot". leave
 #' blank for default
 #' @param stat (REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)
-#' @param observed_file_path (OPT) (string) pass if your observed file has a custom path. leave blank for default
 #' @param custom_save_path  (OPT) (string) pass if your saved runs have custom paths. leave blank for default
 #' @param verbose (OPT) (boolean) print status?
 #'
@@ -27,7 +26,6 @@ plot_statistics <-
            depth =  NULL,
            graph = "default",
            stat = "NSE",
-           observed_file_path = NULL,
            custom_save_path = NULL,
            verbose = F) {
 
@@ -39,18 +37,9 @@ plot_statistics <-
 
   # extract the run name from the data package
   current_run <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
-
-  # TODO switch this so a function, or at least a global variable?
-  if (custom_save_path %>% is.null()) {
-    custom_save_path <- glue("{project_path}/rswap_saved/")
-  }
-
-  # TODO switch this so a function, or at least a global variable?
-  if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-  }
-
-  obs_dat <- load_observed(observed_file_path)
+  custom_save_path <- glue("{project_path}/rswap_saved/")
+  observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+  obs_dat <- load_observed(project_path)
 
   if(depth %>% is.null()){
    depth <- get_depths(data = obs_dat$data, variable = var)
@@ -76,7 +65,6 @@ plot_statistics <-
         stat = stat,
         variable = var,
         depth = depth,
-        observed_file_path = observed_file_path,
         verbose = verbose,
         custom_path = T
       )
@@ -94,7 +82,6 @@ plot_statistics <-
     stat = stat,
     variable = var,
     depth = depth,
-    observed_file_path = observed_file_path,
     verbose = verbose
   )
 

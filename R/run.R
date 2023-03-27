@@ -63,7 +63,7 @@ run_swap <- function(project_path,
   # routine for automatically setting output (could be improved)
   if (autoset_output) {
 
-    obs <- load_observed(path = observed_path)
+    obs <- load_observed(project_path)
     variables <- obs$observed_variables
     depths <- get_depths(data = obs$data) %>% sort()
 

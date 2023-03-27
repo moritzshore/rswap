@@ -101,8 +101,6 @@ ribbonize <- function(.data, .x, .y, .type) {
 #' Plots a graph showing where the model overestimates and underestimates for
 #' the given variable and depth(s).
 #' @param project_path (REQ) (string) path to project directory
-#' @param observed_file_path (OPT) (string) path to observed file, if it is not
-#' in the default location
 #' @param variable (REQ) (string) desired variable for graph
 #' @param depth (OPT) (numeric/vector) depth at which to plot. uses all available depths if left blank.
 #' @param verbose (OPT) (logical) print status?
@@ -111,17 +109,13 @@ ribbonize <- function(.data, .x, .y, .type) {
 #' @importFrom plotly ggplotly layout
 #' @importFrom dplyr %>% left_join pull count group_by
 #' @export
-plot_over_under <- function(project_path, observed_file_path = NULL, variable, depth = NULL, verbose = F) {
+plot_over_under <- function(project_path, variable, depth = NULL, verbose = F) {
 
   # grabs the model data
 
   run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
-  if (observed_file_path %>% is.null()) {
-    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-  }
-
-  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  observed_data <- load_observed(project_path, verbose = verbose)
 
   if(depth %>% is.null()){
     depth = get_depths(observed_data$data, variable = variable)
@@ -136,7 +130,6 @@ plot_over_under <- function(project_path, observed_file_path = NULL, variable, d
       match_mod_obs(
         project_path = project_path,
         variable = variable,
-        observed_file_path = observed_file_path,
         verbose = verbose
       )
     modelled_data_filtered = rlist$mod
@@ -189,7 +182,6 @@ plot_over_under <- function(project_path, observed_file_path = NULL, variable, d
         match_mod_obs(
           project_path = project_path,
           variable = variable,
-          observed_file_path = observed_file_path,
           depth = cdepth,
           verbose = verbose
         )

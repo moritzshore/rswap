@@ -13,10 +13,6 @@
 #' @param variable (REQ) (string) variable to compare
 #' @param depth (OPT) (numeric) depth of variable. leave blank if variable has
 #' no depth
-#' @param observed_file_path (OPT) (string) path to observed file, in case it is
-#' not located in the default location
-#' @param custom_save_path (OPT) (string) path to the custom save location.
-#' leave blank for default
 #' @param verbose (OPT) (logical) print status?
 #'
 #' @importFrom grDevices colorRampPalette
@@ -28,7 +24,11 @@
 #'
 #' @export
 #'
-comparative_plot <- function(project_path, variable, depth =  NULL, observed_file_path = NULL,custom_save_path = NULL, verbose = F) {
+comparative_plot <-
+  function(project_path,
+           variable,
+           depth =  NULL,
+           verbose = F) {
 
   # a custom color pallette
   color_palette<-colorRampPalette(c("red","blue","green" ), )
@@ -42,7 +42,6 @@ comparative_plot <- function(project_path, variable, depth =  NULL, observed_fil
     melt_all_runs(
       project_path = project_path,
       custom_save_path = custom_save_path,
-      observed_file_path = observed_file_path,
       variable = variable,
       depth = depth,
       verbose = verbose

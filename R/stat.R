@@ -11,7 +11,6 @@
 #' @param stat (opt) (string/vector) "NSE" "PBIAS" "RMSE" "RSR" or leave blank for all
 #' @param variable (REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.
 #' @param depth (OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.
-#' @param observed_file_path (OPT) (string) path to observed file. will default to "./project_path/rswap_observed_data.xlsx"
 #' @param verbose (OPT) (boolean) print status to console?
 #' @param addtional (OPT) (string) custom column name(s) to include in the analysis (untested)
 #' @param custom_path (OPT) (boolean) in case the project path differs from default location
@@ -24,16 +23,14 @@ get_performance <-
            stat = NULL,
            variable = NULL,
            depth = NULL,
-           observed_file_path = NULL,
            verbose = F,
            addtional = NULL,
            custom_path = F) {
 
-    if (observed_file_path %>% is.null()) {
       observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-    }
 
-    rlist <- match_mod_obs(project_path, variable, observed_file_path, depth, verbose, addtional, custom_path = custom_path)
+
+    rlist <- match_mod_obs(project_path, variable, depth, verbose, addtional, custom_path = custom_path)
 
     modelled_data_filtered = rlist$mod
     observed_data_filtered = rlist$obs

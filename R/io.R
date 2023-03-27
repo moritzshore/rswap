@@ -172,17 +172,20 @@ save_run <- function(project_path, save_location = NULL, run_name = NULL, verbos
   #TODO generate a preview plot of the model run in the directory?
 }
 
-#' Load observed data (make sure to use the template .xlsx file)
-#' @param path String. Path to observed data file (.xlsx)
+#' Load observed data
+#'
+#' (make sure to use the template .xlsx file, placed in your project directory)
+#' @param project_path String. Path to project directory.
 #' @param verbose Logical. Prints status reports
 #' @importFrom readxl read_excel
 #' @importFrom stringr str_remove str_replace str_split
 #'
 #' @export
-load_observed <- function(path, verbose = F){
+load_observed <- function(project_path, verbose = F){
 
   # TODO: maybe this should be internal
-  # TODO: install the template file via package!
+  # TODO: switch to csv
+  path <- paste0(project_path, "/rswap_observed_data.xlsx")
 
   # skip 1 to remove the comment line
   data <- read_excel(path, skip = 1)
@@ -373,7 +376,6 @@ get_depths <- function(data, variable = NULL) {
 #'
 #' @param project_path req
 #' @param variable req
-#' @param observed_file_path req
 #' @param depth req
 #' @param verbose req
 #' @param addtional req
@@ -387,7 +389,6 @@ get_depths <- function(data, variable = NULL) {
 match_mod_obs <-
   function(project_path,
            variable,
-           observed_file_path,
            depth = NULL,
            verbose = F,
            addtional = NULL,
@@ -398,7 +399,7 @@ match_mod_obs <-
     variable <- variable %>% toupper()
   }
 
-  observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+  observed_data <- load_observed(project_path = project_path, verbose = verbose)
   modelled_data <- read_swap_output(project_path = project_path, custom_path = custom_path)
 
   observed_data_filtered <-
@@ -452,8 +453,6 @@ match_mod_obs <-
 #' @param project_path path to project directory
 #' @param custom_save_path (OPT) (string) path to the custom save location.
 #' leave blank for default
-#' @param observed_file_path (OPT) (string) path to custom observed data location.
-#' leave blank for default
 #' @param variable (REQ) (string) variable to be returned
 #' @param depth (OPT) (string) depth of variable. leave blank if variable has
 #' no depth
@@ -471,15 +470,11 @@ match_mod_obs <-
 melt_all_runs <-
   function(project_path,
            custom_save_path = NULL,
-           observed_file_path = NULL,
            variable,
            depth = NULL,
            verbose = F) {
 
-
-    if (observed_file_path %>% is.null()) {
-      observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-    }
+    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
 
     if(custom_save_path %>% is.null()){
       file_path =  paste0(project_path, "/rswap_saved/")
@@ -512,7 +507,7 @@ melt_all_runs <-
     present_run_df$tag = "present"
     present_run_df$run = "current run"
 
-    observed_data <- load_observed(path = observed_file_path, verbose = verbose)
+    observed_data <- load_observed(project_path, verbose = verbose)
     observed_data<-rswap::filter_swap_data(observed_data$data, var = variable, depth = depth)
     observed_data$tag = "observed"
     observed_data$run = "observed"
