@@ -4,16 +4,14 @@
 \alias{filter_swap_data}
 \title{Filter swap data}
 \usage{
-filter_swap_data(data, var = NULL, depth = NULL, addtional = NULL)
+filter_swap_data(data, var = NULL, depth = NULL)
 }
 \arguments{
 \item{data}{observed/modelled data as given by load_observed()$data or read_swap_output()$custom_depth}
 
 \item{var}{\strong{OPT} name(s) of the variables you would like to select (string). leave blank for "all"}
 
-\item{depth}{\strong{OPT} value(s) of the depths you would like to select (numeric). leave blank for "all"}
-
-\item{addtional}{\strong{OPT} if you would like to select a specific column(s), enter
+\item{depth}{\strong{OPT} value(s) of the depths you would like to select (numeric). leave blank for "all"
 them here as a string/vector.}
 }
 \value{

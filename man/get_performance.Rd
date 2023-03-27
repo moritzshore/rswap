@@ -6,29 +6,26 @@
 \usage{
 get_performance(
   project_path,
+  archived = FALSE,
   stat = NULL,
   variable = NULL,
   depth = NULL,
-  verbose = F,
-  addtional = NULL,
-  custom_path = F
+  verbose = F
 )
 }
 \arguments{
-\item{project_path}{\strong{(REQ)} \strong{(string)}
-path to the project directory / or custom save location.}
+\item{project_path}{\strong{(REQ)} \strong{(string)} path to the project directory}
+
+\item{archived}{Flag, if the model run is saved in the rswap_saved archived}
 
 \item{stat}{(opt) (string/vector) "NSE" "PBIAS" "RMSE" "RSR" or leave blank for all}
 
 \item{variable}{(REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.}
 
-\item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.}
+\item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist
+in SWAP output. leave blank for all available}
 
 \item{verbose}{(OPT) (boolean) print status to console?}
-
-\item{addtional}{(OPT) (string) custom column name(s) to include in the analysis (untested)}
-
-\item{custom_path}{(OPT) (boolean) in case the project path differs from default location}
 }
 \value{
 (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)

@@ -10,7 +10,6 @@ plot_statistics(
   depth = NULL,
   graph = "default",
   stat = "NSE",
-  custom_save_path = NULL,
   verbose = F
 )
 }
@@ -25,8 +24,6 @@ plot_statistics(
 blank for default}
 
 \item{stat}{(REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)}
-
-\item{custom_save_path}{(OPT) (string) pass if your saved runs have custom paths. leave blank for default}
 
 \item{verbose}{(OPT) (boolean) print status?}
 }

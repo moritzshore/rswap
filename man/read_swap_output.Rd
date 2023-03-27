@@ -4,10 +4,12 @@
 \alias{read_swap_output}
 \title{Reads SWAP output of current path}
 \usage{
-read_swap_output(project_path, custom_path = F)
+read_swap_output(project_path, archived = F)
 }
 \arguments{
 \item{project_path}{String, path to the project directory / or custom save location.}
+
+\item{archived}{Flag, needs to be true when reading from the rswap_saved archive}
 }
 \description{
 Reads SWAP output of current path

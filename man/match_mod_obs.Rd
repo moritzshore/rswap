@@ -9,8 +9,7 @@ match_mod_obs(
   variable,
   depth = NULL,
   verbose = F,
-  addtional = NULL,
-  custom_path = F
+  archived = FALSE
 )
 }
 \arguments{
@@ -18,13 +17,11 @@ match_mod_obs(
 
 \item{variable}{req}
 
-\item{depth}{req}
+\item{depth}{opt}
 
-\item{verbose}{req}
+\item{verbose}{opt}
 
-\item{addtional}{req}
-
-\item{custom_path}{in case project path is not default}
+\item{archived}{}
 }
 \value{
 list of modelled DF and observed DF, matched

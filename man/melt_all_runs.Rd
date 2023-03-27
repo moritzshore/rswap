@@ -4,19 +4,10 @@
 \alias{melt_all_runs}
 \title{Melt all runs}
 \usage{
-melt_all_runs(
-  project_path,
-  custom_save_path = NULL,
-  variable,
-  depth = NULL,
-  verbose = F
-)
+melt_all_runs(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}
-
-\item{custom_save_path}{(OPT) (string) path to the custom save location.
-leave blank for default}
 
 \item{variable}{(REQ) (string) variable to be returned}
 

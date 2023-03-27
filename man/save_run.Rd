@@ -4,13 +4,10 @@
 \alias{save_run}
 \title{Save a swap run}
 \usage{
-save_run(project_path, save_location = NULL, run_name = NULL, verbose = F)
+save_run(project_path, run_name = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{String, path to the project directory.}
-
-\item{save_location}{String, path to directory where the model files are to
-be saved. default is "project_directory"/rswap_saved_runs/}
 
 \item{run_name}{name of run to be saved. default is "rswap_{time,date}"}
 
