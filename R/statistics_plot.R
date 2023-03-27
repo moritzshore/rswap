@@ -28,6 +28,7 @@ plot_statistics <-
            verbose = F) {
 
   graph = graph %>% tolower()
+
   if (graph %in% c("ggplot", "default", "sorted") == FALSE) {
       graph = "default"
       warning("graph type not recognized! supported are:\n 'default', 'sorted', ggplot'")
@@ -84,7 +85,7 @@ plot_statistics <-
   )
 
   last_run$run = "last_run"
-  last_run$mean = last_run$NSE %>% mean()
+  last_run$mean = last_run %>% select(all_of(stat)) %>% pull() %>% mean()
 
   stat_df <- rbind(stat_df, last_run)
 
@@ -95,9 +96,11 @@ plot_statistics <-
   if(stat == "NSE"){
     best_perf = stat_df$mean %>% max() %>% min()
     best_run = stat_df$run[which(stat_df$mean==best_perf) %>% min()]
+  }else if(stat %in% c("RMSE", "PBIAS", "RSR")){
+    best_perf = stat_df$mean %>% min() %>% min()
+    best_run = stat_df$run[which(stat_df$mean==best_perf) %>% min()]
   }else{
-    #TODO implement behavior for others (EZ just use max instead for some)
-    stop("stats other than NSE not supported YET")
+    stop(stat, "not recognized")
   }
 
   # plotting -----
@@ -166,7 +169,7 @@ plot_statistics <-
         fig2 %>% add_trace(
           data = stat_df_ordered,
           x = ~ run,
-          y = ~ NSE,
+          y = ~ stat_df_ordered[[2]],
           name = ~ var,
           color = ~ var,
           colors = palette(length(get_depths(obs_dat$data, var))),
