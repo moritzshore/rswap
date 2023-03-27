@@ -9,7 +9,6 @@
 #' @param graph (OPT) (string) either "default" "sorted" or "ggplot". leave
 #' blank for default
 #' @param stat (REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)
-#' @param custom_save_path  (OPT) (string) pass if your saved runs have custom paths. leave blank for default
 #' @param verbose (OPT) (boolean) print status?
 #'
 #' @importFrom ggplot2 ggplot theme scale_color_manual geom_col aes geom_line geom_point labs ggtitle scale_fill_manual
@@ -26,7 +25,6 @@ plot_statistics <-
            depth =  NULL,
            graph = "default",
            stat = "NSE",
-           custom_save_path = NULL,
            verbose = F) {
 
   graph = graph %>% tolower()
@@ -37,7 +35,7 @@ plot_statistics <-
 
   # extract the run name from the data package
   current_run <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
-  custom_save_path <- glue("{project_path}/rswap_saved/")
+  save_path <- glue("{project_path}/rswap_saved/")
   observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   obs_dat <- load_observed(project_path)
 

@@ -6,14 +6,13 @@
 #' Supported performance indicators are: NSE, PBIAS, RMSE, RSR
 #' Supported variables are those provided in the observed data file
 #' Please note, passing multiple variables at differing depths will not work!
-#' @param project_path **(REQ)** **(string)**
-#'  path to the project directory / or custom save location.
+#' @param project_path **(REQ)** **(string)** path to the project directory
+#' @param archived Flag, if the model run is saved in the rswap_saved archived
 #' @param stat (opt) (string/vector) "NSE" "PBIAS" "RMSE" "RSR" or leave blank for all
 #' @param variable (REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.
-#' @param depth (OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.
+#' @param depth (OPT) (numeric/vector) depth of variable value (>0). Must exist
+#' in SWAP output. leave blank for all available
 #' @param verbose (OPT) (boolean) print status to console?
-#' @param addtional (OPT) (string) custom column name(s) to include in the analysis (untested)
-#' @param custom_path (OPT) (boolean) in case the project path differs from default location
 #' @importFrom dplyr %>% nth
 #' @importFrom glue glue
 #' @returns (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
@@ -23,14 +22,23 @@ get_performance <-
            stat = NULL,
            variable = NULL,
            depth = NULL,
-           verbose = F,
-           addtional = NULL,
-           custom_path = F) {
+           verbose = F) {
 
-      observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
 
+      if(variable %>% is.null()){
+        obs <- load_observed(project_path)
+        variable = obs$observed_variables
+      }
 
-    rlist <- match_mod_obs(project_path, variable, depth, verbose, addtional, custom_path = custom_path)
+    rlist <-
+      match_mod_obs(
+        project_path = project_path,
+        variable = variable,
+        depth = depth,
+        verbose = verbose,
+        archived = archived
+      )
 
     modelled_data_filtered = rlist$mod
     observed_data_filtered = rlist$obs

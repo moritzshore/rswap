@@ -38,6 +38,8 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
   # cant do more than 4 variables. (3+RAIN)
   if(length(vars)>3){return("too many variables, max 3")}
 
+  # TODO, add support for any variable?
+
   # check to see if any of the entered vars are not supported
   if(!(vars %in% c("H", "WC", "DRAINAGE", "TEMP")) %>% any()){
     print("at least one not supported variable. supported variables are:")

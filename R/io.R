@@ -132,16 +132,15 @@ update_swp_paths <-
 #' @importFrom stringr str_replace_all
 #' @export
 #'
-save_run <- function(project_path, save_location = NULL, run_name = NULL, verbose = F){
+save_run <- function(project_path, run_name = NULL, verbose = F){
 
   if(run_name %>% is.null()){
     tad = Sys.time() %>%  str_replace_all(":", "_") %>% str_replace_all(" ","at")
     run_name = glue("rswap_{tad}")
   }
 
-  if(save_location %>% is.null()){
-    save_location = glue("{project_path}/rswap_saved")
-  }
+  save_location = glue("{project_path}/rswap_saved")
+
 
   # create the save folder of ALL the saves
   dir.create(save_location, showWarnings = F)
@@ -177,6 +176,7 @@ save_run <- function(project_path, save_location = NULL, run_name = NULL, verbos
 #' (make sure to use the template .xlsx file, placed in your project directory)
 #' @param project_path String. Path to project directory.
 #' @param verbose Logical. Prints status reports
+#'
 #' @importFrom readxl read_excel
 #' @importFrom stringr str_remove str_replace str_split
 #'
@@ -230,7 +230,7 @@ read_swap_output <-  function(project_path, custom_path = F){
   }
 
   result_output <- read.table(
-    glue("{read_path}/result_output.csv"),
+    path,
     comment.char = "*",
     sep = ",",
     dec = ".",
@@ -245,7 +245,7 @@ read_swap_output <-  function(project_path, custom_path = F){
   colnames(result_output) <- new_cols
 
   result_daily <- read.table(
-    glue("{read_path}/result_output_tz.csv"),
+    path_tz,
     comment.char = "*",
     sep = ",",
     dec = ".",
@@ -256,7 +256,7 @@ read_swap_output <-  function(project_path, custom_path = F){
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
 
   r_frame %>% return()
-}
+  result_output_tz.csv}
 
 #' Filter swap data
 #'
@@ -264,7 +264,6 @@ read_swap_output <-  function(project_path, custom_path = F){
 #' @param data observed/modelled data as given by load_observed()$data or read_swap_output()$custom_depth
 #' @param var **OPT** name(s) of the variables you would like to select (string). leave blank for "all"
 #' @param depth **OPT** value(s) of the depths you would like to select (numeric). leave blank for "all"
-#' @param addtional **OPT** if you would like to select a specific column(s), enter
 #' them here as a string/vector.
 #'
 #' @importFrom dplyr %>% select
@@ -272,7 +271,7 @@ read_swap_output <-  function(project_path, custom_path = F){
 #' @importFrom stringi stri_extract_all_regex
 #' @returns dataframe consisting of DATE column, and desired observed values
 #' @export
-filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
+filter_swap_data <- function(data, var = NULL, depth = NULL){
 
   if(var %>% is.null() == FALSE){
     var <- var %>% toupper()
@@ -327,7 +326,7 @@ filter_swap_data <- function(data, var = NULL, depth = NULL, addtional = NULL){
     union <- intersect(relevant_var_cols, relevant_depth_cols)
   }
 
-  perf_mod <- data %>% select(DATE, all_of(union), all_of(addtional))
+  perf_mod <- data %>% select(DATE, all_of(union))
 
   perf_mod %>% return()
 }
@@ -400,22 +399,18 @@ match_mod_obs <-
   }
 
   observed_data <- load_observed(project_path = project_path, verbose = verbose)
-  modelled_data <- read_swap_output(project_path = project_path, custom_path = custom_path)
+  modelled_data <- read_swap_output(project_path = project_path, archived = archived)
 
   observed_data_filtered <-
     filter_swap_data(
       data = observed_data$data,
       var = variable,
-      depth = depth,
-      addtional = addtional
+      depth = depth
     )
   modelled_data_filtered <-
-    filter_swap_data(
-      data = modelled_data$custom_depth,
-      var = variable,
-      depth = depth,
-      addtional = addtional
-    )
+    filter_swap_data(data = modelled_data$custom_depth,
+                     var = variable,
+                     depth = depth)
 
   # sort them to be in consistent order
   obs_new_order = observed_data_filtered %>% colnames() %>% sort()
@@ -451,8 +446,6 @@ match_mod_obs <-
 #' so that the combination of them is easy to plot using ggplot etc.
 #'
 #' @param project_path path to project directory
-#' @param custom_save_path (OPT) (string) path to the custom save location.
-#' leave blank for default
 #' @param variable (REQ) (string) variable to be returned
 #' @param depth (OPT) (string) depth of variable. leave blank if variable has
 #' no depth
@@ -469,18 +462,15 @@ match_mod_obs <-
 #' @export
 melt_all_runs <-
   function(project_path,
-           custom_save_path = NULL,
            variable,
            depth = NULL,
            verbose = F) {
 
     observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
 
-    if(custom_save_path %>% is.null()){
-      file_path =  paste0(project_path, "/rswap_saved/")
-    }else{
-      file_path = custom_save_path
-    }
+
+    file_path =  paste0(project_path, "/rswap_saved/")
+
 
     past_run_names <-  list.files(path = file_path)
     past_run_paths <-  list.files(path = file_path, full.names = T)

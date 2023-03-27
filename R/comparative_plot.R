@@ -41,7 +41,6 @@ comparative_plot <-
   master_df <-
     melt_all_runs(
       project_path = project_path,
-      custom_save_path = custom_save_path,
       variable = variable,
       depth = depth,
       verbose = verbose
