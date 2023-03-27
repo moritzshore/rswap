@@ -4,19 +4,10 @@
 \alias{soft_calibration_plot}
 \title{Soft Calibration Plot}
 \usage{
-soft_calibration_plot(
-  project_path,
-  observed_file_path = NULL,
-  vars,
-  show = NULL,
-  verbose = F
-)
+soft_calibration_plot(project_path, vars, show = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{(REQ) (string) path to project directory}
-
-\item{observed_file_path}{(OPT) (string) path to observed file, in case it is
-not located in the default location}
 
 \item{vars}{(REQ) (string/vector) list of variables to include in the plot}
 

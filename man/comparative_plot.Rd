@@ -6,14 +6,7 @@
 this graph shows the current model run compared to the previous saved
 runs. It highlights the differences between changed parameters etc.}
 \usage{
-comparative_plot(
-  project_path,
-  variable,
-  depth = NULL,
-  observed_file_path = NULL,
-  custom_save_path = NULL,
-  verbose = F
-)
+comparative_plot(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{(REQ) (string) path to project directory}
@@ -22,12 +15,6 @@ comparative_plot(
 
 \item{depth}{(OPT) (numeric) depth of variable. leave blank if variable has
 no depth}
-
-\item{observed_file_path}{(OPT) (string) path to observed file, in case it is
-not located in the default location}
-
-\item{custom_save_path}{(OPT) (string) path to the custom save location.
-leave blank for default}
 
 \item{verbose}{(OPT) (logical) print status?}
 }

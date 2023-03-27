@@ -10,7 +10,6 @@ plot_statistics(
   depth = NULL,
   graph = "default",
   stat = "NSE",
-  observed_file_path = NULL,
   custom_save_path = NULL,
   verbose = F
 )
@@ -26,8 +25,6 @@ plot_statistics(
 blank for default}
 
 \item{stat}{(REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)}
-
-\item{observed_file_path}{(OPT) (string) pass if your observed file has a custom path. leave blank for default}
 
 \item{custom_save_path}{(OPT) (string) pass if your saved runs have custom paths. leave blank for default}
 

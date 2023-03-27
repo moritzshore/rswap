@@ -12,6 +12,8 @@ parse_swp_file(project_path, swap_file = "swap.swp", verbose = F, quiet = F)
 \item{swap_file}{(OPT) (string) name of the swap file to be used. defaults to swap.swp}
 
 \item{verbose}{(OPT) (boolean) print status?}
+
+\item{quiet}{prints important warning by default, use quiet=TRUE to silence.}
 }
 \value{
 SWAP parameters in a dataframe format and path to where the tables

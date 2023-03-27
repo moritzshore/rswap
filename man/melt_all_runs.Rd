@@ -7,7 +7,6 @@
 melt_all_runs(
   project_path,
   custom_save_path = NULL,
-  observed_file_path = NULL,
   variable,
   depth = NULL,
   verbose = F
@@ -17,9 +16,6 @@ melt_all_runs(
 \item{project_path}{path to project directory}
 
 \item{custom_save_path}{(OPT) (string) path to the custom save location.
-leave blank for default}
-
-\item{observed_file_path}{(OPT) (string) path to custom observed data location.
 leave blank for default}
 
 \item{variable}{(REQ) (string) variable to be returned}

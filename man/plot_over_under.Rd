@@ -4,19 +4,10 @@
 \alias{plot_over_under}
 \title{Plot over under}
 \usage{
-plot_over_under(
-  project_path,
-  observed_file_path = NULL,
-  variable,
-  depth = NULL,
-  verbose = F
-)
+plot_over_under(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{(REQ) (string) path to project directory}
-
-\item{observed_file_path}{(OPT) (string) path to observed file, if it is not
-in the default location}
 
 \item{variable}{(REQ) (string) desired variable for graph}
 

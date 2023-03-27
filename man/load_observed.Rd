@@ -2,15 +2,15 @@
 % Please edit documentation in R/io.R
 \name{load_observed}
 \alias{load_observed}
-\title{Load observed data (make sure to use the template .xlsx file)}
+\title{Load observed data}
 \usage{
-load_observed(path, verbose = F)
+load_observed(project_path, verbose = F)
 }
 \arguments{
-\item{path}{String. Path to observed data file (.xlsx)}
+\item{project_path}{String. Path to project directory.}
 
 \item{verbose}{Logical. Prints status reports}
 }
 \description{
-Load observed data (make sure to use the template .xlsx file)
+(make sure to use the template .xlsx file, placed in your project directory)
 }

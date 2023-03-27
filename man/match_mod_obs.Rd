@@ -7,7 +7,6 @@
 match_mod_obs(
   project_path,
   variable,
-  observed_file_path,
   depth = NULL,
   verbose = F,
   addtional = NULL,
@@ -18,8 +17,6 @@ match_mod_obs(
 \item{project_path}{req}
 
 \item{variable}{req}
-
-\item{observed_file_path}{req}
 
 \item{depth}{req}
 

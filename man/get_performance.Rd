@@ -9,7 +9,6 @@ get_performance(
   stat = NULL,
   variable = NULL,
   depth = NULL,
-  observed_file_path = NULL,
   verbose = F,
   addtional = NULL,
   custom_path = F
@@ -24,8 +23,6 @@ path to the project directory / or custom save location.}
 \item{variable}{(REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.}
 
 \item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist in SWAP output. leave blank for all available.}
-
-\item{observed_file_path}{(OPT) (string) path to observed file. will default to "./project_path/rswap_observed_data.xlsx"}
 
 \item{verbose}{(OPT) (boolean) print status to console?}
 
