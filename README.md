@@ -219,6 +219,7 @@ The aformentioned functions rely on more basic general functions which, while ar
 - Expand and improve documentation
 - plot_stat sorting follows stat property
 - improve r/w of tables
+- add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
 
 
 ## Support and Contributing
