@@ -18,7 +18,7 @@ library(rswap)
 for help on any specific function, use ```> ?functionname```
 
 ## How to run SWAP?
-The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located. The `swap.exe` must be located in the parent directory of `project_path`!
+The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located (`project_path`). The `swap.exe` must be located in the parent directory of `project_path`!
 
 ```
 run_swap(project_path)
@@ -121,18 +121,19 @@ A few functions focus on assesing model performance by comparing modelling value
 ```
 > get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
-    var  NSE
-1 WC_15 0.63
-
+# A tibble: 1 × 2                                                                                           
+  var     NSE
+  <chr> <dbl>
+1 WC_15  0.62
 ```
 This function is very flexible, and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
 ## Saving model runs
-While calibrating a model it can be useful to keep track of different model runs, while changing parameters. `rswap` aids this proccess with a vareity of functions, such as
+While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this proccess with a vareity of functions, such as
 ```
 save_run(project_path, run_name = "COFRED = 0.35")
 ```
-This function saves your entire model set up in a directory (by default: `project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
+This function saves your entire model set up in a directory (`project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
 
 ## Comparing model runs
 
@@ -156,7 +157,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 <img src="R/figures/stat_plot1.png" width=60% height=60%>
 </p>
 
-This plot is equally flexible, and can be passed any variable and any amount of depths. the graph type can be switched between `default`, `sorted` and `ggplot`
+This plot is equally flexible, and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
 
 ## Modification of Parameters and SWAP input files.
 
@@ -166,17 +167,16 @@ parsed <- parse_swp_file(project_path, swap_file)
 ```
 This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a "list of dataframes" to work in R, instead of just writing tables #TODO!)
 
-You can modify the dataframe how you wish, with whatever tools you would like, however rswap does have a simple dedicated function to do this for you. 
+You can modify the dataframe how you wish, with whatever tools you would like, however `rswap` does have a simple dedicated function to do this for you. 
 ```
 parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
 ```
 This function takes in the dataframe parsed by the previous function, and returns that same dataframe with the modified parameter.
 
-If you would like to run swap with the modified parameter set, you first would write the new SWAP main file:
+If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:
 ```
 write_swap_file(parameters = parameters, table_path = parsed$table_path, outpath = paste0(project_path, "/modified.swp"))
 ```
-
 And to run this modified SWAP main file, you would of course use `run_swap()` with the corresponding `project_path` and `swap_file` parameters. 
 
 ## Miscellaneous functions
@@ -191,13 +191,13 @@ The aformentioned functions rely on more basic general functions which, while ar
 
 >`RSR() # statistical performance calculation`
 
->`clean_swp_file() # returns swap main file sans comments`\
+>`clean_swp_file() # returns swap main file sans comments`
 
 > `filter_swap_data() # filters SWAP data (observed or modelled) by var and depth`
 
 >`get_swap_units() # returns unit of SWAP variable. (WIP)`
 
->`match_mod_obs() # matches dataframe structure of observed and modelled ` 
+>`match_mod_obs() # matches dataframe structure of observed and modelled` 
 
 >`melt_all_runs() # melts together all saved runs + current into` [tidy](https://towardsdatascience.com/what-is-tidy-data-d58bb9ad2458) `format` 
 
@@ -206,19 +206,20 @@ The aformentioned functions rely on more basic general functions which, while ar
 - Sensitivity Analysis
 - autocalibration / PEST support
 - Parsing support for all swap files, not just the main file.
-- add an init() function to create the observed_template file, amongmay other things
+- add an init() function to create the observed_template file, among other things
 - add documentation in the excel sheet (and switch to supporting .csv instead!)
 - add support for multiple variables at differing depths for `autoset_output`
 - fix the x-axis on the over/under plot.
-- `get_performance()` returns a tibble instead
 - give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
 - move change_swap_parameter() from io.R to rw_parameters.R
 - add a "filename" par to write_swap_output()
-- wrapper function to `combine parse_swp_file()` and `change_swap_par()`\
+- wrapper function to `combine parse_swp_file()` and `change_swap_par()`
 - add NA support to the over-under plot.
-- fix path support
 - better * end of table recognition
 - Expand and improve documentation
+- plot_stat sorting follows stat property
+- improve r/w of tables
+
 
 ## Support and Contributing
 
