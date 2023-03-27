@@ -122,8 +122,6 @@ update_swp_paths <-
 #' Save a swap run
 #'
 #' @param project_path String, path to the project directory.
-#' @param save_location String, path to directory where the model files are to
-#' be saved. default is "project_directory"/rswap_saved_runs/
 #' @param run_name name of run to be saved. default is "rswap_{time,date}"
 #' @param verbose logical
 #'#'
@@ -152,9 +150,9 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 
 
   from_path = glue("{project_path}/rswap/")
-  from_copy = list.files(from_path, full.names = T, include.dirs = T, recursive = T)
+  from_copy = list.files(from_path, full.names = T, include.dirs = F, recursive = F)
 
-  to_files = list.files(from_path, full.names = F, include.dirs = T, recursive = T)
+  to_files = list.files(from_path, full.names = F, include.dirs = F, recursive = F)
   to_copy = to_path
 
   status = file.copy(from_copy, to_copy, overwrite = T, recursive = T, copy.mode = T, copy.date = T)
