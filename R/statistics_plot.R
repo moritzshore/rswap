@@ -11,7 +11,7 @@
 #' @param stat (REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)
 #' @param verbose (OPT) (boolean) print status?
 #'
-#' @importFrom ggplot2 ggplot theme scale_color_manual geom_col aes geom_line geom_point labs ggtitle scale_fill_manual
+#' @importFrom ggplot2 ggplot theme scale_color_manual geom_col aes geom_line geom_point labs ylab xlab ggtitle scale_fill_manual
 #' @importFrom dplyr %>% pull select all_of filter
 #' @importFrom stringr str_split
 #' @importFrom glue glue
