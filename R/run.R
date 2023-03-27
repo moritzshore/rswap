@@ -41,12 +41,6 @@ run_swap <- function(project_path,
   # builds a directory for performing package actions, and returns the path
   rswap_directory <- build_rswap_directory(project_path)
 
-
-  if(file.exists(swap_file_path) == FALSE){
-    stop(glue("SWAP main file not found!\n{project_path}\n{swap_file_path}"))
-  }
-
-
   # reads in the swap parameters and tables
   parse_result <- parse_swp_file(project_path = project_path,
                                  swap_file = swap_file,
