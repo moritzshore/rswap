@@ -34,6 +34,10 @@ run_swap <- function(project_path,
   swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
   swap_file_path <- glue("{project}/rswap/{swap_file}")
 
+  if(file.exists(swap_file_path) == FALSE){
+    stop(glue("SWAP main file not found!\n{project_path}\n{swap_file_path}"))
+  }
+
 
   if(file.exists(swap_exe)==FALSE){
    stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
