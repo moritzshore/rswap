@@ -210,9 +210,19 @@ plot_statistics <-
   if(graph=="ggplot") {
 
     # find the best value
-    best_value <- stat_df$mean %>% max()
-    # find the run with the best value
-    best_run_name <- stat_df$run[which(stat_df$mean == best_value) %>% min()]
+    if(stat == "NSE"){
+      best_value <- stat_df$mean %>% max()
+      best_run_name <- stat_df$run[which(stat_df$mean == best_value) %>% min()]
+
+    }else if(stat=="PBIAS"){
+      best_value_abs <- stat_df$mean %>% abs() %>% min()
+      best_value <- stat_df$mean[which(stat_df$mean %>% abs() == best_value_abs) %>% min()]
+      best_run_name <- stat_df$run[which(stat_df$mean %>% abs() == best_value_abs) %>% min()]
+    }else{
+      best_value <- stat_df$mean %>% min()
+      best_run_name <- stat_df$run[which(stat_df$mean == best_value) %>% min()]
+
+    }
 
     # find the value of the last path
     last_run_value <- stat_df %>% filter(run == "last_run") %>%  select(all_of(stat)) %>% pull() %>% mean()
