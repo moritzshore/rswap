@@ -248,7 +248,6 @@ write_swap_file <-
       cat("...overwriting file:\n", outpath, "\n")
     }
 
-
     write.table(
       x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
       file = outpath,
@@ -258,7 +257,38 @@ write_swap_file <-
       append = F
     )
 
-    par_write = paste(parameters$param, "=", parameters$value)
+
+    # need to remove outdat and outdatint, because for parsings sake they need
+    # to be written on a new line
+    outdatint <- parameters$value[which(parameters$param=="OUTDATINT")]
+    outdatint <- outdatint %>% str_split(" ") %>% unlist()
+    outdat <- parameters$value[which(parameters$param=="OUTDAT")]
+    outdat <- outdat %>% str_split(" ") %>% unlist()
+    odlist = c("OUTDATINT =")
+    for (variable in outdatint) {
+      odlist <- append(odlist, variable)
+    }
+    odlist <- append(odlist, "* End of table")
+    odlist <- append(odlist, "OUTDAT = ")
+    for (variable in outdat) {
+      odlist <- append(odlist, variable)
+    }
+    odlist <- append(odlist, "* End of table")
+    special_case <- odlist %>% as.data.frame()
+    # remove outdat and outdat int from dataframe
+    param_clean = parameters[which(parameters$param %in% c("OUTDATINT", "OUTDAT") == FALSE),]
+    # write the special cases:
+    write.table(
+      special_case,
+      file = outpath,
+      quote = F,
+      row.names = F,
+      col.names = F,
+      append = T
+    )
+
+    # now back to normal buisness
+    par_write = paste(param_clean$param, "=", param_clean$value)
     write.table(
       par_write,
       file = outpath,
