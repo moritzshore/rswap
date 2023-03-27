@@ -14,6 +14,7 @@
 #' in SWAP output. leave blank for all available
 #' @param verbose (OPT) (boolean) print status to console?
 #' @importFrom dplyr %>% nth
+#' @importFrom tibble tibble
 #' @importFrom glue glue
 #' @returns (dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
 #' @export
@@ -73,7 +74,7 @@ get_performance <-
       return_df<-return_df %>% select(var, all_of(stat))
     }
 
-    return(return_df)
+    return(return_df %>% tibble())
   }
 
 #' NSE
