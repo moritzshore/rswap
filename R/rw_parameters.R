@@ -257,7 +257,8 @@ write_swap_file <-
       append = F
     )
 
-
+    # only do this if they exist...
+    if( parameters$value[which(parameters$param=="OUTDATINT")] %>% length() > 0){
     # need to remove outdat and outdatint, because for parsings sake they need
     # to be written on a new line
     outdatint <- parameters$value[which(parameters$param=="OUTDATINT")]
@@ -286,6 +287,9 @@ write_swap_file <-
       col.names = F,
       append = T
     )
+    }else{
+      param_clean <- parameters
+    }
 
     # now back to normal buisness
     par_write = paste(param_clean$param, "=", param_clean$value)
