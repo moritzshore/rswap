@@ -516,11 +516,12 @@ melt_all_runs <-
     new_col_names<-new_col_names %>% str_replace_all("DATETIME", "DATE")
     new_col_names<-new_col_names %>% str_replace_all("path", "RUN")
     colnames(past_run_df) <- new_col_names
-    run_names <- past_run_df$RUN %>% str_split("/") %>% map(., 7) %>% unlist()
+
+    run_names<-past_run_df$RUN %>% str_remove(project_path) %>% str_remove("/rswap_saved/") %>% str_remove("/result_output.csv")
     past_run_df<-past_run_df %>% select(-RUN)
 
     # todo: fix rain/drain overlap!
-    past_run_df<-rswap::filter_swap_data(past_run_df, var = variable, depth = depth)
+    past_run_df<-filter_swap_data(past_run_df, var = variable, depth = depth)
     past_run_df$tag = "past"
     past_run_df$run = run_names
 
