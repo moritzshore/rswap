@@ -44,8 +44,7 @@ run_swap <- function(project_path,
   # reads in the swap parameters and tables
   parse_result <- parse_swp_file(project_path = project_path,
                                  swap_file = swap_file,
-                                 verbose = verbose,
-                                 quiet = quiet)
+                                 verbose = verbose)
 
   # changes the paths in the swap main file to reflect the temporary location
   params <-
