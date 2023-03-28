@@ -148,7 +148,7 @@ run_swap <- function(project_path,
       cat("\n...copying reruns.log to rswap directory\n")
     }
   }
-  swap_ok <- paste0(work_dir, "swap.ok")
+  swap_ok <- paste0(work_dir, "/swap.ok")
   if (file.exists(swap_ok)) {
     file.copy(from  = swap_ok,
               to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
@@ -158,8 +158,6 @@ run_swap <- function(project_path,
     }
   }
 
-
-
-    # return status of run
+  # return status of run
   return(msg$status)
 }
