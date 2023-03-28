@@ -17,12 +17,16 @@ build_rswap_directory <- function(project_path){
 
   temp_directory <- glue("{project_path}/rswap/")
 
-  # create the hidden temp directory
-  dir.create(temp_directory, showWarnings = F, mode = "0777")
+  unlink(temp_directory, recursive = T)
 
   # list all the files in the original project directory
   #TODO might want to check the options here, so you get ALL the files and none more
   file_list <- list.files(project_path, full.names = T, recursive = T)
+
+
+  # create the hidden temp directory
+  dir.create(temp_directory)
+
 
   # remove any files in directory /rswap_saved/ ... this is prone to failure, should make more
   # robust! TODO
