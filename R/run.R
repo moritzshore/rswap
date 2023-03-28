@@ -48,8 +48,13 @@ run_swap <- function(project_path,
                                  quiet = quiet)
 
   # changes the paths in the swap main file to reflect the temporary location
-  params <- update_swp_paths(project_path, swap_exe,
-                             parse_result$parameters, verbose)
+  params <-
+    update_swp_paths(
+      project_path = project_path,
+      swap_exe = swap_exe,
+      parameters = parse_result$parameters,
+      verbose =  verbose
+    )
 
 
   # load observed data
@@ -133,6 +138,28 @@ run_swap <- function(project_path,
     }
   }
 
-  # return status of run
+
+  reruns <- paste0(work_dir, "/reruns.log")
+  if (file.exists(reruns)) {
+    file.copy(from  = reruns,
+              to = paste0(work_dir, "/", project, "/rswap/reruns.log"))
+    file.remove(reruns)
+    if (verbose) {
+      cat("\n...copying reruns.log to rswap directory\n")
+    }
+  }
+  swap_ok <- paste0(work_dir, "swap.ok")
+  if (file.exists(swap_ok)) {
+    file.copy(from  = swap_ok,
+              to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
+    file.remove(swap_ok)
+    if (verbose) {
+      cat("\n...copying swap.ok to rswap directory\n")
+    }
+  }
+
+
+
+    # return status of run
   return(msg$status)
 }
