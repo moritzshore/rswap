@@ -128,8 +128,24 @@ update_swp_paths <-
     parameters = change_swap_par(parameters, par, val )
   }
 
-  return(parameters)
-}
+    # Update the SWINCO path if needed.
+    swinco_index <- (parameters$param == "SWINCO") %>% which()
+    if ((swinco_index %>% length()) > 0) {
+      if (parameters$value[swinco_index] == 3) {
+        infil_index <- (parameters$param == "INIFIL") %>% which()
+        if ((infil_index %>% length()) > 0) {
+          val <-  parameters$value[infil_index] %>% str_remove_all("'")
+          newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap @ {Sys.time()}")
+          parameters = change_swap_par(parameters, "INIFIL", newval )
+          if(verbose){
+            cat(glue("\n...INIFIL parameter set to\n {parameters$value[infil_index]}\n"))
+          }
+        }
+      }
+    }
+
+    return(parameters)
+  }
 
 
 
