@@ -21,19 +21,10 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 
   # checking to see if all "end of tables" are case sensitively correct
   # this was not always the case
-  eot <- (swp %>% grepl(x = ., "* End of table")) %>% which()
-  eot_exact <-
-    (swp %>% grepl(x = ., "\\bEnd of table\\b")) %>% which()
-  if ((eot == eot_exact) %>% all() == FALSE) {
-    stop("please make sure that all tables end with the line '* End of table'")
-  }
 
-  # remove all the comment lines starting with *, except for the * End of lines
+
+  # remove all the comment lines starting with *,
   comment_lines = (swp %>% substr(x = ., 1, 1) == "*") %>% which()
-  if(length(eot)>1){
-    comment_lines <- comment_lines[-which(comment_lines %in% eot)]
-
-  }
   if (comment_lines %>% length() > 0) {
     swp <- swp[-comment_lines]
   }
@@ -49,6 +40,8 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
   if (empty_lines %>% length() > 0) {
     swp <- swp[-empty_lines]
   }
+
+
 
   return(swp)
 }
@@ -75,7 +68,6 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' swap.swp if left blank
 #' @param swap_file (OPT) (string) name of the swap file to be used. defaults to swap.swp
 #' @param verbose (OPT) (boolean) print status?
-#' @param quiet prints important warning by default, use quiet=TRUE to silence.
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom stringr str_trim str_split
@@ -87,27 +79,40 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' dataframes)
 #'
 #' @export
-parse_swp_file <-
-  function(project_path,
+parse_swp_file <- function(project_path,
            swap_file = "swap.swp",
-           verbose = F,
-           quiet = F) {
+           verbose = F) {
 
-    if(quiet == FALSE){
-      cat("Warning:\nall TABLES in the swap file must end with exactly this line:\n\n    -->   '* End of table'   <--\n\notherwise this function will not work!\n(turn this warning off with quiet = T)\n ..I am working on improving this\n")
+    find_eot <- function(short_swp) {
+
+      first_element <- short_swp %>%  str_trim() %>% str_split("\\s+") %>% map(1) %>% unlist()
+
+      next_par <- grepl(x = short_swp, "=") %>% which() %>% min()
+      if(next_par %>% length() == 0){
+        next_par = Inf
+      }
+
+      next_non_value_nor_date <- (first_element %>% as.numeric() %>% is.na() == TRUE &
+                        grepl(x=first_element, "-") == FALSE) %>% which() %>% min() %>% suppressWarnings()
+      if(next_non_value_nor_date %>% length() == 0){
+        next_non_value_nor_date = Inf
+      }
+
+      eot <- min(c(next_non_value_nor_date, next_par))
+
+      return(eot)
     }
-    path = paste0(project_path, "/", swap_file)
 
     swp <- clean_swp_file(project_path, swap_file = swap_file)
+
 
     # predefine for-loop vars
     par_df <- data.frame()
     tab_df <- list()
     new_i = 0
-    special_cases<-c("OUTDATINT", "OUTDAT")
-
 
     table_path = paste0(project_path, "/rswap/tables")
+    unlink(table_path, recursive = T)
     dir.create(table_path, showWarnings = F)
 
     # loop through the main swap file line by line
@@ -116,27 +121,16 @@ parse_swp_file <-
     for (i in c(1:length(swp))) {
       # the line to be handled
       line = swp[i]
-
       # this is important for not double-reading tables later on
       if (i < new_i) {
-        next()
-      }
-
-      # special case for outdatint =
-      # why special case? OUTDATINT is the only Table that has an equal sign,
-      # so by my parsing rules, it is both a parameter and a table (annoying!)
-      # with this special case it is parsed as a table, but saved as a parameter
-
-
-      # this line we dont want to deal with if it ever should come up
-      # it shoudnt... but template swap file is not very consistent
-      if (line == "* End of table") {
         next()
       }
 
       # parameters  always have an equal sign in their line, so we can use this
       # to identify them
       is_param <- line %>% grepl(x = ., "=")
+      is_table <- (line %>% grepl(x = ., "=") == FALSE)
+      special_case <- FALSE
 
       # the routine for if its a parameter:
       if (is_param == TRUE) {
@@ -147,61 +141,77 @@ parse_swp_file <-
         # split that line again, based off the equals sign. left of the
         # equals sign is the parameter name, to the right is the value
         param = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(1)
-
-        if(param %in% special_cases){
-          swap_table_end = swp[i:length(swp)] %>% grepl(x = ., " End of table") %>% which() %>% min()
-          value <- swp[(i+1):(i+swap_table_end-2)] %>% paste(collapse = " ") %>% str_trim()
-          new_i <- i + swap_table_end
-        }else{
-          value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
-
+        value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
+        # special case
+        if (value == "") {
+          is_table = TRUE
+          special_case = TRUE
+        } else{
+          # create a row in the final dataframe containing these 3 things,
+          # seperately
+          add_row = data.frame(param = param,
+                               value = value,
+                               comment = comment)
+          par_df <- rbind(par_df, add_row)
         }
-        # create a row in the final dataframe containing these 3 things,
-        # seperately
-        add_row = data.frame(param = param,
-                             value = value,
-                             comment = comment)
-
-        par_df <- rbind(par_df, add_row)
-        # routine for if its a table
-      } else{
-        header = line  %>%  str_split("!") %>% map(1)  %>% str_trim() %>% str_split("\\s+") %>%  unlist()
-        width = header %>% length()
-
-        # finds the next NON NUMERIC VALUE
-        swap_table_end = swp[i:length(swp)] %>% grepl(x = ., " End of table") %>% which() %>% min()
-
-        # super messy!
-        swap_table <- swp[i:(i + swap_table_end - 2)]
-        swap_table[1] <-
-          header %>% paste(collapse = " ") %>% str_trim()
-        swap_table2 <-
-          swap_table %>% str_trim() %>% str_split("\\s+")
-        base <- swap_table2 %>% map(1) %>% unlist()
-        for (j in c(2:width)) {
-          col <-  swap_table2 %>% map(j) %>% unlist()
-          base <- cbind(base, col)
-        }
-        swap_table3 <- base %>% as.data.frame()
-
-        colnames(swap_table3) <- header
-        swap_table3 <- swap_table3[-1, ]
-        swap_table3 <- swap_table3 %>% tibble()
-
-        table_name <- header %>% paste(collapse = "_")
-        write.table(
-          x = swap_table3,
-          file = paste0(table_path, "/", table_name, ".csv"),
-          sep = ",",
-          row.names = F,
-          col.names = T,
-          quote = F
-        )
-
-        # skip the next rows because you already read them in
-        new_i = i + swap_table_end
       }
-    }
+
+      # routine for if its a table
+      if (is_table) {
+        if (special_case) {
+          header = line %>% str_trim()
+          width = 1
+          swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
+          swap_table <- swp[i:(i + swap_table_end-1)]
+
+          table_name = header %>% str_remove("=") %>% str_trim()
+          write.table(
+            x = swap_table,
+            file = paste0(table_path, "/", table_name, ".csv"),
+            sep = ",",
+            row.names = F,
+            col.names = F,
+            quote = F
+          )
+          new_i = i + swap_table_end
+        } else{ # START of table, not special
+          header = line  %>%  str_split("!") %>% map(1)  %>% str_trim() %>% str_split("\\s+") %>%  unlist()
+          width = header %>% length()
+
+          swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
+          swap_table <- swp[i:(i + swap_table_end-1)]
+
+          swap_table[1] <-
+            header %>% paste(collapse = " ") %>% str_trim()
+
+          swap_table2 <- swap_table %>% str_trim() %>% str_split("\\s+")
+
+          base <- swap_table2 %>% map(1) %>% unlist()
+          for (j in c(2:width)) {
+            col <-  swap_table2 %>% map(j) %>% unlist()
+            base <- cbind(base, col)
+          }
+          swap_table3 <- base %>% as.data.frame()
+
+          colnames(swap_table3) <- header
+          swap_table3 <- swap_table3[-1, ]
+          swap_table3 <- swap_table3 %>% tibble()
+
+          table_name <- header %>% paste(collapse = "_")
+          write.table(
+            x = swap_table3,
+            file = paste0(table_path, "/", table_name, ".csv"),
+            sep = ",",
+            row.names = F,
+            col.names = T,
+            quote = F
+          )
+
+          # skip the next rows because you already read them in
+          new_i = i + swap_table_end
+        } # END of table not special
+      } # END of table
+    } # END of for loop
 
     if (verbose) {
       cat("...tables have been saved in .csv format here:\n",
@@ -241,7 +251,7 @@ write_swap_file <-
 
     removed <- file.remove(outpath) %>% suppressWarnings()
 
-    if(removed & verbose){
+    if (removed & verbose) {
       cat("...overwriting file:\n", outpath, "\n")
     }
 
@@ -254,42 +264,7 @@ write_swap_file <-
       append = F
     )
 
-    # only do this if they exist...
-    if( parameters$value[which(parameters$param=="OUTDATINT")] %>% length() > 0){
-    # need to remove outdat and outdatint, because for parsings sake they need
-    # to be written on a new line
-    outdatint <- parameters$value[which(parameters$param=="OUTDATINT")]
-    outdatint <- outdatint %>% str_split(" ") %>% unlist()
-    outdat <- parameters$value[which(parameters$param=="OUTDAT")]
-    outdat <- outdat %>% str_split(" ") %>% unlist()
-    odlist = c("OUTDATINT =")
-    for (variable in outdatint) {
-      odlist <- append(odlist, variable)
-    }
-    odlist <- append(odlist, "* End of table")
-    odlist <- append(odlist, "OUTDAT = ")
-    for (variable in outdat) {
-      odlist <- append(odlist, variable)
-    }
-    odlist <- append(odlist, "* End of table")
-    special_case <- odlist %>% as.data.frame()
-    # remove outdat and outdat int from dataframe
-    param_clean = parameters[which(parameters$param %in% c("OUTDATINT", "OUTDAT") == FALSE),]
-    # write the special cases:
-    write.table(
-      special_case,
-      file = outpath,
-      quote = F,
-      row.names = F,
-      col.names = F,
-      append = T
-    )
-    }else{
-      param_clean <- parameters
-    }
-
-    # now back to normal buisness
-    par_write = paste(param_clean$param, "=", param_clean$value)
+    par_write = paste(parameters$param, "=", parameters$value)
     write.table(
       par_write,
       file = outpath,
@@ -303,7 +278,10 @@ write_swap_file <-
     for (table in tables) {
       read <- read.csv(table, colClasses = "character") %>% tibble()
 
-      read %>% tibble()
+
+      # bandaid fix for the special cases
+      colnames(read) <- colnames(read) %>% str_replace("\\..", " = ")
+
       write.table(
         read,
         file = outpath,
@@ -352,54 +330,55 @@ write_swap_file <-
 #'
 #' @export
 #'
-set_swap_output <- function(parameters, variables, depths, verbose = F){
+set_swap_output <-
+  function(parameters, variables, depths, verbose = F) {
+    # template:
+    # INLIST_CSV = 'rain,snow,drainage,DSTOR,TEMP[-15,-40,-70],WC[-15,-40,-70],H[-10,-20,-30]'
 
-  # template:
- # INLIST_CSV = 'rain,snow,drainage,DSTOR,TEMP[-15,-40,-70],WC[-15,-40,-70],H[-10,-20,-30]'
+    variables <- variables %>% toupper()
+    # todo need to expand these... or something
+    depthwise <- c("TEMP", "WC", "H")
+    nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
 
-  variables <- variables %>% toupper()
-  # todo need to expand these... or something
-  depthwise <- c("TEMP", "WC", "H")
-  nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
-
-  string <- "["
-  for (d in depths) {
-    if(d == last(depths)){
-      string <- glue("{string}-{d}]")
-
-    }else{
-      string <- glue("{string}-{d},")
-    }
-  }
-
-  # rain must always be present! (for the soft calibration plot)
-  outstring <- "'RAIN,"
-  for (var in variables) {
-    if (var %in% depthwise) {
-      if (var == last(variables)) {
-        add_var <- glue("{var}{string}'")
+    string <- "["
+    for (d in depths) {
+      if (d == last(depths)) {
+        string <- glue("{string}-{d}]")
 
       } else{
-        add_var <- glue("{var}{string},")
+        string <- glue("{string}-{d},")
       }
-    }else if(var %in% nodepth){
-      if(var == last(variables)){
-        add_var <- glue("{var}'")
-      }else{
-        add_var <- glue("{var},")
-      }
-    }else{
-      stop(glue("variable {var} not supported yet"))
     }
 
-    outstring <- glue("{outstring}{add_var}")
+    # rain must always be present! (for the soft calibration plot)
+    outstring <- "'RAIN,"
+    for (var in variables) {
+      if (var %in% depthwise) {
+        if (var == last(variables)) {
+          add_var <- glue("{var}{string}'")
+
+        } else{
+          add_var <- glue("{var}{string},")
+        }
+      } else if (var %in% nodepth) {
+        if (var == last(variables)) {
+          add_var <- glue("{var}'")
+        } else{
+          add_var <- glue("{var},")
+        }
+      } else{
+        stop(glue("variable {var} not supported yet"))
+      }
+
+      outstring <- glue("{outstring}{add_var}")
+    }
+
+    parameters <-
+      change_swap_par(parameters, "INLIST_CSV", outstring)
+
+    if (verbose) {
+      cat(glue("...updating parameter:\n INLIST_CSV = {outstring} \n"))
+    }
+    return(parameters)
+
   }
-
-  parameters <- change_swap_par(parameters, "INLIST_CSV", outstring)
-
-  if(verbose){
-    cat(glue("...updating parameter:\n INLIST_CSV = {outstring} \n"))
-  }
-  return(parameters)
-
-}
