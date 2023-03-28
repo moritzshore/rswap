@@ -25,7 +25,7 @@ build_rswap_directory <- function(project_path){
 
 
   # create the hidden temp directory
-  dir.create(temp_directory)
+  dir.create(temp_directory, showWarnings = F)
 
 
   # remove any files in directory /rswap_saved/ ... this is prone to failure, should make more
