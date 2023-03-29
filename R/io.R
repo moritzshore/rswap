@@ -118,7 +118,6 @@ update_swp_paths <-
     # TODO this could be revamped
     swap_exe_name = swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
-
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
 
@@ -565,3 +564,73 @@ melt_all_runs <-
 
     return(full_df)
   }
+
+#' Initialize rswap
+#'
+#' This function is an optional starting point when using rswap for the first
+#' time. What it does is copy in the example swap setup "hupselbrook" into a
+#' sample project directory "rswap_init" within the same working directory as
+#' your swap.exe executable (hence the need to pass the path to the .exe).
+#'
+#' The sample directory contains the SWAP input files, as well as a template for
+#' observed values. This provides a good starting point for setting up your own
+#' rswap project. Just changes the name of the directory, fill in the observed
+#' file and start modifying parameters.
+#'
+#' If this function does not succesfully complete, then there is an underlying
+#' issue you need to fix before continuing to use rswap.
+#'
+#' @param swap_exe Path to swap.exe in string form
+#'
+#' @importFrom stringr str_split str_remove
+#' @importFrom dplyr %>%
+#' @export
+rswap_init <- function(swap_exe){
+  pkg_path <- system.file(package = "rswap")
+  extdata <- paste0(pkg_path, '/extdata')
+
+  exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
+  wd <- swap_exe %>% str_remove(exe_name)
+
+  example_path <- paste0(wd, "rswap_init")
+  unlink(example_path, recursive = T)
+  dir.create(example_path, showWarnings = F)
+
+  from_path = list.files(extdata, full.names = T, recursive = T)
+  to_path <- from_path %>% str_remove(extdata)
+  to_path <- to_path %>% str_remove("/hupselbrook")
+  file.copy(from = from_path, to =paste0(example_path, to_path))
+
+  status = run_swap(example_path, verbose = T, autoset_output = T)
+
+  if(status == 100){
+    cat("\nrswap ran successfully!\n")
+  }else{
+    cat("\nOh no! something went wrong with the running rswap!\n")
+    cat("\nERROR CODE:", status, "\n")
+
+  }
+
+  data<-load_observed(example_path, verbose = T)
+  mod <- rswap::read_swap_output(example_path)
+
+  if(data[[1]] %>% is.data.frame()){
+    cat("\nobserved data loading... success!\n")
+  }else{
+    stop("something went wrong loading the observed data")
+  }
+
+  if(mod[[1]] %>%  is.data.frame()){
+    cat("\nloading SWAP output... success!\n")
+  }else{
+    stop("something went wrong loading the modelled data")
+  }
+
+  variable <- data$observed_variables[1:3]
+  depth <- get_depths(data = data$data)[1]
+  soft_calibration_plot(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
+  cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
+
+  cat("\nrswap initilization complete, you can find the project folder here:\n")
+  cat(example_path)
+}
