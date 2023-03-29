@@ -213,9 +213,8 @@ The aformentioned functions rely on more basic general functions which, while ar
 - give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
 - move change_swap_parameter() from io.R to rw_parameters.R
 - add a "filename" par to write_swap_output()
-- wrapper function to `combine parse_swp_file()` and `change_swap_par()`
+- wrapper function to combine `parse_swp_file()` and `change_swap_par()`
 - add NA support to the over-under plot.
-- better * end of table recognition
 - Expand and improve documentation
 - plot_stat sorting follows stat property
 - improve r/w of tables
