@@ -121,6 +121,30 @@ update_swp_paths <-
 
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
+
+    if ("SWCSV" %in% parameters$param) {
+      parameters = change_swap_par(parameters, "SWCSV", "1")
+    } else{
+      rbind(parameters,
+            data.frame(
+              param = "SWCSV",
+              value = "1",
+              comment = glue("added by rswap {Sys.time()}")
+            ))
+    }
+
+
+    if ("SWCSV_TZ" %in% parameters$param) {
+      parameters = change_swap_par(parameters, "SWCSV_TZ", "1")
+    } else{
+      rbind(parameters,
+            data.frame(
+              param = "SWCSV_TZ",
+              value = "1",
+              comment = glue("added by rswap {Sys.time()}")
+            ))
+    }
+
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
 
   for (par in update_par) {
