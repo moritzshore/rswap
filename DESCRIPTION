@@ -1,17 +1,19 @@
 Type: Package
 Package: rswap
-Title: R interface for the SWAP model
+Title: an R interface for the SWAP model PRE-RELEASE
 Version: 0.1.0
 Date: 2023-03-30
-Author: c(person("Moritz", "Shore",
-             email = "moritz.shore@nibio.no",
-             role = c("aut", "cre")))
+Authors@R: person("Moritz", "Shore",
+                email = "moritz.shore@nibio.no",
+                role = c("aut", "cre"),
+                comment = c(ORCID = '0000-0002-7586-997X'))
 Maintainer: Moritz Shore <moritz.shore@nibio.no>
 Description: R-based interface for calibrating the SWAP model (among other things)
-License: GPL 3
+License: GPL-3
 URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 4.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

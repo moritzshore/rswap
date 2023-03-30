@@ -229,6 +229,16 @@ If you run into any bugs or problems, please open an issue on the repository pag
 The same goes for if you have any suggestions for improvement.
 If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)
 
+Any OPTAIN case-studies which use `rswap` are required to bake Moritz Shore a cake using a local reciepe from the case-study country.  
+
+## Acknowledgements
+
+This package was developed for the [OPTAIN](https://optain.eu) project.
+
+<p align="center">
+<img src="man/figures/support_banner.png" width=60% height=60%>
+</p>
+
 ## References
 
 [1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000.
