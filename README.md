@@ -1,4 +1,4 @@
-# rswap ⚠️unreleased!⚠️<img src="R/figures/rswap.png" align="right" width=20% height=20% />
+# rswap ⚠️unreleased!⚠️<img src="man/figures/rswap.png" align="right" width=20% height=20% />
 
 rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
@@ -104,7 +104,7 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 
 
 <p align="center">
-<img src="R/figures/overunder.png" width=60% height=60%>
+<img src="man/figures/overunder.png" width=60% height=60%>
 </p>
 
 >(this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
@@ -117,7 +117,7 @@ This function can be passed up to 3 variables, and will display them interactive
 
 
 <p align="center">
-<img src="R/figures/softcalplot.png" width=60% height=60%>
+<img src="man/figures/softcalplot.png" width=60% height=60%>
 </p>
 
 ## Model performance
@@ -148,7 +148,7 @@ comparative_plot(project_path, variable = "WC", depth = 15)
 ```
 
 <p align="center">
-<img src="R/figures/compareplot.png" width=60% height=60%>
+<img src="man/figures/compareplot.png" width=60% height=60%>
 </p>
 
 Once again, this function is quite flexible, and can be passed any available `variable` or `depth`
@@ -159,7 +159,7 @@ You can compare the performance of your various model runs by using the `plot_st
 plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 ```
 <p align="center">
-<img src="R/figures/stat_plot1.png" width=60% height=60%>
+<img src="man/figures/stat_plot1.png" width=60% height=60%>
 </p>
 
 This plot is equally flexible, and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
