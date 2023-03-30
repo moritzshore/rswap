@@ -592,14 +592,13 @@ rswap_init <- function(swap_exe){
   exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
   wd <- swap_exe %>% str_remove(exe_name)
 
-  example_path <- paste0(wd, "rswap_init")
+  example_path <- paste0(wd, "hupselbrook")
   unlink(example_path, recursive = T)
   dir.create(example_path, showWarnings = F)
 
-  from_path = list.files(extdata, full.names = T, recursive = T)
+  from_path = list.files(extdata, full.names = T)
   to_path <- from_path %>% str_remove(extdata)
-  to_path <- to_path %>% str_remove("/hupselbrook")
-  file.copy(from = from_path, to =paste0(example_path, to_path))
+  file.copy(from = from_path, to = paste0(example_path, to_path))
 
   status = run_swap(example_path, verbose = T, autoset_output = T)
 
@@ -613,12 +612,6 @@ rswap_init <- function(swap_exe){
 
   data<-load_observed(example_path, verbose = T)
   mod <- rswap::read_swap_output(example_path)
-
-  if(data[[1]] %>% is.data.frame()){
-    cat("\nobserved data loading... success!\n")
-  }else{
-    stop("something went wrong loading the observed data")
-  }
 
   if(mod[[1]] %>%  is.data.frame()){
     cat("\nloading SWAP output... success!\n")
