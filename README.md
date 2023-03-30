@@ -239,6 +239,7 @@ This package was developed for the [OPTAIN](https://optain.eu) project.
 
 [1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000.
 
+## 
 <p align="center">
 <img src="man/figures/support_banner.png" width=60% height=60%>
 </p>
