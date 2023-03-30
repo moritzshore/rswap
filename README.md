@@ -241,5 +241,5 @@ This package was developed for the [OPTAIN](https://optain.eu) project and has r
 
 ## 
 <p align="center">
-<img src="man/figures/support_banner.png" width=60% height=60%>
+<img src="man/figures/support_banner.png" width=100% height=100%>
 </p>
