@@ -1,6 +1,6 @@
 # rswap ⚠️unreleased!⚠️<img src="R/figures/rswap.png" align="right" width=20% height=20% />
 
-rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ## How to install?
 
@@ -14,8 +14,13 @@ remotes::install_github("moritzshore/rswap")
 
 library(rswap)
 ```
-
+A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished succesfully, you know `rswap` is working properly. 
+```
+rswap_init(swapexe = "C:/path/to/swap.exe")
+```
 for help on any specific function, use ```> ?functionname```
+
+**⚠️IMPORTANT⚠️** Its important to know that rswap never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well, and will be overwritten over time. Remeber to save your results if you would like to keep them, and remeber that anything in the `project_path/rswap` directory is temporary!
 
 ## How to run SWAP?
 The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located (`project_path`). The `swap.exe` must be located in the parent directory of `project_path`!
@@ -34,7 +39,7 @@ To read the output of your executed SWAP run, you can use the following command
 ```
 modelled_data <- read_swap_output(project_path)
 ```
-`read_swap_output()` returns two dataframes, `daily_output` which contains depthwise values of various variables:
+`read_swap_output()` returns two dataframes, `daily_output` which contains depthwise values of various variables.
 ```
 > modelled_data$daily_output
 # A tibble: 17,520 x 5
@@ -46,7 +51,7 @@ modelled_data <- read_swap_output(project_path)
 # i 17,517 more rows
 # i Use `print(n = ...)` to see more rows
 ```
-The other is `custom_depth` which contains custom variables at custom depths either explictly altered by the user, or automatically parsed by the `autoset_output` flag of `run_swap()`. This dataframe is used widely throughout the package.
+The other is `custom_depth` which contains custom variables at custom depths either explictly altered by the user, or automatically parsed by the `autoset_output` flag of `run_swap()`. This dataframe is used widely throughout the package. (more/all results will be added over time) 
 
 ```
 > modelled_data$custom_depth
@@ -60,7 +65,7 @@ The other is `custom_depth` which contains custom variables at custom depths eit
 # i Use `print(n = ...)` to see more rows
 ```
 
-As rswap heavily revolves around calibration, observed data is of high importance. when running either `build_rswap_directory()` or `run_swap()`, a template observed file will be copied into the `project_directory` (this will be done by a dedicated `init()` function in the future). It is up to the user to fill this excel sheet with the appropriate data and column names. Documentation for how to do this will be found in the excel sheet. 
+As rswap heavily revolves around calibration, observed data is of high importance. When running either `build_rswap_directory()` or `run_swap()`, a template observed file will be copied into the `project_directory` (if not already existing). It is up to the user to fill this excel sheet with the appropriate data and column names. Documentation for how to do this will be found in the excel sheet. (I will switch to .csv format soon)
 
 To load your observed file, you can use the following command:
 ```
@@ -181,7 +186,7 @@ And to run this modified SWAP main file, you would of course use `run_swap()` wi
 
 ## Miscellaneous functions
 
-The aformentioned functions rely on more basic general functions which, while are desinged for internal use, can possibly also be of assitance to the end user. These are listed below. 
+The aformentioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assitance to the end user. These are listed below. 
 
 >`NSE() # statistical performance calculation`
 
@@ -204,22 +209,19 @@ The aformentioned functions rely on more basic general functions which, while ar
 ## Roadmap
 - Linux Support
 - Sensitivity Analysis
-- autocalibration / PEST support
+- Autocalibration / PEST support
 - Parsing support for all swap files, not just the main file.
-- add an init() function to create the observed_template file, among other things
-- add documentation in the excel sheet (and switch to supporting .csv instead!)
-- add support for multiple variables at differing depths for `autoset_output`
-- fix the x-axis on the over/under plot.
-- give all exported rswap functions a consitent naming scheme (`verb_swap_noun()`)
-- move change_swap_parameter() from io.R to rw_parameters.R
-- add a "filename" par to write_swap_output()
-- wrapper function to combine `parse_swp_file()` and `change_swap_par()`
-- add NA support to the over-under plot.
+- Add documentation in the excel sheet (and switch to supporting .csv instead!)
+- Add support for multiple variables at differing depths for `autoset_output`
+- Fix the x-axis on the over/under plot, and support missing values
+- Give all exported rswap functions a consistent naming scheme (`verb_swap_noun()`)
+- Move change_swap_parameter() from io.R to rw_parameters.R
+- Add a "filename" par to write_swap_output()
+- Wrapper function to combine `parse_swp_file()` and `change_swap_par()` (and `write_swap_file()`?)
 - Expand and improve documentation
-- plot_stat sorting follows stat property
-- improve r/w of tables
-- add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
-
+- plot_stat sorting to follow stat property
+- Improve r/w of tables
+- Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
 
 ## Support and Contributing
 
