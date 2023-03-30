@@ -233,7 +233,7 @@ Any OPTAIN case-studies which use `rswap` are required to bake Moritz Shore a ca
 
 ## Acknowledgements
 
-This package was developed for the [OPTAIN](https://optain.eu) project.
+This package was developed for the [OPTAIN](https://optain.eu) project and has received funding from the European Union's Horizon 2020 research and innovation program under grant agreement No. 862756.
 
 ## References
 
