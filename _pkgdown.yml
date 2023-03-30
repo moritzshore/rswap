@@ -1,9 +1,0 @@
-url: https://moritzshore.github.io/rswap/
-template:
-  bootstrap: 5
-            
-development:
-  mode: release
-   
-authors:
-  Moritz Shore:
