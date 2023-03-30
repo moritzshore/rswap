@@ -1,99 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://moritzshore.github.io/rswap/404.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://moritzshore.github.io/rswap/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://moritzshore.github.io/rswap/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://moritzshore.github.io/rswap/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/reference/build_rswap_directory.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/build_rswap_directory.html</loc>
   </url>
   <url>
-    <loc>/reference/change_swap_par.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/change_swap_par.html</loc>
   </url>
   <url>
-    <loc>/reference/clean_swp_file.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/clean_swp_file.html</loc>
   </url>
   <url>
-    <loc>/reference/comparative_plot.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/comparative_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/filter_swap_data.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/filter_swap_data.html</loc>
   </url>
   <url>
-    <loc>/reference/get_depths.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/get_depths.html</loc>
   </url>
   <url>
-    <loc>/reference/get_performance.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/get_performance.html</loc>
   </url>
   <url>
-    <loc>/reference/get_swap_units.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/get_swap_units.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/load_observed.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/load_observed.html</loc>
   </url>
   <url>
-    <loc>/reference/match_mod_obs.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/match_mod_obs.html</loc>
   </url>
   <url>
-    <loc>/reference/melt_all_runs.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/melt_all_runs.html</loc>
   </url>
   <url>
-    <loc>/reference/NSE.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/NSE.html</loc>
   </url>
   <url>
-    <loc>/reference/parse_swp_file.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/parse_swp_file.html</loc>
   </url>
   <url>
-    <loc>/reference/PBIAS.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/PBIAS.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_over_under.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/plot_over_under.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_statistics.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/plot_statistics.html</loc>
   </url>
   <url>
-    <loc>/reference/read_swap_output.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/read_swap_output.html</loc>
   </url>
   <url>
-    <loc>/reference/ribbonize.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/ribbonize.html</loc>
   </url>
   <url>
-    <loc>/reference/RMSE.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/RMSE.html</loc>
   </url>
   <url>
-    <loc>/reference/RSR.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/RSR.html</loc>
   </url>
   <url>
-    <loc>/reference/rswap_init.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/rswap_init.html</loc>
   </url>
   <url>
-    <loc>/reference/run_swap.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/run_swap.html</loc>
   </url>
   <url>
-    <loc>/reference/save_run.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/save_run.html</loc>
   </url>
   <url>
-    <loc>/reference/set_swap_output.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/set_swap_output.html</loc>
   </url>
   <url>
-    <loc>/reference/soft_calibration_plot.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/soft_calibration_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/update_swp_paths.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/update_swp_paths.html</loc>
   </url>
   <url>
-    <loc>/reference/write_swap_file.html</loc>
+    <loc>https://moritzshore.github.io/rswap/reference/write_swap_file.html</loc>
   </url>
 </urlset>
