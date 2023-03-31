@@ -169,7 +169,7 @@ This plot is equally flexible, and can be passed any `variable` and any amount o
 
 ## Modification of Parameters and SWAP input files.
 
-changing a parameter in rswap can be done using the `parse_swap_file()` function. 
+changing a parameter in rswap can be done using the `parse_swp_file()` function. 
 ```
 parsed <- parse_swp_file(project_path, swap_file)
 ```
