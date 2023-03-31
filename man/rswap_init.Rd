@@ -7,7 +7,7 @@
 rswap_init(swap_exe)
 }
 \arguments{
-\item{swap_exe}{Path to swap.exe in string form}
+\item{swap_exe}{path to swap.exe (string)}
 }
 \description{
 This function is an optional starting point when using rswap for the first
@@ -21,6 +21,6 @@ observed values. This provides a good starting point for setting up your own
 rswap project. Just changes the name of the directory, fill in the observed
 file and start modifying parameters.
 
-If this function does not succesfully complete, then there is an underlying
+If this function does not successfully complete, then there is an underlying
 issue you need to fix before continuing to use rswap.
 }

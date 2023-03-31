@@ -628,15 +628,17 @@ melt_all_runs <-
 #' rswap project. Just changes the name of the directory, fill in the observed
 #' file and start modifying parameters.
 #'
-#' If this function does not succesfully complete, then there is an underlying
+#' If this function does not successfully complete, then there is an underlying
 #' issue you need to fix before continuing to use rswap.
 #'
-#' @param swap_exe Path to swap.exe in string form
+#' @param swap_exe path to swap.exe (string)
 #'
 #' @importFrom stringr str_split str_remove
 #' @importFrom dplyr %>%
 #' @export
+#'
 rswap_init <- function(swap_exe){
+
   pkg_path <- system.file(package = "rswap")
   extdata <- paste0(pkg_path, '/extdata')
 
@@ -658,13 +660,12 @@ rswap_init <- function(swap_exe){
   }else{
     cat("\nOh no! something went wrong with the running rswap!\n")
     cat("\nERROR CODE:", status, "\n")
-
   }
 
-  data<-load_observed(example_path, verbose = T)
+  data <- load_observed(example_path, verbose = T)
   mod <- rswap::read_swap_output(example_path)
 
-  if(mod[[1]] %>%  is.data.frame()){
+  if(mod[[1]] %>% is.data.frame()){
     cat("\nloading SWAP output... success!\n")
   }else{
     stop("something went wrong loading the modelled data")
@@ -674,7 +675,6 @@ rswap_init <- function(swap_exe){
   depth <- get_depths(data = data$data)[1]
   soft_calibration_plot(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
-
   cat("\nrswap initilization complete, you can find the project folder here:\n")
   cat(example_path)
 }
