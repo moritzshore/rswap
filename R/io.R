@@ -434,13 +434,16 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
   perf_mod %>% return()
 }
 
-#' get_depth
+#' Get Depths
 #'
-#' extract numeric depth values for given observed variable
-#' @param data **REQ** (list) as given by load_observed()
-#' @param variable **OPT** (string) variable for which depth levels should be given.
-#' If no variable is given, all depths will be returned
-#' @returns numeric vector of depths
+#' Extracts the numeric depth values found in the observed data, as loaded by
+#' `load_observed()`. Can be filtered by `variable`.
+#'
+#' @param data dataframe loaded by `load_observed()`
+#' @param variable only returns depths of the given variable when passed. leave blank for all.
+#'
+#' @returns Returns a numeric vector of depths
+#'
 #' @export
 get_depths <- function(data, variable = NULL) {
 
@@ -449,7 +452,6 @@ get_depths <- function(data, variable = NULL) {
 
   char_index <-
     splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
-
 
   vars <- splitted[char_index]
 
@@ -463,12 +465,12 @@ get_depths <- function(data, variable = NULL) {
 
   depths <- colnames(data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
   depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
-
   depths <- depths %>% unique()
 
   if(length(depths)<1){
     depths = NULL
   }
+D
   return(depths)
 }
 

@@ -2,19 +2,19 @@
 % Please edit documentation in R/io.R
 \name{get_depths}
 \alias{get_depths}
-\title{get_depth}
+\title{Get Depths}
 \usage{
 get_depths(data, variable = NULL)
 }
 \arguments{
-\item{data}{\strong{REQ} (list) as given by load_observed()}
+\item{data}{dataframe loaded by \code{load_observed()}}
 
-\item{variable}{\strong{OPT} (string) variable for which depth levels should be given.
-If no variable is given, all depths will be returned}
+\item{variable}{only returns depths of the given variable when passed. leave blank for all.}
 }
 \value{
-numeric vector of depths
+Returns a numeric vector of depths
 }
 \description{
-extract numeric depth values for given observed variable
+Extracts the numeric depth values found in the observed data, as loaded by
+\code{load_observed()}. Can be filtered by \code{variable}.
 }
