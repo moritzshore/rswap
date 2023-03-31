@@ -2,16 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{get_swap_units}
 \alias{get_swap_units}
-\title{get swap units}
+\title{Get SWAP Units}
 \usage{
 get_swap_units(variable)
 }
 \arguments{
-\item{variable}{(REQ) (string) ("WC", "H","TEMP","DRAINAGE","RAIN")}
+\item{variable}{SWAP variable (string)}
 }
 \value{
-unit in string from
+Returns unit in string from
 }
 \description{
-returns default swap units for the given variable
+returns default swap units for the given variable (Work in progress). Will
+possibly also include a database on what variables are depth-wise.
 }

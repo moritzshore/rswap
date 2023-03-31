@@ -1,11 +1,10 @@
-# utils
-
-#' get swap units
+#' Get SWAP Units
 #'
-#' returns default swap units for the given variable
+#' returns default swap units for the given variable (Work in progress). Will
+#' possibly also include a database on what variables are depth-wise.
 #'
-#' @param variable (REQ) (string) ("WC", "H","TEMP","DRAINAGE","RAIN")
-#' @returns unit in string from
+#' @param variable SWAP variable (string)
+#' @returns Returns unit in string from
 #' @importFrom tibble %>%
 #' @export
 get_swap_units <- function(variable){
