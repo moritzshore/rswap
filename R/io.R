@@ -180,42 +180,53 @@ update_swp_paths <- function(project_path, swap_exe,
     return(parameters)
   }
 
-#' Save a swap run
+#' Save a SWAP run
 #'
-#' @param project_path String, path to the project directory.
-#' @param run_name name of run to be saved. default is "rswap_{time,date}"
-#' @param verbose logical
-#'#'
+#' If you would like to keep the results your last SWAP model run, and/or the
+#' setup itself, you should use this function. You need to pass it the
+#' `project_path` of the last run project. To give your saved setup a name, pass
+#' one via the `run_name` parameter.
+#'
+#' Once a run has been saved, it can be compared to other saved runs, and/or the
+#' next run you perform. This can be done with functions such as
+#' `comparative_plot()` or `plot_statistics()`
+#'
+#' @param project_path path to the project directory (string)
+#' @param run_name name of run to be saved. default is "rswap_{time,date} (string)"
+#' @param verbose print status? (flag)
+#'
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_replace_all
+#'
 #' @export
 #'
 save_run <- function(project_path, run_name = NULL, verbose = F){
+  # TODO change the name of this function to save_swap_run()
 
+  # if the run name is not passed, then assign a run name based on the current
+  # time and date.
   if(run_name %>% is.null()){
     tad = Sys.time() %>%  str_replace_all(":", "_") %>% str_replace_all(" ","at")
     run_name = glue("rswap_{tad}")
   }
 
+  # create the save folder of ALL the saves, if not already present.
   save_location = glue("{project_path}/rswap_saved")
-
-
-  # create the save folder of ALL the saves
   dir.create(save_location, showWarnings = F)
 
   # create the save folder for the individual run
   to_path = glue("{save_location}/{run_name}")
+  # leave warnings on, to notify user that they are overwriting.
+  # TODO: include a safety for overwriting folders here?
   dir.create(to_path, showWarnings = T)
   dir.create(glue("{to_path}/tables/"), showWarnings = F)
 
-
+  # copy over the files.
   from_path = glue("{project_path}/rswap/")
   from_copy = list.files(from_path, full.names = T, include.dirs = F, recursive = F)
-
   to_files = list.files(from_path, full.names = F, include.dirs = F, recursive = F)
   to_copy = to_path
-
   status = file.copy(from_copy, to_copy, overwrite = T, recursive = T, copy.mode = T, copy.date = T)
 
   if (verbose) {
@@ -228,6 +239,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
     }
   }
   #TODO generate a preview plot of the model run in the directory?
+  #TODO return path of saved run?
 }
 
 #' Load observed data

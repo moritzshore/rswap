@@ -2,18 +2,25 @@
 % Please edit documentation in R/io.R
 \name{save_run}
 \alias{save_run}
-\title{Save a swap run}
+\title{Save a SWAP run}
 \usage{
 save_run(project_path, run_name = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{String, path to the project directory.}
+\item{project_path}{path to the project directory (string)}
 
-\item{run_name}{name of run to be saved. default is "rswap_{time,date}"}
+\item{run_name}{name of run to be saved. default is "rswap_{time,date} (string)"}
 
-\item{verbose}{logical
-#'}
+\item{verbose}{print status? (flag)}
 }
 \description{
-Save a swap run
+If you would like to keep the results your last SWAP model run, and/or the
+setup itself, you should use this function. You need to pass it the
+\code{project_path} of the last run project. To give your saved setup a name, pass
+one via the \code{run_name} parameter.
+}
+\details{
+Once a run has been saved, it can be compared to other saved runs, and/or the
+next run you perform. This can be done with functions such as
+\code{comparative_plot()} or \code{plot_statistics()}
 }
