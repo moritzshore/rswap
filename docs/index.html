@@ -87,7 +87,19 @@
 </h2>
 <p>The SWAP model can be run using the <code><a href="reference/run_swap.html">run_swap()</a></code> function. It needs to know where your model setup is located (<code>project_path</code>). The <code>swap.exe</code> must be located in the parent directory of <code>project_path</code>!</p>
 <pre><code><span><span class="fu"><a href="reference/run_swap.html">run_swap</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre>
-<p><code><a href="reference/run_swap.html">run_swap()</a></code> can be further customized with the following parameters: - <code>swap_file</code> can be set to a custom name for your SWAP main file (*.swp) - <code>autoset_output</code> can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later) - <code>timeout</code> sets the max allowed runtime of SWAP ## How to access the data?</p>
+<p><code><a href="reference/run_swap.html">run_swap()</a></code> can be further customized with the following parameters:</p>
+<ul>
+<li>
+<code>swap_file</code> can be set to a custom name for your SWAP main file (*.swp)</li>
+<li>
+<code>autoset_output</code> can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later)</li>
+<li>
+<code>timeout</code> sets the max allowed runtime of SWAP</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="how-to-access-the-data">How to access the data?<a class="anchor" aria-label="anchor" href="#how-to-access-the-data"></a>
+</h2>
 <p>To read the output of your executed SWAP run, you can use the following command</p>
 <pre><code><span><span class="va">modelled_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_swap_output.html">read_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre>
 <p><code><a href="reference/read_swap_output.html">read_swap_output()</a></code> returns two dataframes, <code>daily_output</code> which contains depthwise values of various variables.</p>
