@@ -2,21 +2,32 @@
 % Please edit documentation in R/io.R
 \name{change_swap_par}
 \alias{change_swap_par}
-\title{Changes a SWAP parameter}
+\title{Change SWAP Parameter}
 \usage{
 change_swap_par(param, name, value)
 }
 \arguments{
-\item{param}{dataframe consisting of the parameter values}
+\item{param}{Parameter set (dataframe)}
 
-\item{name}{name of the parameter to change}
+\item{name}{name of the parameter to change (string)}
 
-\item{value}{that the parameter should take on}
+\item{value}{value the parameter should take on (string)}
 }
 \value{
-modified parameter dataframe
+This function returns the same dataframe it was passed, with the
+parameter value altered.
 }
 \description{
-passed a parameter dataframe, changes the right parameter, and returns the
-dataframe
+This function changes a SWAP parameter. It is passed a parameter dataframe
+as parsed by \code{parse_swap_file()} as well as the name of the parameter which
+should be modified, along with its value.
+}
+\details{
+Important: this function only works for single parameters. Any values stored
+as "tables" in the SWAP input file will need to be modified in another way
+(WIP)
+
+Note: the value of the parameter should be passed as a string in the correct
+format (ie. correct decimal place), as SWAP/FORTRAN is very particular about
+this
 }

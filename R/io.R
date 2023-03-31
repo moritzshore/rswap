@@ -67,16 +67,26 @@ build_rswap_directory <- function(project_path){
   return(temp_directory)
 }
 
-#' Changes a SWAP parameter
+#' Change SWAP Parameter
 #'
-#' passed a parameter dataframe, changes the right parameter, and returns the
-#' dataframe
+#' This function changes a SWAP parameter. It is passed a parameter dataframe
+#' as parsed by `parse_swap_file()` as well as the name of the parameter which
+#' should be modified, along with its value.
 #'
-#' @param param dataframe consisting of the parameter values
-#' @param name name of the parameter to change
-#' @param value that the parameter should take on
+#' Important: this function only works for single parameters. Any values stored
+#' as "tables" in the SWAP input file will need to be modified in another way
+#' (WIP)
 #'
-#' @returns modified parameter dataframe
+#' Note: the value of the parameter should be passed as a string in the correct
+#' format (ie. correct decimal place), as SWAP/FORTRAN is very particular about
+#' this
+#'
+#' @param param Parameter set (dataframe)
+#' @param name name of the parameter to change (string)
+#' @param value value the parameter should take on (string)
+#'
+#' @returns This function returns the same dataframe it was passed, with the
+#' parameter value altered.
 #'
 #' @importFrom glue glue
 #'
