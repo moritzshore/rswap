@@ -2,24 +2,20 @@
 % Please edit documentation in R/comparative_plot.R
 \name{comparative_plot}
 \alias{comparative_plot}
-\title{Comparative Plot
-this graph shows the current model run compared to the previous saved
-runs. It highlights the differences between changed parameters etc.}
+\title{Comparative Plot}
 \usage{
 comparative_plot(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{(REQ) (string) path to project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{variable}{(REQ) (string) variable to compare}
+\item{variable}{variable to show (string)}
 
-\item{depth}{(OPT) (numeric) depth of variable. leave blank if variable has
-no depth}
+\item{depth}{depth of variable, if it has a depth. Otherwise leave blank (string)}
 
-\item{verbose}{(OPT) (logical) print status?}
+\item{verbose}{print status? (flag)}
 }
 \description{
-Comparative Plot
-this graph shows the current model run compared to the previous saved
-runs. It highlights the differences between changed parameters etc.
+This graph highlights the differences between saved model runs for a given
+variable at a certain depth.
 }

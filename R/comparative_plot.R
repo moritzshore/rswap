@@ -1,21 +1,13 @@
-# comparative plot
-
-# SWAPUI comparative plot
-# Author: Moritz Shore | moritz.shore@nibio.no | 9.1.23
-# Contents: this graph shows the current model run compared to the previous saved
-# runs. It highlights the differences between changed parameters etc.
-
 #' Comparative Plot
-#' this graph shows the current model run compared to the previous saved
-#' runs. It highlights the differences between changed parameters etc.
 #'
-#' @param project_path (REQ) (string) path to project directory
-#' @param variable (REQ) (string) variable to compare
-#' @param depth (OPT) (numeric) depth of variable. leave blank if variable has
-#' no depth
-#' @param verbose (OPT) (logical) print status?
+#' This graph highlights the differences between saved model runs for a given
+#' variable at a certain depth.
 #'
-#' @importFrom grDevices colorRampPalette
+#' @param project_path path to project directory (string)
+#' @param variable variable to show (string)
+#' @param depth depth of variable, if it has a depth. Otherwise leave blank (string)
+#' @param verbose print status? (flag)
+#'
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_split
 #' @importFrom glue glue
@@ -24,18 +16,13 @@
 #'
 #' @export
 #'
-comparative_plot <-
-  function(project_path,
-           variable,
-           depth =  NULL,
-           verbose = F) {
+comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F) {
+  # TODO: rename to compare_swap_runs
+  # Custom color palette
+  color_palette <- colorRampPalette(c("red", "blue", "green"))
 
-  # a custom color pallette
-  color_palette<-colorRampPalette(c("red","blue","green" ), )
-
-  # grab data from model run
-  run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
-
+  # Grab data from last model run
+  project_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
 
   # combine the past runs, the current run
   master_df <-
@@ -53,7 +40,7 @@ comparative_plot <-
   # create a base plot with the custom color palette
   plot <- plot_ly(colors = custom_colors)
 
-  # add observed WC Trace
+  # add observed trace
   plot <-
     plot %>% add_trace(
       data = master_df %>% filter(tag == "observed"),
@@ -102,9 +89,10 @@ comparative_plot <-
       visible = "legendonly"
     )
 
+  # modify the layout
   plot %>% layout(
     autosize = T,
-    title = paste("Comparative plot:", "<b>", run_name, "</b>", variable, depth, "cm"),
+    title = paste("Comparative plot:", "<b>", project_name, "</b>", variable, depth, "cm"),
     plot_bgcolor = "white",
     hovermode = "x unified",
     xaxis = list(title = 'Date'),
