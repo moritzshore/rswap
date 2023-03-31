@@ -82,7 +82,7 @@ optionally, a certain <code>swap_file</code>.</p><ul><li><p>If you desire, you c
 <dd><p>If set to <code>TRUE</code>, rswap will automatically detect
 your observed data provided in the observed file and match it to the SWAP
 output. if this is set to <code>FALSE</code>, then INLIST csv must be set by the user either
-manually or with <code><a href="set_swap_output.html">set_swap_output()</a></code> or <code><a href="change_swap_par.html">change_swap_par()</a></code> for several other <code>rswap</code> function to work</p></dd>
+manually or with <code>set_swp_output()</code> or <code><a href="change_swap_par.html">change_swap_par()</a></code> for several other <code>rswap</code> function to work</p></dd>
 
 
 <dt>verbose</dt>
@@ -104,7 +104,7 @@ manually or with <code><a href="set_swap_output.html">set_swap_output()</a></cod
     <p>This function does more than simply run the model, it does the following, in this order:</p><ol><li><p>Build the rswap directory: <code><a href="build_rswap_directory.html">build_rswap_directory()</a></code></p></li>
 <li><p>Parses the main swap file: <code>parse_swap_file()</code></p></li>
 <li><p>Updates several parameters in the main file (such as paths, and output settings): <code><a href="set_swap_output.html">set_swap_output()</a></code></p></li>
-<li><p>Writes the new SWAP main file: <code><a href="write_swap_file.html">write_swap_file()</a></code></p></li>
+<li><p>Writes the new SWAP main file: <code>write_swp_file()</code></p></li>
 <li><p>Runs the new SWAP main file.</p></li>
 </ol></div>
 

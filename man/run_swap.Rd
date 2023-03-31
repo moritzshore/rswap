@@ -20,7 +20,7 @@ run_swap(
 \item{autoset_output}{If set to \code{TRUE}, rswap will automatically detect
 your observed data provided in the observed file and match it to the SWAP
 output. if this is set to \code{FALSE}, then INLIST csv must be set by the user either
-manually or with \code{set_swap_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
+manually or with \code{set_swp_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
 
 \item{verbose}{print status? (flag)}
 
@@ -44,7 +44,7 @@ This function does more than simply run the model, it does the following, in thi
 \item Build the rswap directory: \code{build_rswap_directory()}
 \item Parses the main swap file: \code{parse_swap_file()}
 \item Updates several parameters in the main file (such as paths, and output settings): \code{set_swap_output()}
-\item Writes the new SWAP main file: \code{write_swap_file()}
+\item Writes the new SWAP main file: \code{write_swp_file()}
 \item Runs the new SWAP main file.
 }
 }

@@ -195,7 +195,7 @@
 <div class="section level2">
 <h2 id="modification-of-parameters-and-swap-input-files">Modification of Parameters and SWAP input files.<a class="anchor" aria-label="anchor" href="#modification-of-parameters-and-swap-input-files"></a>
 </h2>
-<p>changing a parameter in rswap can be done using the <code>parse_swap_file()</code> function.</p>
+<p>changing a parameter in rswap can be done using the <code><a href="reference/parse_swp_file.html">parse_swp_file()</a></code> function.</p>
 <pre><code><span><span class="va">parsed</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/parse_swp_file.html">parse_swp_file</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="va">swap_file</span><span class="op">)</span></span></code></pre>
 <p>This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a “list of dataframes” to work in R, instead of just writing tables #TODO!)</p>
 <p>You can modify the dataframe how you wish, with whatever tools you would like, however <code>rswap</code> does have a simple dedicated function to do this for you.</p>

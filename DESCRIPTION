@@ -1,8 +1,8 @@
 Type: Package
 Package: rswap
-Version: 0.1.0
-Title: an R interface for the SWAP model PRE-RELEASE
-Date: 2023-03-30
+Version: 0.1.1
+Title: an R interface for the SWAP model
+Date: 2023-03-31
 Authors@R: person("Moritz", "Shore",
                 email = "moritz.shore@nibio.no",
                 role = c("aut", "cre"),
