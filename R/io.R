@@ -1,12 +1,10 @@
-# io functions
-# TODO error handling for missing data
+# input/output functions
 
-
-# TODO: translate stat plot, sensitivity functionaliy, autocal functionality
-# Then: the big autocal update: read in every variable with value, and be able to change the values
-
-#' Makes a temporary sub-directory workspace for the package to run in.
-#' @param project_path string, path to project directory
+#' Build rswap Directory
+#'
+#' Makes a temporary sub-directory workspace for the package to run SWAP in.
+#'
+#' @param project_path path to project directory (string)
 #'
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
@@ -19,24 +17,19 @@ build_rswap_directory <- function(project_path){
 
   unlink(temp_directory, recursive = T)
 
-  # list all the files in the original project directory
-  #TODO might want to check the options here, so you get ALL the files and none more
+  # list files found in project path (Note, this includes all the saved runs as\
+  # well, which we dont want, which is why we need to remove them)
   file_list <- list.files(project_path, full.names = T, recursive = T)
-
-
-  # create the hidden temp directory
-  dir.create(temp_directory, showWarnings = F)
-
-
-  # remove any files in directory /rswap_saved/ ... this is prone to failure, should make more
-  # robust! TODO
   ignore <- file_list %>% grepl(x=., "\\b/rswap_saved/\\b") %>% which()
-
+  # only remove files if they actually need to be, because if you do this
+  # with an empty vector, it will delete ALL the files
   if(length(ignore)>0){
     file_list<-file_list[-ignore]
   }
 
-  # vector of all the files i want to copy over
+  # Vector of all the SWAP file types that will be copied into the temp directory
+  # It might be a good idea to NOT do this, and just copy every file, incase this
+  # vector does not cover every possible filetype...
   file_types <-
     c("*.crp",
       "*.met",
@@ -49,28 +42,27 @@ build_rswap_directory <- function(project_path){
       "*.irg",
       "*.ini")
   match_string <- paste(file_types, collapse = "|")
-
-  # find out the index of the required files and copy only those over to the temp directory
   required_files <- file_list %>% grepl(x = ., match_string) %>% which()
   required_file_list <- file_list[required_files]
+
+  # create the hidden temp directory
+  dir.create(temp_directory, showWarnings = F)
+  # and copy over the desired files
   status <- file.copy(from = required_file_list, to = temp_directory)
 
   # legacy support for old met files:
   # copies over any files with a "numeric" file type. (best way i could think of)
-  not_numeric <- str_split(file_list, "[.]", simplify = T)[,2] %>% as.numeric() %>% is.na() %>% suppressWarnings()
+  not_numeric <- str_split(file_list, "[.]", simplify = T)[,2] %>%
+    as.numeric() %>% is.na() %>% suppressWarnings()
   met_files <- file_list[which(not_numeric == FALSE)]
   met_status <- file.copy(from = met_files, to = temp_directory)
 
-  # copy in a template observed excel
-  template_observed = system.file("extdata/rswap_observed_data.xlsx", package="rswap")
-
   # if the template does not yet exist in the project directory, copy it in there
   if("rswap_observed_data.xlsx" %in% list.files(project_path) == FALSE){
+    template_observed = system.file("extdata/rswap_observed_data.xlsx", package="rswap")
     obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.xlsx"))
     cat("copying template sheet 'rswap_observed_data_xlsx' into project directory\n")
     }
-
-
   # return the path to the temp directory
   return(temp_directory)
 }

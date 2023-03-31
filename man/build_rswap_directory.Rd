@@ -2,14 +2,14 @@
 % Please edit documentation in R/io.R
 \name{build_rswap_directory}
 \alias{build_rswap_directory}
-\title{Makes a temporary sub-directory workspace for the package to run in.}
+\title{Build rswap Directory}
 \usage{
 build_rswap_directory(project_path)
 }
 \arguments{
-\item{project_path}{string, path to project directory}
+\item{project_path}{path to project directory (string)}
 }
 \description{
-Makes a temporary sub-directory workspace for the package to run in.
+Makes a temporary sub-directory workspace for the package to run SWAP in.
 }
 \keyword{internal}
