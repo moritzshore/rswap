@@ -10,4 +10,7 @@ ribbonize(.data, .x, .y, .type)
 author: Neal Grantham
 source: https://www.nsgrantham.com/fill-between-two-lines-ggplot2
 }
+\author{
+Neal Grantham, Moritz Shore
+}
 \keyword{internal}
