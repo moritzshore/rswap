@@ -1,4 +1,4 @@
-# rswap ⚠️prerelease!⚠️<img src="man/figures/rswap.png" align="right" width=20% height=20% />
+# rswap ⚠️prerelease⚠️<img src="man/figures/rswap.png" align="right" width=20% height=20% />
 
 rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
@@ -134,7 +134,7 @@ A few functions focus on assesing model performance by comparing modelling value
 This function is very flexible, and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
 ## Saving model runs
-While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this proccess with a vareity of functions, such as
+While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this proccess with a vareity of functions, such as..
 ```
 save_run(project_path, run_name = "COFRED = 0.35")
 ```
@@ -142,7 +142,7 @@ This function saves your entire model set up in a directory (`project_directory/
 
 ## Comparing model runs
 
-Once you have saved at least one run, you can compare them using the 
+Once you have saved at least one run, you can compare them using:
 ```
 comparative_plot(project_path, variable = "WC", depth = 15)
 ```
@@ -151,7 +151,7 @@ comparative_plot(project_path, variable = "WC", depth = 15)
 <img src="man/figures/compareplot.png" width=60% height=60%>
 </p>
 
-Once again, this function is quite flexible, and can be passed any available `variable` or `depth`
+Once again, this function is quite flexible, and can be passed any available `variable` or `depth`.
 
 You can compare the performance of your various model runs by using the `plot_statistics()` function. 
 
@@ -162,11 +162,11 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 <img src="man/figures/stat_plot1.png" width=60% height=60%>
 </p>
 
-This plot is equally flexible, and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
+This plot is equally flexible, and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`.
 
 ## Modification of Parameters and SWAP input files.
 
-changing a parameter in rswap can be done using the `parse_swap_file()` function. 
+Changing a parameter in rswap can be done using the `parse_swap_file()` function. 
 ```
 parsed <- parse_swp_file(project_path, swap_file)
 ```
@@ -209,7 +209,10 @@ The aformentioned functions rely on more basic general functions which, while ar
 ## Roadmap
 - Linux Support
 - Sensitivity Analysis
+- Parallelization 
+- SWAPtools support
 - Autocalibration / PEST support
+- Scenario analysis
 - Parsing support for all swap files, not just the main file.
 - Add documentation in the excel sheet (and switch to supporting .csv instead!)
 - Add support for multiple variables at differing depths for `autoset_output`
