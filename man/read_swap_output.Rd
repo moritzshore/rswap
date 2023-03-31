@@ -2,15 +2,24 @@
 % Please edit documentation in R/io.R
 \name{read_swap_output}
 \alias{read_swap_output}
-\title{Reads SWAP output of current path}
+\title{Reads SWAP Model Output}
 \usage{
 read_swap_output(project_path, archived = F)
 }
 \arguments{
-\item{project_path}{String, path to the project directory / or custom save location.}
+\item{project_path}{path to project directory (string)}
 
-\item{archived}{Flag, needs to be true when reading from the rswap_saved archive}
+\item{archived}{needs to be set to true when reading from the rswap_saved archive (flag)}
+}
+\value{
+Returns a list of dataframes. \code{.$daily_output} and \code{.$custom_depth}
 }
 \description{
-Reads SWAP output of current path
+This function reads the output of the SWAP model for the last run of the
+given \code{project_path}. It can also be used to read the results of saved runs
+in the "/rswap_saved" folder if \code{archived} is set to \code{TRUE}.
+}
+\details{
+Currently, the function only returns the data needed by the rest of the
+package, but this will be expanded over time to return all SWAP output
 }

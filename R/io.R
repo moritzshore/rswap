@@ -264,6 +264,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' @export
 #'
+#'
 load_observed <- function(project_path, verbose = F){
 
   #TODO switch to CSV
@@ -293,14 +294,29 @@ load_observed <- function(project_path, verbose = F){
   return_df %>% return()
 }
 
-#' Reads SWAP output of current path
-#' @param project_path String, path to the project directory / or custom save location.
-#' @param archived Flag, needs to be true when reading from the rswap_saved archive
+#' Reads SWAP Model Output
+#'
+#' This function reads the output of the SWAP model for the last run of the
+#' given `project_path`. It can also be used to read the results of saved runs
+#' in the "/rswap_saved" folder if `archived` is set to `TRUE`.
+#'
+#' Currently, the function only returns the data needed by the rest of the
+#' package, but this will be expanded over time to return all SWAP output
+#'
+#' @param project_path path to project directory (string)
+#' @param archived needs to be set to true when reading from the rswap_saved archive (flag)
+#'
 #' @importFrom glue glue
 #' @importFrom stringr str_replace str_remove
 #' @importFrom tibble tibble
+#'
+#' @returns Returns a list of dataframes. `.$daily_output` and `.$custom_depth`
+#'
 #' @export
+#'
 read_swap_output <-  function(project_path, archived = F){
+
+  #TODO rewrite to return ALL SWAP output.
 
   if(archived){
     path <- glue("{project_path}/result_output.csv")
@@ -323,7 +339,6 @@ read_swap_output <-  function(project_path, archived = F){
   ) %>% tibble()
 
   result_output$DATETIME <- result_output$DATETIME %>% as.Date()
-
   colnames(result_output)[1] <- "DATE"
 
   new_cols <- result_output %>% colnames() %>% str_replace("\\..", "_") %>% str_remove("\\.")
@@ -337,7 +352,7 @@ read_swap_output <-  function(project_path, archived = F){
     header = T
   ) %>% tibble()
 
-  # TODO rename these to be more clear
+  # TODO rename these to be more clear?
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
 
   r_frame %>% return()
