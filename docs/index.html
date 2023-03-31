@@ -63,7 +63,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="rswap-️prerelease️">rswap ⚠️prerelease!⚠️<img src="reference/figures/rswap.png" align="right" width="20%" height="20%"><a class="anchor" aria-label="anchor" href="#rswap-%EF%B8%8Fprerelease%EF%B8%8F"></a>
+<div class="page-header"><h1 id="rswap-️prerelease️">rswap ⚠️prerelease⚠️<img src="reference/figures/rswap.png" align="right" width="20%" height="20%"><a class="anchor" aria-label="anchor" href="#rswap-%EF%B8%8Fprerelease%EF%B8%8F"></a>
 </h1></div>
 <p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP 4.2.0</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
 <div class="section level2">
@@ -162,28 +162,28 @@
 <div class="section level2">
 <h2 id="saving-model-runs">Saving model runs<a class="anchor" aria-label="anchor" href="#saving-model-runs"></a>
 </h2>
-<p>While calibrating a model it can be useful to keep track of different model runs with different parameterization. <code>rswap</code> aids this proccess with a vareity of functions, such as</p>
+<p>While calibrating a model it can be useful to keep track of different model runs with different parameterization. <code>rswap</code> aids this proccess with a vareity of functions, such as..</p>
 <pre><code><span><span class="fu"><a href="reference/save_run.html">save_run</a></span><span class="op">(</span><span class="va">project_path</span>, run_name <span class="op">=</span> <span class="st">"COFRED = 0.35"</span><span class="op">)</span></span></code></pre>
 <p>This function saves your entire model set up in a directory (<code>project_directory/rswap_saved</code>). Once a model run has been saved, it can be compared to other model runs, with the following functions.</p>
 </div>
 <div class="section level2">
 <h2 id="comparing-model-runs">Comparing model runs<a class="anchor" aria-label="anchor" href="#comparing-model-runs"></a>
 </h2>
-<p>Once you have saved at least one run, you can compare them using the</p>
+<p>Once you have saved at least one run, you can compare them using:</p>
 <pre><code><span><span class="fu"><a href="reference/comparative_plot.html">comparative_plot</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre>
 <p align="center">
 <img src="reference/figures/compareplot.png" width="60%" height="60%"></p>
-<p>Once again, this function is quite flexible, and can be passed any available <code>variable</code> or <code>depth</code></p>
+<p>Once again, this function is quite flexible, and can be passed any available <code>variable</code> or <code>depth</code>.</p>
 <p>You can compare the performance of your various model runs by using the <code><a href="reference/plot_statistics.html">plot_statistics()</a></code> function.</p>
 <pre><code><span><span class="fu"><a href="reference/plot_statistics.html">plot_statistics</a></span><span class="op">(</span><span class="va">project_path</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">40</span>,<span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p align="center">
 <img src="reference/figures/stat_plot1.png" width="60%" height="60%"></p>
-<p>This plot is equally flexible, and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>. the graph type can be switched between <code>default</code>, <code>sorted</code> and <code>ggplot</code></p>
+<p>This plot is equally flexible, and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>. the graph type can be switched between <code>default</code>, <code>sorted</code> and <code>ggplot</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="modification-of-parameters-and-swap-input-files">Modification of Parameters and SWAP input files.<a class="anchor" aria-label="anchor" href="#modification-of-parameters-and-swap-input-files"></a>
 </h2>
-<p>changing a parameter in rswap can be done using the <code>parse_swap_file()</code> function.</p>
+<p>Changing a parameter in rswap can be done using the <code>parse_swap_file()</code> function.</p>
 <pre><code><span><span class="va">parsed</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/parse_swp_file.html">parse_swp_file</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="va">swap_file</span><span class="op">)</span></span></code></pre>
 <p>This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a “list of dataframes” to work in R, instead of just writing tables #TODO!)</p>
 <p>You can modify the dataframe how you wish, with whatever tools you would like, however <code>rswap</code> does have a simple dedicated function to do this for you.</p>
@@ -231,7 +231,10 @@
 <ul>
 <li>Linux Support</li>
 <li>Sensitivity Analysis</li>
+<li>Parallelization</li>
+<li>SWAPtools support</li>
 <li>Autocalibration / PEST support</li>
+<li>Scenario analysis</li>
 <li>Parsing support for all swap files, not just the main file.</li>
 <li>Add documentation in the excel sheet (and switch to supporting .csv instead!)</li>
 <li>Add support for multiple variables at differing depths for <code>autoset_output</code>
@@ -245,11 +248,10 @@
 <li>plot_stat sorting to follow stat property</li>
 <li>Improve r/w of tables</li>
 <li>Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats</li>
+<li>Add “exact variable matching” and stop removing “RAIN” in io.R-&gt;<code><a href="reference/melt_all_runs.html">melt_all_runs()</a></code>
+</li>
+<li>Move output modifying code to set_swap_output, and expand on it. ## Support and Contributing</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="support-and-contributing">Support and Contributing<a class="anchor" aria-label="anchor" href="#support-and-contributing"></a>
-</h2>
 <p>If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: <a href="mailto:moritz.shore@nibio.no" class="email">moritz.shore@nibio.no</a>) The same goes for if you have any suggestions for improvement. If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)</p>
 <p>Any OPTAIN case-studies which use <code>rswap</code> are required to bake Moritz Shore a cake using a local reciepe from the case-study country.</p>
 </div>
@@ -266,7 +268,7 @@
 <div class="section level2">
 <h2 id="section"></h2>
 <p align="center">
-<img src="reference/figures/support_banner.png" width="60%" height="60%"></p>
+<img src="reference/figures/support_banner.png" width="100%" height="100%"></p>
 </div>
 </div>
   </div>
