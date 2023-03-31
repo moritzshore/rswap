@@ -358,19 +358,24 @@ read_swap_output <-  function(project_path, archived = F){
   r_frame %>% return()
   }
 
-#' Filter swap data
+#' Filter SWAP Data
 #'
-#' by variable and depth
-#' @param data observed/modelled data as given by load_observed()$data or read_swap_output()$custom_depth
-#' @param var **OPT** name(s) of the variables you would like to select (string). leave blank for "all"
-#' @param depth **OPT** value(s) of the depths you would like to select (numeric). leave blank for "all"
-#' them here as a string/vector.
+#' This is an internal function which filters dataframes of SWAP data by depth
+#' and variable. It might be useful for end users as well, which is why its
+#' accessible.
+#'
+#' @param data data as given by `load_observed()$data` or `read_swap_output()$custom_depth`
+#' @param var name(s) of the variables you would like to select (string). leave blank for all
+#' @param depth value(s) of the depths you would like to select (numeric). leave blank for all
+#'
+#' @returns Returns a dataframe with a `DATE` column, followed by the desired data.
 #'
 #' @importFrom dplyr %>% select
 #' @importFrom stringr str_remove str_split
 #' @importFrom stringi stri_extract_all_regex
-#' @returns dataframe consisting of DATE column, and desired observed values
+#'
 #' @export
+#'
 filter_swap_data <- function(data, var = NULL, depth = NULL){
 
   if(var %>% is.null() == FALSE){
@@ -379,55 +384,53 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
 
   colz <- data %>% colnames() %>% toupper()
 
-  if(var %>% is.null() == FALSE){
+  # need to find the desired var columns, if a var was passed
+  if (var %>% is.null() == FALSE) {
+    # using this function because grepl() cannot handle more than one pattern.
     find <- stri_extract_all_regex(str = colz, pattern = paste(var, collapse = "|")) %>%
       unlist() %>% is.na()
-    # which were matched? index.
     relevant_var_cols <- (find == FALSE) %>% which()
+  } else{
+    relevant_var_cols = NULL
+  }
 
-  }else{relevant_var_cols=NULL}
-
-
-
+  # need to find the desired depth columns, if depth was passed
   if (depth %>% is.null() == FALSE) {
     depth = depth %>% as.character()
-
-    find2 <-
-      stri_extract_all_regex(str = colz, pattern = paste(depth, collapse = "|")) %>%
+    find2 <- stri_extract_all_regex(str = colz, pattern = paste(depth, collapse = "|")) %>%
       unlist() %>% is.na()
     relevant_depth_cols <- (find2 == FALSE) %>% which()
-
-    if(relevant_depth_cols %>% length() == 0){stop("Error: no matching column found")}
-
+    if (relevant_depth_cols %>% length() == 0) {
+      stop("Error: no matching column found")
+    }
   } else{
     relevant_depth_cols = NULL
   }
 
-  # switchboard, determining priorty of union
-  if(depth %>% is.null() & var %>% is.null()){
+  # switchboard, determining priority of union of depth and var
 
-    # if both were left blank, then return all, but only unique
+  # if both were left blank, then return all, but only unique
+  if(depth %>% is.null() & var %>% is.null()){
     union <- c(relevant_depth_cols, relevant_var_cols) %>% unique()
   }
 
+  # if depth was given, but variable was not, return all the depth cols
   if(depth %>% is.null() == FALSE & var %>% is.null()){
-    # if depth was given, but variable was not, return all the depth cols
     union <- relevant_depth_cols
   }
 
+  # if var was given but not depth, return all the var cols
   if(depth %>% is.null() & var %>% is.null() == FALSE){
-    # if var was given but not depth, return all the var cols
     union <- relevant_var_cols
-
   }
 
+  # if both depth and var were given, then return their intersection
   if(depth %>% is.null() == FALSE & var %>% is.null() == FALSE){
-    # if both depth and var were given, then
     union <- intersect(relevant_var_cols, relevant_depth_cols)
   }
 
+  # build the filtered DF and return it.
   perf_mod <- data %>% select(DATE, all_of(union))
-
   perf_mod %>% return()
 }
 

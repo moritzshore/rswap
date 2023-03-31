@@ -2,21 +2,22 @@
 % Please edit documentation in R/io.R
 \name{filter_swap_data}
 \alias{filter_swap_data}
-\title{Filter swap data}
+\title{Filter SWAP Data}
 \usage{
 filter_swap_data(data, var = NULL, depth = NULL)
 }
 \arguments{
-\item{data}{observed/modelled data as given by load_observed()$data or read_swap_output()$custom_depth}
+\item{data}{data as given by \code{load_observed()$data} or \code{read_swap_output()$custom_depth}}
 
-\item{var}{\strong{OPT} name(s) of the variables you would like to select (string). leave blank for "all"}
+\item{var}{name(s) of the variables you would like to select (string). leave blank for all}
 
-\item{depth}{\strong{OPT} value(s) of the depths you would like to select (numeric). leave blank for "all"
-them here as a string/vector.}
+\item{depth}{value(s) of the depths you would like to select (numeric). leave blank for all}
 }
 \value{
-dataframe consisting of DATE column, and desired observed values
+Returns a dataframe with a \code{DATE} column, followed by the desired data.
 }
 \description{
-by variable and depth
+This is an internal function which filters dataframes of SWAP data by depth
+and variable. It might be useful for end users as well, which is why its
+accessible.
 }
