@@ -87,7 +87,8 @@ parse_swp_file <- function(project_path,
 
       first_element <- short_swp %>%  str_trim() %>% str_split("\\s+") %>% map(1) %>% unlist()
 
-      next_par <- grepl(x = short_swp, "=") %>% which() %>% min()
+      next_par <- grepl(x = short_swp, "=") %>% which() %>% min() %>% suppressWarnings()
+
       if(next_par %>% length() == 0){
         next_par = Inf
       }
@@ -100,10 +101,18 @@ parse_swp_file <- function(project_path,
 
       eot <- min(c(next_non_value_nor_date, next_par))
 
+      # special case if at end of file:
+      if(eot %>% is.infinite()){
+        # return the index for the end of the file
+        return(length(short_swp)+1)
+      }
+
       return(eot)
     }
 
-    swp <- clean_swp_file(project_path, swap_file = swap_file)
+    rswap_dir <- build_rswap_directory(project_path)
+
+    swp <- clean_swp_file(rswap_dir, swap_file = swap_file)
 
 
     # predefine for-loop vars
@@ -177,6 +186,7 @@ parse_swp_file <- function(project_path,
         } else{ # START of table, not special
           header = line  %>%  str_split("!") %>% map(1)  %>% str_trim() %>% str_split("\\s+") %>%  unlist()
           width = header %>% length()
+
 
           swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
           swap_table <- swp[i:(i + swap_table_end-1)]

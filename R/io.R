@@ -13,7 +13,7 @@
 #'
 build_rswap_directory <- function(project_path){
 
-  temp_directory <- glue("{project_path}/rswap/")
+  temp_directory <- glue("{project_path}/rswap")
 
   unlink(temp_directory, recursive = T)
 

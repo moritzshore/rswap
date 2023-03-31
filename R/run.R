@@ -57,7 +57,7 @@ run_swap <- function(project_path,
 
 
   # load observed data
-  observed_path <- paste0(rswap_directory, "rswap_observed_data.xlsx")
+  observed_path <- paste0(rswap_directory, "/rswap_observed_data.xlsx")
   if(file.exists(observed_path) == FALSE){
     warning("Observed file not found!\n",observed_path )
   }
@@ -65,7 +65,7 @@ run_swap <- function(project_path,
   # routine for automatically setting output (could be improved)
   if (autoset_output) {
 
-    obs <- load_observed(project_path)
+    obs <- load_observed(rswap_directory)
     variables <- obs$observed_variables
     depths <- get_depths(data = obs$data) %>% sort()
 
@@ -108,7 +108,8 @@ run_swap <- function(project_path,
   }
 
   # location for where the swap file is to be written
-  outpath <- paste0(rswap_directory, swap_file)
+  # change this name to "rswap.swp"?
+  outpath <- paste0(rswap_directory, "/", swap_file)
 
   # Write swap file
   rswap_file <- write_swap_file(
