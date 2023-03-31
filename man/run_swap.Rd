@@ -2,36 +2,49 @@
 % Please edit documentation in R/run.R
 \name{run_swap}
 \alias{run_swap}
-\title{Runs the SWAP model}
+\title{Run SWAP}
 \usage{
 run_swap(
   project_path,
   swap_file = "swap.swp",
   autoset_output = F,
   verbose = F,
-  timeout = Inf,
-  quiet = F
+  timeout = Inf
 )
 }
 \arguments{
-\item{project_path}{String, path to the project directory.}
+\item{project_path}{path to the project directory (string)}
 
-\item{autoset_output}{If set to true, rswap will automatically detect
+\item{swap_file}{name of the *.swp main file (leave blank for "swap.swp")}
+
+\item{autoset_output}{If set to \code{TRUE}, rswap will automatically detect
 your observed data provided in the observed file and match it to the SWAP
-output. if this is set to false, then INLIST csv must be set by the user either
-manually or with set_swap_output() or change_swap_par()}
+output. if this is set to \code{FALSE}, then INLIST csv must be set by the user either
+manually or with \code{set_swap_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
 
-\item{verbose}{logical, print status?}
+\item{verbose}{print status? (flag)}
 
-\item{timeout}{number of seconds before run timeout (optional, unlimited by default)}
-
-\item{quiet}{logical, turn off warnings?}
-
-\item{string}{name of the *.swp main file}
+\item{timeout}{number of seconds before run timeout (unlimited by default) (numeric)}
 }
 \value{
-returns name of run (change this!)
+Returns the status code of the run.
 }
 \description{
-Runs the SWAP model
+This function runs the SWAP model for the given project directory, and
+optionally, a certain \code{swap_file}.
+\itemize{
+\item If you desire, you can automatically match the output of the SWAP model to the data provided in the \code{rswap_observed_data.xlsx} file by setting \code{autoset_output} to \code{TRUE}.
+\item \code{verbose} will print not only model running status, but also what rswap is doing
+\item \code{timeout} allows you to set the maximum runtime of the model
+}
+}
+\details{
+This function does more than simply run the model, it does the following, in this order:
+\enumerate{
+\item Build the rswap directory: \code{build_rswap_directory()}
+\item Parses the main swap file: \code{parse_swap_file()}
+\item Updates several parameters in the main file (such as paths, and output settings): \code{set_swap_output()}
+\item Writes the new SWAP main file: \code{write_swap_file()}
+\item Runs the new SWAP main file.
+}
 }

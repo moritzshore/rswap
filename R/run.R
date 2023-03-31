@@ -1,30 +1,42 @@
-# run functions
+# Function(s) relating to running the model
 
-#' Runs the SWAP model
+#' Run SWAP
 #'
-#' @param project_path String, path to the project directory.
-#' @param string name of the *.swp main file
-#' @param autoset_output If set to true, rswap will automatically detect
+#' This function runs the SWAP model for the given project directory, and
+#' optionally, a certain `swap_file`.
+#' -  If you desire, you can automatically match the output of the SWAP model to the data provided in the `rswap_observed_data.xlsx` file by setting `autoset_output` to `TRUE`.
+#' - `verbose` will print not only model running status, but also what rswap is doing
+#' - `timeout` allows you to set the maximum runtime of the model
+#'
+#' This function does more than simply run the model, it does the following, in this order:
+#'  1. Build the rswap directory: `build_rswap_directory()`
+#'  2. Parses the main swap file: `parse_swap_file()`
+#'  3. Updates several parameters in the main file (such as paths, and output settings): `set_swap_output()`
+#'  4. Writes the new SWAP main file: `write_swp_file()`
+#'  5. Runs the new SWAP main file.
+#'
+#' @param project_path path to the project directory (string)
+#' @param swap_file name of the *.swp main file (leave blank for "swap.swp")
+#' @param autoset_output If set to `TRUE`, rswap will automatically detect
 #' your observed data provided in the observed file and match it to the SWAP
-#' output. if this is set to false, then INLIST csv must be set by the user either
-#' manually or with set_swap_output() or change_swap_par()
-#' @param verbose logical, print status?
-#' @param quiet logical, turn off warnings?
-#' @param timeout number of seconds before run timeout (optional, unlimited by default)
+#' output. if this is set to `FALSE`, then INLIST csv must be set by the user either
+#' manually or with `set_swp_output()` or `change_swap_par()` for several other `rswap` function to work
+#' @param verbose print status? (flag)
+#' @param timeout number of seconds before run timeout (unlimited by default) (numeric)
 #'
-#' @return returns name of run (change this!)
+#' @returns Returns the status code of the run.
 #'
 #' @importFrom glue glue
 #' @importFrom processx run
 #' @importFrom dplyr %>%
+#'
 #' @export
 #'
 run_swap <- function(project_path,
                      swap_file = "swap.swp",
                      autoset_output = F,
                      verbose = F,
-                     timeout = Inf,
-                     quiet = F) {
+                     timeout = Inf) {
 
 
   # Parse paths
@@ -139,7 +151,7 @@ run_swap <- function(project_path,
     }
   }
 
-
+  # Move reruns.log and swap.ok to the temp directory.
   reruns <- paste0(work_dir, "/reruns.log")
   if (file.exists(reruns)) {
     file.copy(from  = reruns,
