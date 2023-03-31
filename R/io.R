@@ -540,14 +540,18 @@ match_mod_obs <- function(project_path, variable, depth = NULL,
 
 #' Melt All Runs
 #'
-#' Combines the past saved runs, with the current run, and the observed data
-#' so that the combination of them is easy to plot using ggplot etc.
+#' This function combines the modeled and observed data of the current run,
+#' along with all the modeled and observed data of all the saved runs
+#' (for a single variable) and returns them in tidy format, easy to use for
+#' plotting, etc.
 #'
-#' @param project_path path to project directory
-#' @param variable (REQ) (string) variable to be returned
-#' @param depth (OPT) (string) depth of variable. leave blank if variable has
-#' no depth
-#' @param verbose print status?
+#' This is once again an internal function that is made available due to it
+#' possibly being useful for the end user.
+#'
+#' @param project_path path to project directory (string)
+#' @param variable variable to be used (string)
+#' @param depth optional depth to filter by, leave blank for all/no depth (numeric)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom dplyr %>% select
 #' @importFrom stringr str_remove_all str_replace_all str_split
@@ -555,9 +559,10 @@ match_mod_obs <- function(project_path, variable, depth = NULL,
 #' @importFrom purrr map map_df is_empty
 #' @importFrom vroom vroom
 #'
-#' @returns dataframe with columns "run" "DATE" "tag" "variable" "value"
+#' @returns Returns dataframe with columns "run" "DATE" "tag" "variable" "value"
 #'
 #' @export
+#'
 melt_all_runs <-
   function(project_path,
            variable,
@@ -565,42 +570,45 @@ melt_all_runs <-
            verbose = F) {
 
     observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+    file_path <-  paste0(project_path, "/rswap_saved/")
+    past_run_names <- list.files(path = file_path)
+    past_run_paths <- list.files(path = file_path, full.names = T)
 
-
-    file_path =  paste0(project_path, "/rswap_saved/")
-
-
-    past_run_names <-  list.files(path = file_path)
-    past_run_paths <-  list.files(path = file_path, full.names = T)
-
-    if(past_run_names %>% is_empty()){warning("no previous runs to melt!");return(NA)}
-
+    if (past_run_names %>% is_empty()) {
+      warning("no previous runs to melt!")
+      return(NULL)
+    }
 
     result_files <- paste0(past_run_paths, "/result_output.csv")
     past_run_df <- result_files %>% map_df(., ~ vroom(.x, id = "path", show_col_types = F, delim = ",", comment = "*"))
     new_col_names <- past_run_df %>% colnames() %>% str_remove_all("]") %>% str_remove_all("\\[") %>% str_replace_all("-", "_")
-    new_col_names<-new_col_names %>% str_replace_all("DATETIME", "DATE")
-    new_col_names<-new_col_names %>% str_replace_all("path", "RUN")
+    new_col_names <- new_col_names %>% str_replace_all("DATETIME", "DATE")
+    new_col_names <- new_col_names %>% str_replace_all("path", "RUN")
     colnames(past_run_df) <- new_col_names
+    run_names <- past_run_df$RUN %>% str_remove(project_path) %>% str_remove("/rswap_saved/") %>% str_remove("/result_output.csv")
+    past_run_df <- past_run_df %>% select(-RUN)
 
-    run_names<-past_run_df$RUN %>% str_remove(project_path) %>% str_remove("/rswap_saved/") %>% str_remove("/result_output.csv")
-    past_run_df<-past_run_df %>% select(-RUN)
+    # We remove RAIN, because it overlaps with "DRAINAGE" but this needs to be
+    # fixed properly.. somewhere I need to add the '\bVARNAME\b" flags to fix this
+    # TODO!
+    past_run_df <- past_run_df %>% select(-RAIN)
+    past_run_df <- filter_swap_data(past_run_df, var = variable, depth = depth)
 
-    # todo: fix rain/drain overlap!
-    past_run_df<-filter_swap_data(past_run_df, var = variable, depth = depth)
-    past_run_df$tag = "past"
-    past_run_df$run = run_names
+    if(length(past_run_df) == 1){
+      stop("something went wrong... no data was selected in:\n",
+           "filter_swap_data(past_run_df, var = variable, depth = depth)")
+    }
 
-    present_run_df <- rswap::read_swap_output(project_path)
-    present_run_df<-rswap::filter_swap_data(present_run_df$custom_depth, var = variable, depth = depth)
+    past_run_df$tag <- "past"
+    past_run_df$run <- run_names
+    present_run_df <- read_swap_output(project_path)
+    present_run_df <- filter_swap_data(present_run_df$custom_depth, var = variable, depth = depth)
     present_run_df$tag = "present"
     present_run_df$run = "current run"
-
     observed_data <- load_observed(project_path, verbose = verbose)
-    observed_data<-rswap::filter_swap_data(observed_data$data, var = variable, depth = depth)
+    observed_data <- filter_swap_data(observed_data$data, var = variable, depth = depth)
     observed_data$tag = "observed"
     observed_data$run = "observed"
-
     full_df <- rbind(past_run_df, present_run_df, observed_data)
     full_df$variable = colnames(full_df)[2]
     colnames(full_df)[2] <- "value"

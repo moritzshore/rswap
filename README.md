@@ -222,6 +222,7 @@ The aformentioned functions rely on more basic general functions which, while ar
 - plot_stat sorting to follow stat property
 - Improve r/w of tables
 - Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
+- Add "exact variable matching" and stop removing "RAIN" in io.R->`melt_all_runs()`
 
 ## Support and Contributing
 

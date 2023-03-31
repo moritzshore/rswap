@@ -2,24 +2,29 @@
 % Please edit documentation in R/io.R
 \name{melt_all_runs}
 \alias{melt_all_runs}
-\title{Melt all runs}
+\title{Melt All Runs}
 \usage{
 melt_all_runs(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{path to project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{variable}{(REQ) (string) variable to be returned}
+\item{variable}{variable to be used (string)}
 
-\item{depth}{(OPT) (string) depth of variable. leave blank if variable has
-no depth}
+\item{depth}{optional depth to filter by, leave blank for all/no depth (numeric)}
 
-\item{verbose}{print status?}
+\item{verbose}{print status? (flag)}
 }
 \value{
-dataframe with columns "run" "DATE" "tag" "variable" "value"
+Returns dataframe with columns "run" "DATE" "tag" "variable" "value"
 }
 \description{
-Combines the past saved runs, with the current run, and the observed data
-so that the combination of them is easy to plot using ggplot etc.
+This function combines the modeled and observed data of the current run,
+along with all the modeled and observed data of all the saved runs
+(for a single variable) and returns them in tidy format, easy to use for
+plotting, etc.
+}
+\details{
+This is once again an internal function that is made available due to it
+possibly being useful for the end user.
 }
