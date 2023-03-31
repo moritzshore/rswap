@@ -7,18 +7,18 @@
 soft_calibration_plot(project_path, vars, show = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{(REQ) (string) path to project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{vars}{(REQ) (string/vector) list of variables to include in the plot}
+\item{vars}{list of variables to include in the plot (string/vector)}
 
-\item{show}{(OPT) (string/vector) list of variables to show by default}
+\item{show}{list of variables to show by default (string/vector)}
 
-\item{verbose}{(OPT) (logical) print status?}
+\item{verbose}{print status? (flag)}
 }
 \description{
 Generates a 1-4 axis plot from desired variables. Designed to help
-user understand how the model is working.
+user understand how the model is working, how the variables are interacting.
 }
 \details{
-currently supports "H", "WC", "DRAINAGE", "TEMP"
+currently supports "H", "WC", "DRAINAGE", "TEMP". Working on expanding
 }

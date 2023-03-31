@@ -1,44 +1,44 @@
 # TODO add cum. drain (could be better in dedicated graph)
 # TODO add total water (probably best in custom graph)
-
-
+# TODO make the 3 chosen variables totally flexible!
+  # -> requires more work in utils.R
 
 #' Soft Calibration Plot
 #'
 #' Generates a 1-4 axis plot from desired variables. Designed to help
-#' user understand how the model is working.
+#' user understand how the model is working, how the variables are interacting.
 #'
-#' currently supports "H", "WC", "DRAINAGE", "TEMP"
+#' currently supports "H", "WC", "DRAINAGE", "TEMP". Working on expanding
 #'
-#' @param project_path (REQ) (string) path to project directory
-#' @param vars (REQ) (string/vector) list of variables to include in the plot
-#' @param show (OPT) (string/vector) list of variables to show by default
-#' @param verbose (OPT) (logical) print status?
+#' @param project_path path to project directory (string)
+#' @param vars list of variables to include in the plot (string/vector)
+#' @param show list of variables to show by default (string/vector)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom dplyr %>% left_join
 #' @importFrom plotly plot_ly layout add_trace
 #' @importFrom glue glue
 #' @importFrom stringr str_split
-#' @importFrom grDevices colorRampPalette
+#'
 #' @export
+#'
 soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
+
+  # TODO rename to plot_swap_multivar()?
 
   vars <- vars %>% toupper()
 
+  # RAIN present if show is left blank
   if(show %>% is.null){
     show = "RAIN"
   }else{
     show <- show %>% toupper()
   }
 
-
   observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-
 
   # cant do more than 4 variables. (3+RAIN)
   if(length(vars)>3){return("too many variables, max 3")}
-
-  # TODO, add support for any variable?
 
   # check to see if any of the entered vars are not supported
   if(!(vars %in% c("H", "WC", "DRAINAGE", "TEMP")) %>% any()){
@@ -46,22 +46,19 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
     return(c("H", "WC", "DRAINAGE", "TEMP"))
   }
 
-  # adds the unit to the ylax labels
-  # todo convert this to the utils function
+  # adds the unit to the ylab labels
+  # TODO convert this to the utils function!
   var_lab = vars
   for (i in c(1:length(vars))) {
     if( vars[i]  == "TEMP" ){
       var_lab[i] = "TEMP [C]"
     }
-
     if( vars[i]  == "H" ){
       var_lab[i] = "H [cm]"
     }
-
     if( vars[i]  == "WC" ){
       var_lab[i] = "WC [cm3/cm3]"
     }
-
     if( vars[i]  == "DRAINAGE" ){
       var_lab[i] = "DRAINAGE [cm]"
     }
@@ -102,7 +99,6 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
 
   results = left_join(modelled_data, observed_data, by = "DATE")
 
-
   # grabs the depths at which we have observed data for
   depths = get_depths(data = results)
 
@@ -119,7 +115,7 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
   # rain gets added to the base plot first.
   # this is because ONE variable must always be constant, and since
   # some case studies might use WC, some might use H, some might use TEMP, or
-  # not, the only constant i can be sure of is RAIN.
+  # not, the only constant I can be sure of is RAIN.
   #     -- on second thought, this might not be necessary..
 
   # find the RAIN column index
@@ -237,20 +233,13 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
         marker = list(color = temp_color, line = list(
           color = 'black',
           width = 1))
-
       )
-
   }
-
     }
   # pressure head -----
-
   if("H" %in% vars){
-
     h_palette <- colorRampPalette(c("deeppink4","deeppink2","magenta" ))
     h_color = h_palette(length(depths))[which(depth == depths)]
-
-
     mod_index = colnames(results) %>% grepl(x = ., paste0("\\bH_",depth,"\\b")) %>% which()
     obs_index = colnames(results) %>% grepl(x = ., paste0("\\bobsH_",depth,"\\b")) %>% which()
 
@@ -282,14 +271,10 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
           marker = list(color = h_color, line = list(
             color = 'black',
             width = 1))
-
         )
-
     }
-
   }
-  #depth loop ends here
-  }
+    }
 
  # the non-depth dependent variables get added after the loop.
   # Drainage ----
@@ -322,7 +307,7 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
         type = "scatter",
         visible = if("DRAINAGE" %in% show){""}else{"legendonly"}
       )
-  }
+    }
   }
 
   # layout settings for the multi-axis setup
@@ -331,8 +316,8 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
     title = run_name, yaxis2 = y2, yaxis3 = y3, yaxis4 = y4, # the max, 4 axis
     xaxis = list(title = '', domain = graph_domain), # graph margins
     yaxis = list(title="RAIN" # name for the MAIN y axis
+                 )
     )
-  )
   }
 
   if(length(vars)==2){
