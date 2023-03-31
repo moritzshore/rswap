@@ -92,7 +92,8 @@ build_rswap_directory <- function(project_path){
 #'
 #' @export
 change_swap_par <- function(param, name, value){
-  value <- glue(value, " ! changed by rswap {Sys.time()}")
+  version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
+  value <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
   param$value[which(param$param == name)] = value
   return(param)
 }
@@ -118,6 +119,8 @@ change_swap_par <- function(param, name, value){
 update_swp_paths <- function(project_path, swap_exe,
                              parameters, verbose) {
 
+    version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
+
     # parse the various paths
     rswap_dir <- project_path %>% paste0(.,"/rswap/")
     swap_exe_name <- swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
@@ -135,7 +138,7 @@ update_swp_paths <- function(project_path, swap_exe,
             data.frame(
               param = "SWCSV",
               value = "1",
-              comment = glue("added by rswap {Sys.time()}")
+              comment = glue("added by rswap v{version} @ {Sys.time()}")
             ))
     }
     # The exact same thing goes for SWCSV...
@@ -146,7 +149,7 @@ update_swp_paths <- function(project_path, swap_exe,
             data.frame(
               param = "SWCSV_TZ",
               value = "1",
-              comment = glue("added by rswap {Sys.time()}")
+              comment = glue("added by rswap v{version} {Sys.time()}")
             ))
     }
     # when more output is needed, I will need to add more and more, so this
@@ -168,7 +171,7 @@ update_swp_paths <- function(project_path, swap_exe,
         infil_index <- (parameters$param == "INIFIL") %>% which()
         if ((infil_index %>% length()) > 0) {
           val <-  parameters$value[infil_index] %>% str_remove_all("'")
-          newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap @ {Sys.time()}")
+          newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap v{version} @ {Sys.time()}")
           parameters = change_swap_par(parameters, "INIFIL", newval )
           if(verbose){
             cat(glue("\n...INIFIL parameter set to\n {parameters$value[infil_index]}\n"))
