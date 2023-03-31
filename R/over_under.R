@@ -1,9 +1,10 @@
-# SWAPUI Over/underestimation graph
-# Author: Moritz Shore | moritz.shore@nibio.no | 9.1.23
-# Contents: Hacked together plot showing over/under estimates of the model
-#           compared to measurements. used function ribbonize() from nsgrantham
-#           Poor quality method, should be improved someday.
+# Hacked together plot showing over/under estimates of the model
+# compared to measurements. used function ribbonize() from nsgrantham
+# Poor quality method, should be improved someday.
 
+# TODO: fix x axis
+# TODO: allow NA values..
+# ...maybe try to write it myself...
 
 # source: https://www.nsgrantham.com/fill-between-two-lines-ggplot2
 
@@ -16,7 +17,7 @@
 #' @importFrom dplyr transmute arrange recode lead bind_rows
 #' @importFrom tidyr pivot_wider pivot_longer
 #'
-#' @author Neal Grantham, Moritz Shore
+#' @author Neal Grantham
 ribbonize <- function(.data, .x, .y, .type) {
   # Calculate the ribbons required for geom_ribbon().
   # For more info, visit nsgrantham.com/fill-between-two-lines-ggplot2
@@ -98,19 +99,26 @@ ribbonize <- function(.data, .x, .y, .type) {
 }
 
 
-#' Plot over under
+#' Plot Over/Underestimation graph
 #'
 #' Plots a graph showing where the model overestimates and underestimates for
 #' the given variable and depth(s).
-#' @param project_path (REQ) (string) path to project directory
-#' @param variable (REQ) (string) desired variable for graph
-#' @param depth (OPT) (numeric/vector) depth at which to plot. uses all available depths if left blank.
-#' @param verbose (OPT) (logical) print status?
+#'
+#' Graph is based on [ribbonize()](https://www.nsgrantham.com/fill-between-two-lines-ggplot2) from Neal Grantham
+#'
+#' @param project_path path to project_directory (string)
+#' @param variable desired variable (string)
+#' @param depth optional depth specification. leave blank for no/all depths. (numeric/vector)
+#' @param verbose print status? (flag)
+#'
 #' @importFrom ggplot2 ggplot geom_line geom_ribbon guides scale_color_manual
 #' @importFrom ggplot2 scale_linetype_manual theme element_text element_blank scale_x_discrete labs aes
 #' @importFrom plotly ggplotly layout
 #' @importFrom dplyr %>% left_join pull count group_by
+#'
 #' @export
+#'
+#' @author Neal Grantham, Moritz Shore
 plot_over_under <- function(project_path, variable, depth = NULL, verbose = F) {
 
   # grabs the model data

@@ -2,20 +2,26 @@
 % Please edit documentation in R/over_under.R
 \name{plot_over_under}
 \alias{plot_over_under}
-\title{Plot over under}
+\title{Plot Over/Underestimation graph}
 \usage{
 plot_over_under(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{(REQ) (string) path to project directory}
+\item{project_path}{path to project_directory (string)}
 
-\item{variable}{(REQ) (string) desired variable for graph}
+\item{variable}{desired variable (string)}
 
-\item{depth}{(OPT) (numeric/vector) depth at which to plot. uses all available depths if left blank.}
+\item{depth}{optional depth specification. leave blank for no/all depths. (numeric/vector)}
 
-\item{verbose}{(OPT) (logical) print status?}
+\item{verbose}{print status? (flag)}
 }
 \description{
 Plots a graph showing where the model overestimates and underestimates for
 the given variable and depth(s).
+}
+\details{
+Graph is based on \href{https://www.nsgrantham.com/fill-between-two-lines-ggplot2}{ribbonize()} from Neal Grantham
+}
+\author{
+Neal Grantham, Moritz Shore
 }
