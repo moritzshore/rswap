@@ -7,9 +7,9 @@
 get_depths(data, variable = NULL)
 }
 \arguments{
-\item{data}{dataframe loaded by \code{load_observed()}}
+\item{data}{as loaded by \code{load_observed()} (dataframe)}
 
-\item{variable}{only returns depths of the given variable when passed. leave blank for all.}
+\item{variable}{only returns depths of the given variable when passed. leave blank for all. (string)}
 }
 \value{
 Returns a numeric vector of depths

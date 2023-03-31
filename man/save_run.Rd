@@ -9,7 +9,7 @@ save_run(project_path, run_name = NULL, verbose = F)
 \arguments{
 \item{project_path}{path to the project directory (string)}
 
-\item{run_name}{name of run to be saved. default is "rswap_{time,date} (string)"}
+\item{run_name}{name of run to be saved. default is "rswap_{time,date}" (string)}
 
 \item{verbose}{print status? (flag)}
 }

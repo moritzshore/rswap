@@ -192,7 +192,7 @@ update_swp_paths <- function(project_path, swap_exe,
 #' `comparative_plot()` or `plot_statistics()`
 #'
 #' @param project_path path to the project directory (string)
-#' @param run_name name of run to be saved. default is "rswap_{time,date} (string)"
+#' @param run_name name of run to be saved. default is "rswap_{time,date}" (string)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
@@ -364,9 +364,9 @@ read_swap_output <-  function(project_path, archived = F){
 #' and variable. It might be useful for end users as well, which is why its
 #' accessible.
 #'
-#' @param data data as given by `load_observed()$data` or `read_swap_output()$custom_depth`
-#' @param var name(s) of the variables you would like to select (string). leave blank for all
-#' @param depth value(s) of the depths you would like to select (numeric). leave blank for all
+#' @param data as given by `load_observed()$data` or `read_swap_output()$custom_depth` (dataframe)
+#' @param var name(s) of the variables you would like to select, leave blank for all. (string)
+#' @param depth value(s) of the depths you would like to select, leave blank for all. (numeric)
 #'
 #' @returns Returns a dataframe with a `DATE` column, followed by the desired data.
 #'
@@ -439,19 +439,19 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
 #' Extracts the numeric depth values found in the observed data, as loaded by
 #' `load_observed()`. Can be filtered by `variable`.
 #'
-#' @param data dataframe loaded by `load_observed()`
-#' @param variable only returns depths of the given variable when passed. leave blank for all.
+#' @param data as loaded by `load_observed()` (dataframe)
+#' @param variable only returns depths of the given variable when passed. leave blank for all. (string)
 #'
 #' @returns Returns a numeric vector of depths
 #'
 #' @export
 get_depths <- function(data, variable = NULL) {
 
+  # TODO: rename to get_swap_depths
   splitted <- colnames(data) %>% str_remove("obs") %>%
     str_split("_") %>% unlist() %>% toupper()
 
-  char_index <-
-    splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
+  char_index <- splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
 
   vars <- splitted[char_index]
 
@@ -470,33 +470,35 @@ get_depths <- function(data, variable = NULL) {
   if(length(depths)<1){
     depths = NULL
   }
-D
+
   return(depths)
 }
 
-#' match mod obs
+#' Match Modeled Values To Observed Values
 #'
-#' internal function: matches observed and modelled dataframes and returns them
+#' This function is used internally to match observed values with modeled values
+#' in the same format, such that it is easy to pass them to performance indicators.
 #'
-#' @param project_path req
-#' @param variable req
-#' @param depth opt
-#' @param verbose opt
-#' @param archived
+#' This function is available since it might be of use to the end user.
+#'
+#' @param project_path path to project directory (string)
+#' @param variable variable to match (string)
+#' @param depth an optional depth to select for (numeric)
+#' @param verbose print status? (boolean)
+#' @param archived is the project in /rswap_saved/?
 #'
 #' @importFrom tibble %>%
 #' @importFrom glue glue
-#' @returns list of modelled DF and observed DF, matched
-#' @keywords internal
+#'
+#' @returns Returns a list of two dataframes, `.$mod` and `.$obs`. These two dataframes have identical dimensions and column names.
+#'
 #' @export
-match_mod_obs <-
-  function(project_path,
-           variable,
-           depth = NULL,
-           verbose = F,
-           archived = FALSE) {
+#'
+match_mod_obs <- function(project_path, variable, depth = NULL,
+                          verbose = F, archived = F) {
 
-  # todo remove export from this function
+    # TODO rename: match_swap_data
+
   if (variable %>% is.null() == FALSE) {
     variable <- variable %>% toupper()
   }
@@ -504,46 +506,39 @@ match_mod_obs <-
   observed_data <- load_observed(project_path = project_path, verbose = verbose)
   modelled_data <- read_swap_output(project_path = project_path, archived = archived)
 
-  observed_data_filtered <-
-    filter_swap_data(
-      data = observed_data$data,
-      var = variable,
-      depth = depth
-    )
-  modelled_data_filtered <-
-    filter_swap_data(data = modelled_data$custom_depth,
-                     var = variable,
-                     depth = depth)
+  observed_data_filtered <-filter_swap_data(data = observed_data$data,
+                                            var = variable, depth = depth)
+
+  modelled_data_filtered <-filter_swap_data(data = modelled_data$custom_depth,
+                                            var = variable, depth = depth)
 
   # sort them to be in consistent order
   obs_new_order = observed_data_filtered %>% colnames() %>% sort()
   mod_new_order = modelled_data_filtered %>% colnames() %>% sort()
 
   modelled_data_filtered = modelled_data_filtered[, mod_new_order]
-
   observed_data_filtered = observed_data_filtered[, obs_new_order]
 
   obs_col_length = length(observed_data_filtered)
   mod_col_length = modelled_data_filtered %>% length()
 
   if (obs_col_length != mod_col_length) {
-    print("OBS file:")
-    print(observed_data_filtered)
-    print("mod file:")
-    print(modelled_data_filtered)
-    stop(
-      "Illegal request: obs col length and mod col length differ, likely because observed data attributes does not match modelled"
-    )
+    stop("Illegal request: obs col length and mod col length differ, likely because observed data attributes does not match modelled",
+         "\nOBS file selected columns --> ",
+         observed_data_filtered %>% length(),
+         "\nMOD file selected columns --> ",
+         modelled_data_filtered %>% length())
   }
 
   if (obs_col_length == 1) {
-    warning("No variable selected, returning empty dataframe. ")
+    warning("No variable selected, returning an empty dataframe.")
     return(observed_data_filtered)
   }
+
   list(mod = modelled_data_filtered, obs = observed_data_filtered) %>% return()
 }
 
-#' Melt all runs
+#' Melt All Runs
 #'
 #' Combines the past saved runs, with the current run, and the observed data
 #' so that the combination of them is easy to plot using ggplot etc.

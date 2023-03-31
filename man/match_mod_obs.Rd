@@ -2,31 +2,28 @@
 % Please edit documentation in R/io.R
 \name{match_mod_obs}
 \alias{match_mod_obs}
-\title{match mod obs}
+\title{Match Modeled Values To Observed Values}
 \usage{
-match_mod_obs(
-  project_path,
-  variable,
-  depth = NULL,
-  verbose = F,
-  archived = FALSE
-)
+match_mod_obs(project_path, variable, depth = NULL, verbose = F, archived = F)
 }
 \arguments{
-\item{project_path}{req}
+\item{project_path}{path to project directory (string)}
 
-\item{variable}{req}
+\item{variable}{variable to match (string)}
 
-\item{depth}{opt}
+\item{depth}{an optional depth to select for (numeric)}
 
-\item{verbose}{opt}
+\item{verbose}{print status? (boolean)}
 
-\item{archived}{}
+\item{archived}{is the project in /rswap_saved/?}
 }
 \value{
-list of modelled DF and observed DF, matched
+Returns a list of two dataframes, \code{.$mod} and \code{.$obs}. These two dataframes have identical dimensions and column names.
 }
 \description{
-internal function: matches observed and modelled dataframes and returns them
+This function is used internally to match observed values with modeled values
+in the same format, such that it is easy to pass them to performance indicators.
 }
-\keyword{internal}
+\details{
+This function is available since it might be of use to the end user.
+}

@@ -7,11 +7,11 @@
 filter_swap_data(data, var = NULL, depth = NULL)
 }
 \arguments{
-\item{data}{data as given by \code{load_observed()$data} or \code{read_swap_output()$custom_depth}}
+\item{data}{as given by \code{load_observed()$data} or \code{read_swap_output()$custom_depth} (dataframe)}
 
-\item{var}{name(s) of the variables you would like to select (string). leave blank for all}
+\item{var}{name(s) of the variables you would like to select, leave blank for all. (string)}
 
-\item{depth}{value(s) of the depths you would like to select (numeric). leave blank for all}
+\item{depth}{value(s) of the depths you would like to select, leave blank for all. (numeric)}
 }
 \value{
 Returns a dataframe with a \code{DATE} column, followed by the desired data.
