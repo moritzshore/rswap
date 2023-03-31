@@ -72,6 +72,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #'
 parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
+    # TODO rename to parse_swap_file()
     # finds the end of the table when passed a snipped of the swap file
     find_eot <- function(short_swp) {
       first_element <- short_swp %>%  str_trim() %>% str_split("\\s+") %>% map(1) %>% unlist()
