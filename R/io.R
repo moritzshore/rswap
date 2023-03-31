@@ -97,32 +97,37 @@ change_swap_par <- function(param, name, value){
   return(param)
 }
 
-#' Update swp main file paths
+#' Update SWAP Main File Paths
 #'
-#' updates the file paths in the swap main file
-#' @param project_path path to the temp directory
-#' @param swap_exe path to swap.exe
-#' @param parameters SWAP main file parameters in dataframe format
-#' @param verbose print status?
+#' As `rswap` creates a new directory for the model file, the paths in the those
+#' files need to be update to still be correct. This function does just that.
+#'
+#'
+#' @param project_path path to the temp directory (string)
+#' @param swap_exe path to swap.exe (string)
+#' @param parameters SWAP main file parameters (string)
+#' @param verbose print status? (flag)
+#'
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
-#' @keywords internal
-#' @returns swap parameter dataframe
 #'
-update_swp_paths <-
-  function(project_path,
-           swap_exe,
-           parameters,
-           verbose) {
+#' @keywords internal
+#'
+#' @returns Returns the SWAP parameter dataframe with modified path values
+#'
+update_swp_paths <- function(project_path, swap_exe,
+                             parameters, verbose) {
 
+    # parse the various paths
     rswap_dir <- project_path %>% paste0(.,"/rswap/")
-
-    # TODO this could be revamped
-    swap_exe_name = swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
+    swap_exe_name <- swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
-
+    # SWCSV needs to be present in the SWAP main file, such that the needed
+    # output can be printed. If this parameter already exists within the
+    # parameter dataframe, we can simply adjust the value to 1. If it does
+    # not exist yet, we need to add it, with the value of 1.
     if ("SWCSV" %in% parameters$param) {
       parameters = change_swap_par(parameters, "SWCSV", "1")
     } else{
@@ -133,8 +138,7 @@ update_swp_paths <-
               comment = glue("added by rswap {Sys.time()}")
             ))
     }
-
-
+    # The exact same thing goes for SWCSV...
     if ("SWCSV_TZ" %in% parameters$param) {
       parameters = change_swap_par(parameters, "SWCSV_TZ", "1")
     } else{
@@ -145,15 +149,19 @@ update_swp_paths <-
               comment = glue("added by rswap {Sys.time()}")
             ))
     }
+    # when more output is needed, I will need to add more and more, so this
+    # should / will be updated to do as a loop, as it is done below:
 
+    # these are the parameters that need a path to be updated
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
+    for (par in update_par) {
+      val = glue("'{swap_main_file_path}'")
+      parameters = change_swap_par(parameters, par, val)
+    }
 
-  for (par in update_par) {
-    val = glue("'{swap_main_file_path}'")
-    parameters = change_swap_par(parameters, par, val )
-  }
-
-    # Update the SWINCO path if needed.
+    # Update the SWINCO path if needed. If SWINCO is set to 3, then INIFIL needs
+    # to have its path updated.
+    # This code is ugly, and can be simplified, but it does work.
     swinco_index <- (parameters$param == "SWINCO") %>% which()
     if ((swinco_index %>% length()) > 0) {
       if (parameters$value[swinco_index] == 3) {
@@ -168,11 +176,9 @@ update_swp_paths <-
         }
       }
     }
-
+    # Return the modified parameter set with the updated paths
     return(parameters)
   }
-
-
 
 #' Save a swap run
 #'

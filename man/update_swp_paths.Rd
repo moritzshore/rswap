@@ -2,23 +2,24 @@
 % Please edit documentation in R/io.R
 \name{update_swp_paths}
 \alias{update_swp_paths}
-\title{Update swp main file paths}
+\title{Update SWAP Main File Paths}
 \usage{
 update_swp_paths(project_path, swap_exe, parameters, verbose)
 }
 \arguments{
-\item{project_path}{path to the temp directory}
+\item{project_path}{path to the temp directory (string)}
 
-\item{swap_exe}{path to swap.exe}
+\item{swap_exe}{path to swap.exe (string)}
 
-\item{parameters}{SWAP main file parameters in dataframe format}
+\item{parameters}{SWAP main file parameters (string)}
 
-\item{verbose}{print status?}
+\item{verbose}{print status? (flag)}
 }
 \value{
-swap parameter dataframe
+Returns the SWAP parameter dataframe with modified path values
 }
 \description{
-updates the file paths in the swap main file
+As \code{rswap} creates a new directory for the model file, the paths in the those
+files need to be update to still be correct. This function does just that.
 }
 \keyword{internal}
