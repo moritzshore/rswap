@@ -7,14 +7,13 @@
 PBIAS(obs, mod)
 }
 \arguments{
-\item{obs}{numeric vector of observed values \strong{REQ}}
+\item{obs}{numeric vector of observed values}
 
-\item{mod}{numeric vector of modeled values \strong{REQ}}
+\item{mod}{numeric vector of modeled values}
 }
 \value{
 numeric PBIAS value rounded to 2 decimal
 }
 \description{
 Returns PBIAS value for a paired observed and modeled vector.
-#TODO: change this function to accept a named vector, or dataframe.
 }

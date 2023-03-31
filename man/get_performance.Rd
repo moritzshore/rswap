@@ -2,7 +2,7 @@
 % Please edit documentation in R/stat.R
 \name{get_performance}
 \alias{get_performance}
-\title{Get model performance}
+\title{Get Model Performance}
 \usage{
 get_performance(
   project_path,
@@ -14,25 +14,26 @@ get_performance(
 )
 }
 \arguments{
-\item{project_path}{\strong{(REQ)} \strong{(string)} path to the project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{archived}{Flag, if the model run is saved in the rswap_saved archived}
+\item{archived}{set to \code{TRUE} if project is saved in "rswap_saved/" (flag)}
 
-\item{stat}{(opt) (string/vector) "NSE" "PBIAS" "RMSE" "RSR" or leave blank for all}
+\item{stat}{statistical performance indicator (ie. "NSE") (string)}
 
-\item{variable}{(REQ) (string/vector) variable name (ie. WC, H, TEMP). leave blank for all available.}
+\item{variable}{variable name. leave blank for all. (string)}
 
-\item{depth}{(OPT) (numeric/vector) depth of variable value (>0). Must exist
-in SWAP output. leave blank for all available}
+\item{depth}{depth of variable if it is depth-wise. leave blank for all (numeric)}
 
-\item{verbose}{(OPT) (boolean) print status to console?}
+\item{verbose}{print status? (flag)}
 }
 \value{
-(dataframe) value(s) of performance indicator(s) for given variable(s) and depth(s)
+dataframe value(s) of performance indicator(s) for given variable(s) and depth(s)
 }
 \description{
-returns the performance indicator for the chosen variable(s) and measure(s)
-Supported performance indicators are: NSE, PBIAS, RMSE, RSR
-Supported variables are those provided in the observed data file
-Please note, passing multiple variables at differing depths will not work!
+Returns the performance for the chosen variable(s) and performance indicator(s).
+Supported performance indicators are: NSE, PBIAS, RMSE, RSR.
+Supported variables are those provided in the observed data file.
+}
+\details{
+Please note, passing multiple variables at differing depths will not work! (yet)
 }
