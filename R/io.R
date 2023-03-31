@@ -15,8 +15,6 @@ build_rswap_directory <- function(project_path){
 
   temp_directory <- glue("{project_path}/rswap")
 
-  unlink(temp_directory, recursive = T)
-
   # list files found in project path (Note, this includes all the saved runs as\
   # well, which we dont want, which is why we need to remove them)
   file_list <- list.files(project_path, full.names = T, recursive = T)
