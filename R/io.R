@@ -242,38 +242,45 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
   #TODO return path of saved run?
 }
 
-#' Load observed data
+#' Load Observed Data
 #'
-#' (make sure to use the template .xlsx file, placed in your project directory)
-#' @param project_path String. Path to project directory.
-#' @param verbose Logical. Prints status reports
+#' This function loads your observed data from the template file that was placed
+#' in your project directory either by `build_rswap_directory()` or `rswap_init()`
+#'
+#' It is critical that the template observed file is filled out correctly.
+#' Please see the file itself for more information. It should be located in
+#' your project directory, and must bear the namer `swap_observed_data.xlsx`.
+#'
+#' Please note, the file type will eventually be switched to .csv.
+#'
+#' @param project_path Path to project directory (string)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom readxl read_excel
 #' @importFrom stringr str_remove str_replace str_split
 #'
+#' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
+#' as well as `.$observed_variables`, a vector of the detected observed variables.
+#'
 #' @export
+#'
 load_observed <- function(project_path, verbose = F){
 
-  # TODO: maybe this should be internal
-  # TODO: switch to csv
+  #TODO switch to CSV
+  #TODO rename to load_swap_observed
+
   path <- paste0(project_path, "/rswap_observed_data.xlsx")
-
-  # skip 1 to remove the comment line
-  data <- read_excel(path, skip = 1)
-
-  data$DATE <- data$DATE %>% as.Date()
-
+  data <- read_excel(path, skip = 1) # skip 1 to remove the comment line
+  data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
 
-  # find a better way to do this. or remove it
   date_col <- columns %>% grepl(x = ., "DATE") %>% which()
-
   obs_cols <- columns[-date_col]
 
   col_sep <- obs_cols %>% str_split("_") %>% unlist()
-
   num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
 
+  # parse the observed varibles names
   obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
 
   return_df <- list(data = data, observed_variables = obs_vars)
@@ -282,6 +289,7 @@ load_observed <- function(project_path, verbose = F){
     cat("observed data loaded, following variables detected:", sep = "\n")
     cat(obs_vars, "\n", sep = " ")
   }
+
   return_df %>% return()
 }
 

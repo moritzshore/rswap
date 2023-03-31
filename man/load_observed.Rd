@@ -2,15 +2,27 @@
 % Please edit documentation in R/io.R
 \name{load_observed}
 \alias{load_observed}
-\title{Load observed data}
+\title{Load Observed Data}
 \usage{
 load_observed(project_path, verbose = F)
 }
 \arguments{
-\item{project_path}{String. Path to project directory.}
+\item{project_path}{Path to project directory (string)}
 
-\item{verbose}{Logical. Prints status reports}
+\item{verbose}{print status? (flag)}
+}
+\value{
+Returns a list consiting of \code{.$data}, a dataframe of the observed values,
+as well as \code{.$observed_variables}, a vector of the detected observed variables.
 }
 \description{
-(make sure to use the template .xlsx file, placed in your project directory)
+This function loads your observed data from the template file that was placed
+in your project directory either by \code{build_rswap_directory()} or \code{rswap_init()}
+}
+\details{
+It is critical that the template observed file is filled out correctly.
+Please see the file itself for more information. It should be located in
+your project directory, and must bear the namer \code{swap_observed_data.xlsx}.
+
+Please note, the file type will eventually be switched to .csv.
 }
