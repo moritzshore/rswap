@@ -1,15 +1,16 @@
-#' Plot statistics
+#' Plot Statistics
 #'
-#' This function generates a plot of all the saved runs, allowing the
-#' user to see how well their runs are performing compared to previous
-#' attempts.
-#' @param project_path (REQ) (string) path to project directory
-#' @param var (REQ) (string) variable to analyse
-#' @param depth (numeric/vector) (OPT) optional, leave blank for all
-#' @param graph (OPT) (string) either "default" "sorted" or "ggplot". leave
-#' blank for default
-#' @param stat (REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)
-#' @param verbose (OPT) (boolean) print status?
+#' This function calculates the statistical performance of all the saved model
+#' runs in the /rswap_saved/ folder, as well as the last performed run. It does
+#' this per `variable` and for any/all given `depths`, for the passed statistical
+#' performance indicator `stat` (Currently supported are "NSE", "RMSE", "PBIAS", "RSR")
+#'
+#' @param project_path path to project directory (string)
+#' @param var variable to show (string)
+#' @param depth depth(s) to show. Leave blank for all (numeric/vector)
+#' @param graph either "default" "sorted" or "ggplot" leave blank for default (string)
+#' @param stat statistical indicator function ("NSE", "RMSE", "PBIAS", "RSR") (string)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom ggplot2 ggplot theme scale_color_manual geom_col aes geom_line geom_point labs ylab xlab ggtitle scale_fill_manual
 #' @importFrom dplyr %>% pull select all_of filter
@@ -19,12 +20,9 @@
 #' @importFrom grDevices palette
 #'
 #' @export
+#'
 plot_statistics <-
-  function(project_path,
-           var,
-           depth =  NULL,
-           graph = "default",
-           stat = "NSE",
+  function(project_path, var, depth =  NULL, graph = "default",stat = "NSE",
            verbose = F) {
 
   graph = graph %>% tolower()
@@ -264,3 +262,5 @@ plot_statistics <-
     plot %>% print()
   }
 }
+
+# TODO: sorting of the results NEEDS to react to the stat functions setting!

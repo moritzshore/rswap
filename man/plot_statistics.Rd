@@ -2,7 +2,7 @@
 % Please edit documentation in R/statistics_plot.R
 \name{plot_statistics}
 \alias{plot_statistics}
-\title{Plot statistics}
+\title{Plot Statistics}
 \usage{
 plot_statistics(
   project_path,
@@ -14,21 +14,21 @@ plot_statistics(
 )
 }
 \arguments{
-\item{project_path}{(REQ) (string) path to project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{var}{(REQ) (string) variable to analyse}
+\item{var}{variable to show (string)}
 
-\item{depth}{(numeric/vector) (OPT) optional, leave blank for all}
+\item{depth}{depth(s) to show. Leave blank for all (numeric/vector)}
 
-\item{graph}{(OPT) (string) either "default" "sorted" or "ggplot". leave
-blank for default}
+\item{graph}{either "default" "sorted" or "ggplot" leave blank for default (string)}
 
-\item{stat}{(REQ) (string) Performance statistic. (NSE, PBIAS, RMSE, RSE)}
+\item{stat}{statistical indicator function ("NSE", "RMSE", "PBIAS", "RSR") (string)}
 
-\item{verbose}{(OPT) (boolean) print status?}
+\item{verbose}{print status? (flag)}
 }
 \description{
-This function generates a plot of all the saved runs, allowing the
-user to see how well their runs are performing compared to previous
-attempts.
+This function calculates the statistical performance of all the saved model
+runs in the /rswap_saved/ folder, as well as the last performed run. It does
+this per \code{variable} and for any/all given \code{depths}, for the passed statistical
+performance indicator \code{stat} (Currently supported are "NSE", "RMSE", "PBIAS", "RSR")
 }
