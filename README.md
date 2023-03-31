@@ -23,6 +23,7 @@ for help on any specific function, use ```> ?functionname```
 **⚠️IMPORTANT⚠️** Its important to know that rswap never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well, and will be overwritten over time. Remeber to save your results if you would like to keep them, and remeber that anything in the `project_path/rswap` directory is temporary!
 
 ## How to run SWAP?
+
 The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located (`project_path`). The `swap.exe` must be located in the parent directory of `project_path`!
 
 ```
@@ -30,9 +31,11 @@ run_swap(project_path)
 ```
 
 `run_swap()` can be further customized with the following parameters:
+
 - `swap_file` can be set to a custom name for your SWAP main file (*.swp)
 - `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later)
 - `timeout` sets the max allowed runtime of SWAP
+
 ## How to access the data?
 
 To read the output of your executed SWAP run, you can use the following command
