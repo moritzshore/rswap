@@ -15,6 +15,8 @@
 #' @importFrom dplyr %>% pull filter count group_by mutate select distinct
 #' @importFrom dplyr transmute arrange recode lead bind_rows
 #' @importFrom tidyr pivot_wider pivot_longer
+#'
+#' @author Neal Grantham, Moritz Shore
 ribbonize <- function(.data, .x, .y, .type) {
   # Calculate the ribbons required for geom_ribbon().
   # For more info, visit nsgrantham.com/fill-between-two-lines-ggplot2
