@@ -2,31 +2,34 @@
 % Please edit documentation in R/rw_parameters.R
 \name{parse_swp_file}
 \alias{parse_swp_file}
-\title{Parse swap file}
+\title{Parse SWAP File}
 \usage{
 parse_swp_file(project_path, swap_file = "swap.swp", verbose = F)
 }
 \arguments{
-\item{project_path}{(REQ) (string), path to project directory}
+\item{project_path}{path to project directory (string)}
 
-\item{swap_file}{(OPT) (string) name of the swap file to be used. defaults to swap.swp}
+\item{swap_file}{optional swap main file name (string) defaults to "swap.swp"}
 
-\item{verbose}{(OPT) (boolean) print status?}
+\item{verbose}{print status? (flag)}
 }
 \value{
-SWAP parameters in a dataframe format and path to where the tables
+Returns SWAP parameters in a dataframe format and path to where the tables
 were saved in a csv format (until i figure out how to return an array of
 dataframes)
 }
 \description{
-Reads the passed swap file and parses it. returns parameters and tables in a
-convienient format. can also write the file directly into the rswap directory
+This function reads in a SWAP main file and returns the parameter set in a
+dataset form. It also converts the tables in the main file into .csv format
+and saves them in the rswap directory. In this format it is easy to make
+alterations to the SWAP parameters and tables.
 }
 \details{
-Not necessarily meant for manual use.
+I am working on getting tables to be returned as a "list of dataframes"
+instead of saving them as a file.
 
-Make sure each table in the swap main file ends with a '* End of table' marker!!!
+Also, this parsing technique was designed to work with the SWAP example cases.
+If your SWAP main file structure does something different, you might run into trouble.
 
-Also this is designed to work with the same format as the example files. if
-you do something different with yours,  you might run into issues
+This function will be expanded to work with more SWAP input files like .dra
 }

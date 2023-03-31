@@ -63,6 +63,7 @@ run_swap <- function(project_path,
   }
 
   # routine for automatically setting output (could be improved)
+  # TODO move all of this to set_swap_output()
   if (autoset_output) {
 
     obs <- load_observed(rswap_directory)

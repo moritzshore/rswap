@@ -2,22 +2,28 @@
 % Please edit documentation in R/rw_parameters.R
 \name{write_swap_file}
 \alias{write_swap_file}
-\title{write swap file}
+\title{Write SWAP File}
 \usage{
 write_swap_file(parameters, table_path, outpath, verbose = F)
 }
 \arguments{
-\item{parameters}{(REQ) (dataframe) dataframe of project parameters as created
-by the parse_swap_file() function}
+\item{parameters}{dataframe of project parameters as created by \code{parse_swap_file()} (dataframe)}
 
-\item{table_path}{(REQ) (string) path to swap tables stored as csv as written
-by the parse_swap_fil function}
+\item{table_path}{path of project tables as created by \code{parse_swap_file()} (string)}
 
-\item{outpath}{(REQ) (string) where to write the swap file (and what to call it)}
+\item{outpath}{path where to save the swap file (string)}
 
-\item{verbose}{(OPT) (boolean) print status?}
+\item{verbose}{print status? (flag)}
+}
+\value{
+Returns path of written file
 }
 \description{
-writes the swap file from the passed parameter dataframe, and the passed path
-to the tables stored as csv from the parse_swap_file() function
+Writes a SWAP main file from the passed parameter dataframe, and the passed path
+to the tables stored as .csv from the \code{parse_swap_file()} function. The SWAP
+main file will be written to the location specified by \code{outpath}.
+}
+\details{
+This function currently is only intended for the SWAP main file, but will be
+expanded to handle the other SWAP input files over time.
 }

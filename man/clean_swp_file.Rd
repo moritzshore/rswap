@@ -2,22 +2,23 @@
 % Please edit documentation in R/rw_parameters.R
 \name{clean_swp_file}
 \alias{clean_swp_file}
-\title{Clean swap file}
+\title{Clean SWAP File}
 \usage{
 clean_swp_file(project_path, swap_file = "swap.swp")
 }
 \arguments{
-\item{project_path}{(REQ) (string) path where the swap file is located}
+\item{project_path}{path to the project directory (string)}
 
-\item{swap_file}{(OPT) (string) name of the swap file (will default to "swap.swp" if left blank)}
+\item{swap_file}{name of the swap file (string)}
 }
 \value{
-cleaned up SWAP file in list form.
+Returns a cleaned up SWAP file in string vector form.
 }
 \description{
-Returns a cleaned up SWAP file fit for manipulation
-Make sure each table in the swap main file ends with a '* End of table' marker!!!
+Returns a cleaned up SWAP file fit for manipulation (removes all non-vital
+information).
 }
 \details{
-Not necessarily meant for manual use.
+This function is designed to be used internally, but may be useful to the end
+users. This is currently only tested for the SWAP main file.
 }

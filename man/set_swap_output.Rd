@@ -7,18 +7,21 @@
 set_swap_output(parameters, variables, depths, verbose = F)
 }
 \arguments{
-\item{parameters}{parsed parameter DF}
+\item{parameters}{parameter dataframe as returned by \code{parse_swap_file()}}
 
-\item{variables}{variables desired for output}
+\item{variables}{variables desired for output (string)}
 
-\item{depths}{depths depth at which to output them}
+\item{depths}{depths depth at which to output them (string)}
 
-\item{verbose}{print status?}
+\item{verbose}{print status? (flag)}
 }
 \value{
-parameter dataframe with modified INLIST_CSV parameter.
+Returns parameter dataframe with modified INLIST_CSV parameter.
 }
 \description{
-by changing the inlist_csv function. if you depths for variables differ,
-you need to change the "INLIST_CSV" parameter manually with change_swap_par()
+This function alters the output parameters of your SWAP input files.
+}
+\details{
+Currently it only modifies INLIST_CSV, but more functionality will be placed
+here over time.
 }

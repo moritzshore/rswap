@@ -223,7 +223,7 @@ The aformentioned functions rely on more basic general functions which, while ar
 - Improve r/w of tables
 - Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
 - Add "exact variable matching" and stop removing "RAIN" in io.R->`melt_all_runs()`
-
+- Move output modifying code to set_swap_output, and expand on it.
 ## Support and Contributing
 
 If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: moritz.shore@nibio.no)
