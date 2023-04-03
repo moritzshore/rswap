@@ -7,6 +7,6 @@ bibentry(
   title   = "rswap: an R interface for the SWAP model",
   year    = "2023",
   note = "R package version 0.1.3",
-  doi = "10.5281/zenodo.7795153",
+  doi = "10.5281/zenodo.7795152",
   url     = "https://moritzshore.github.io/rswap/",
 )
