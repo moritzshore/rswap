@@ -1,6 +1,6 @@
 Type: Package
 Package: rswap
-Version: 0.1.1
+Version: 0.1.3
 Title: an R interface for the SWAP model
 Date: 2023-03-31
 Authors@R: person("Moritz", "Shore",

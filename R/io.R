@@ -68,37 +68,6 @@ build_rswap_directory <- function(project_path){
   return(temp_directory)
 }
 
-#' Change SWAP Parameter
-#'
-#' This function changes a SWAP parameter. It is passed a parameter dataframe
-#' as parsed by `parse_swap_file()` as well as the name of the parameter which
-#' should be modified, along with its value.
-#'
-#' Important: this function only works for single parameters. Any values stored
-#' as "tables" in the SWAP input file will need to be modified in another way
-#' (WIP)
-#'
-#' Note: the value of the parameter should be passed as a string in the correct
-#' format (ie. correct decimal place), as SWAP/FORTRAN is very particular about
-#' this
-#'
-#' @param param Parameter set (dataframe)
-#' @param name name of the parameter to change (string)
-#' @param value value the parameter should take on (string)
-#'
-#' @returns This function returns the same dataframe it was passed, with the
-#' parameter value altered.
-#'
-#' @importFrom glue glue
-#'
-#' @export
-change_swap_par <- function(param, name, value){
-  version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
-  value <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
-  param$value[which(param$param == name)] = value
-  return(param)
-}
-
 #' Update SWAP Main File Paths
 #'
 #' As `rswap` creates a new directory for the model file, the paths in the those
