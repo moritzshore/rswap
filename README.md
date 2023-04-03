@@ -1,12 +1,12 @@
 # rswap <img src="man/figures/rswap.png" align="right" width=20% height=20% />
 
-rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ## How to install?
 
 You can install `rswap` from GitHub: 
 
-```r
+```
 # install remotes, if not already present
 install.packages("remotes")
 
@@ -14,13 +14,13 @@ remotes::install_github("moritzshore/rswap")
 
 library(rswap)
 ```
-A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished succesfully, you know `rswap` is working properly. 
+A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly. 
 ```
 rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 for help on any specific function, use ```> ?functionname```
 
-**⚠️IMPORTANT⚠️** Its important to know that rswap never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well, and will be overwritten over time. Remeber to save your results if you would like to keep them, and remeber that anything in the `project_path/rswap` directory is temporary!
+**⚠️IMPORTANT⚠️** Its important to know that rswap never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them, and remember that anything in the `project_path/rswap` directory is temporary!
 
 ## How to run SWAP?
 
@@ -38,11 +38,11 @@ run_swap(project_path)
 
 ## How to access the data?
 
-To read the output of your executed SWAP run, you can use the following command
+To read the output of your executed SWAP run, you can use the following command.
 ```
 modelled_data <- read_swap_output(project_path)
 ```
-`read_swap_output()` returns two dataframes, `daily_output` which contains depthwise values of various variables.
+`read_swap_output()` returns two dataframes, `daily_output` which contains depth wise values of various variables.
 ```
 > modelled_data$daily_output
 # A tibble: 17,520 x 5
@@ -54,7 +54,7 @@ modelled_data <- read_swap_output(project_path)
 # i 17,517 more rows
 # i Use `print(n = ...)` to see more rows
 ```
-The other is `custom_depth` which contains custom variables at custom depths either explictly altered by the user, or automatically parsed by the `autoset_output` flag of `run_swap()`. This dataframe is used widely throughout the package. (more/all results will be added over time) 
+The other is `custom_depth` which contains custom variables at custom depths either explicitly altered by the user, or automatically parsed by the `autoset_output` flag of `run_swap()`. This dataframe is used widely throughout the package. (more/all results will be added over time) 
 
 ```
 > modelled_data$custom_depth
@@ -116,7 +116,7 @@ For a more detailed look at multiple variables at once, you can use the `soft_ca
 ```
 > soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
 ```
-This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is avaiable, they will be displayed as well.  
+This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.  
 
 
 <p align="center">
@@ -125,7 +125,7 @@ This function can be passed up to 3 variables, and will display them interactive
 
 ## Model performance
 
-A few functions focus on assesing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
+A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
 ```
 > get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
@@ -134,10 +134,11 @@ A few functions focus on assesing model performance by comparing modelling value
   <chr> <dbl>
 1 WC_15  0.62
 ```
-This function is very flexible, and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
+This function is very flexible and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
 ## Saving model runs
-While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this proccess with a vareity of functions, such as
+
+While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this process with a variety of functions, such as
 ```
 save_run(project_path, run_name = "COFRED = 0.35")
 ```
@@ -165,7 +166,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 <img src="man/figures/stat_plot1.png" width=60% height=60%>
 </p>
 
-This plot is equally flexible, and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
+This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
 
 ## Modification of Parameters and SWAP input files.
 
@@ -179,7 +180,7 @@ You can modify the dataframe how you wish, with whatever tools you would like, h
 ```
 parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
 ```
-This function takes in the dataframe parsed by the previous function, and returns that same dataframe with the modified parameter.
+This function takes in the dataframe parsed by the previous function and returns that same dataframe with the modified parameter.
 
 If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:
 ```
@@ -189,7 +190,7 @@ And to run this modified SWAP main file, you would of course use `run_swap()` wi
 
 ## Miscellaneous functions
 
-The aformentioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assitance to the end user. These are listed below. 
+The aforementioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assistance to the end user. These are listed below. 
 
 >`NSE() # statistical performance calculation`
 
@@ -210,6 +211,7 @@ The aformentioned functions rely on more basic general functions which, while ar
 >`melt_all_runs() # melts together all saved runs + current into` [tidy](https://towardsdatascience.com/what-is-tidy-data-d58bb9ad2458) `format` 
 
 ## Roadmap
+
 - Linux Support
 - Sensitivity Analysis
 - Autocalibration / PEST support
@@ -227,6 +229,7 @@ The aformentioned functions rely on more basic general functions which, while ar
 - Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
 - Add "exact variable matching" and stop removing "RAIN" in io.R->`melt_all_runs()`
 - Move output modifying code to set_swap_output, and expand on it.
+
 ## Support and Contributing
 
 If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: moritz.shore@nibio.no)
@@ -244,6 +247,7 @@ This package was developed for the [OPTAIN](https://optain.eu) project and has r
 [1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000.
 
 ## 
+
 <p align="center">
-<img src="man/figures/support_banner.png" width=80% height=80%>
+<img src="man/figures/support_banner.png" width=70% height=70%>
 </p>
