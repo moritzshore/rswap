@@ -255,6 +255,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #' Please note, the file type will eventually be switched to .csv.
 #'
 #' @param project_path Path to project directory (string)
+#' @param archived set to true if project path in saved in 'rswap_saved' (flag)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom readxl read_excel
@@ -266,12 +267,16 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #' @export
 #'
 #'
-load_observed <- function(project_path, verbose = F){
+load_observed <- function(project_path, archived = F, verbose = F){
 
   #TODO switch to CSV
   #TODO rename to load_swap_observed
+  if(archived){
+    path <- paste0(project_path, "/rswap_observed_data.xlsx")
+  }else{
+    path <- paste0(project_path, "/rswap/rswap_observed_data.xlsx")
 
-  path <- paste0(project_path, "/rswap_observed_data.xlsx")
+  }
   data <- read_excel(path, skip = 1) # skip 1 to remove the comment line
   data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
@@ -504,7 +509,11 @@ match_mod_obs <- function(project_path, variable, depth = NULL,
     variable <- variable %>% toupper()
   }
 
-  observed_data <- load_observed(project_path = project_path, verbose = verbose)
+  if(archived){
+    project_path<-project_path %>% str_remove("/rswap/")
+  }
+
+  observed_data <- load_observed(project_path = project_path, verbose = verbose, archived = archived)
   modelled_data <- read_swap_output(project_path = project_path, archived = archived)
 
   observed_data_filtered <-filter_swap_data(data = observed_data$data,

@@ -4,10 +4,12 @@
 \alias{load_observed}
 \title{Load Observed Data}
 \usage{
-load_observed(project_path, verbose = F)
+load_observed(project_path, archived = F, verbose = F)
 }
 \arguments{
 \item{project_path}{Path to project directory (string)}
+
+\item{archived}{set to true if project path in saved in 'rswap_saved' (flag)}
 
 \item{verbose}{print status? (flag)}
 }

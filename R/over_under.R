@@ -123,7 +123,7 @@ plot_over_under <- function(project_path, variable, depth = NULL, verbose = F) {
 
   # grabs the model data
 
-  run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
+  run_name <- project_path %>% str_split("/") %>% unlist() %>% tail(1)
 
   observed_data <- load_observed(project_path, verbose = verbose)
 

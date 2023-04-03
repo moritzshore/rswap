@@ -35,7 +35,6 @@ plot_statistics <-
   # extract the run name from the data package
   current_run <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
   save_path <- glue("{project_path}/rswap_saved/")
-  observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
   obs_dat <- load_observed(project_path)
 
   if(depth %>% is.null()){

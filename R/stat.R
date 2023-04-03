@@ -29,8 +29,6 @@ get_performance <-
 
     # TODO rename to get_swap_performance()
 
-    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
-
     if (variable %>% is.null()) {
       obs <- load_observed(project_path)
       variable = obs$observed_variables
