@@ -35,7 +35,7 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
     show <- show %>% toupper()
   }
 
-  observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+  observed_file_path <- glue("{project_path}/rswap_observed_data.csv")
 
   # cant do more than 4 variables. (3+RAIN)
   if(length(vars)>3){return("too many variables, max 3")}

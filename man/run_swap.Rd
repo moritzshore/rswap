@@ -33,7 +33,7 @@ Returns the status code of the run.
 This function runs the SWAP model for the given project directory, and
 optionally, a certain \code{swap_file}.
 \itemize{
-\item If you desire, you can automatically match the output of the SWAP model to the data provided in the \code{rswap_observed_data.xlsx} file by setting \code{autoset_output} to \code{TRUE}.
+\item If you desire, you can automatically match the output of the SWAP model to the data provided in the \code{rswap_observed_data.csv} file by setting \code{autoset_output} to \code{TRUE}.
 \item \code{verbose} will print not only model running status, but also what rswap is doing
 \item \code{timeout} allows you to set the maximum runtime of the model
 }

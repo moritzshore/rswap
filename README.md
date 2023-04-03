@@ -20,7 +20,7 @@ rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 for help on any specific function, use ```> ?functionname```
 
-**⚠️IMPORTANT⚠️** Its important to know that rswap never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them, and remember that anything in the `project_path/rswap` directory is temporary!
+**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them, and remember that anything in the `project_path/rswap` directory is temporary!
 
 ## How to run SWAP?
 
@@ -212,23 +212,27 @@ The aforementioned functions rely on more basic general functions which, while a
 
 ## Roadmap
 
+### Major
+
 - Linux Support
-- Sensitivity Analysis
+- Multi-core running
+- Sensitivity analysis
 - Autocalibration / PEST support
-- Parsing support for all swap files, not just the main file.
-- Add documentation in the excel sheet (and switch to supporting .csv instead!)
+- Scenario runs
+
+### Minor
+
+- Parsing support for all SWAP files, not just the main file.
 - Add support for multiple variables at differing depths for `autoset_output`
-- Fix the x-axis on the over/under plot, and support missing values
-- Give all exported rswap functions a consistent naming scheme (`verb_swap_noun()`)
-- Move change_swap_parameter() from io.R to rw_parameters.R
-- Add a "filename" par to write_swap_output()
+- Fix the x-axis to `plot_over_under()`, and support missing values
+- Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
+- Move `change_swap_parameter()` from `io.R` to `rw_parameters.R`
+- Add a "filename" par to `write_swap_output()`
 - Wrapper function to combine `parse_swp_file()` and `change_swap_par()` (and `write_swap_file()`?)
-- Expand and improve documentation
-- plot_stat sorting to follow stat property
+- `plot_statistics()` sorting to follow stat property
 - Improve r/w of tables
-- Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats
-- Add "exact variable matching" and stop removing "RAIN" in io.R->`melt_all_runs()`
-- Move output modifying code to set_swap_output, and expand on it.
+- Add "exact variable matching" and stop removing "RAIN" in `io.R` -> `melt_all_runs()`
+- Move output modifying code to `set_swap_output()`, and expand on it.
 
 ## Support and Contributing
 

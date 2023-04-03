@@ -4,7 +4,7 @@
 #'
 #' This function runs the SWAP model for the given project directory, and
 #' optionally, a certain `swap_file`.
-#' -  If you desire, you can automatically match the output of the SWAP model to the data provided in the `rswap_observed_data.xlsx` file by setting `autoset_output` to `TRUE`.
+#' -  If you desire, you can automatically match the output of the SWAP model to the data provided in the `rswap_observed_data.csv` file by setting `autoset_output` to `TRUE`.
 #' - `verbose` will print not only model running status, but also what rswap is doing
 #' - `timeout` allows you to set the maximum runtime of the model
 #'
@@ -74,7 +74,7 @@ run_swap <- function(project_path,
 
 
   # load observed data
-  observed_path <- paste0(rswap_directory, "/rswap_observed_data.xlsx")
+  observed_path <- paste0(rswap_directory, "/rswap_observed_data.csv")
   if(file.exists(observed_path) == FALSE){
     warning("Observed file not found!\n",observed_path )
   }

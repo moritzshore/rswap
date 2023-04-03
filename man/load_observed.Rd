@@ -24,7 +24,7 @@ in your project directory either by \code{build_rswap_directory()} or \code{rswa
 \details{
 It is critical that the template observed file is filled out correctly.
 Please see the file itself for more information. It should be located in
-your project directory, and must bear the namer \code{swap_observed_data.xlsx}.
+your project directory, and must bear the namer \code{swap_observed_data.csv}.
 
 Please note, the file type will eventually be switched to .csv.
 }

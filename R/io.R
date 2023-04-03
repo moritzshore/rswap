@@ -34,7 +34,6 @@ build_rswap_directory <- function(project_path){
       "*.swp",
       "*.dra",
       "layer*n.csv",
-      "*.xlsx",
       "*.bbc",
       "*.csv",
       "*.irg",
@@ -56,10 +55,14 @@ build_rswap_directory <- function(project_path){
   met_status <- file.copy(from = met_files, to = temp_directory)
 
   # if the template does not yet exist in the project directory, copy it in there
-  if("rswap_observed_data.xlsx" %in% list.files(project_path) == FALSE){
-    template_observed = system.file("extdata/rswap_observed_data.xlsx", package="rswap")
-    obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.xlsx"))
-    cat("copying template sheet 'rswap_observed_data_xlsx' into project directory\n")
+  if("rswap_observed_data.csv" %in% list.files(project_path) == FALSE){
+    template_observed = system.file("extdata/rswap_observed_data.csv", package="rswap")
+    template_instructions = system.file("extdata/instructions_rswap_observed_data.txt", package="rswap")
+
+    obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.csv"))
+    obs_status <- file.copy(from = template_instructions, to = paste0(project_path, "/instructions_rswap_observed_data.txt"))
+
+    cat("copying template sheet 'rswap_observed_data.csv' into project directory\n ...along with 'instructions_rswap_observed_data.txt'\n")
     }
   # return the path to the temp directory
   return(temp_directory)
@@ -250,7 +253,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' It is critical that the template observed file is filled out correctly.
 #' Please see the file itself for more information. It should be located in
-#' your project directory, and must bear the namer `swap_observed_data.xlsx`.
+#' your project directory, and must bear the namer `swap_observed_data.csv`.
 #'
 #' Please note, the file type will eventually be switched to .csv.
 #'
@@ -258,8 +261,8 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #' @param archived set to true if project path in saved in 'rswap_saved' (flag)
 #' @param verbose print status? (flag)
 #'
-#' @importFrom readxl read_excel
 #' @importFrom stringr str_remove str_replace str_split
+#' @importFrom tibble tibble
 #'
 #' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
 #' as well as `.$observed_variables`, a vector of the detected observed variables.
@@ -272,12 +275,13 @@ load_observed <- function(project_path, archived = F, verbose = F){
   #TODO switch to CSV
   #TODO rename to load_swap_observed
   if(archived){
-    path <- paste0(project_path, "/rswap_observed_data.xlsx")
+    path <- paste0(project_path, "/rswap_observed_data.csv")
   }else{
-    path <- paste0(project_path, "/rswap/rswap_observed_data.xlsx")
+    path <- paste0(project_path, "/rswap/rswap_observed_data.csv")
 
   }
-  data <- read_excel(path, skip = 1) # skip 1 to remove the comment line
+  # SUPPORTED FORMAT: sep=; dec=,
+  data <- read.table(file = path, header = T, sep = ";", dec = ",") %>% tibble()
   data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
 
@@ -579,7 +583,7 @@ melt_all_runs <-
            depth = NULL,
            verbose = F) {
 
-    observed_file_path <- glue("{project_path}/rswap_observed_data.xlsx")
+    observed_file_path <- glue("{project_path}/rswap_observed_data.csv")
     file_path <-  paste0(project_path, "/rswap_saved/")
     past_run_names <- list.files(path = file_path)
     past_run_paths <- list.files(path = file_path, full.names = T)

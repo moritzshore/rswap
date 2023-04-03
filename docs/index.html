@@ -65,22 +65,21 @@
 <div class="section level1">
 <div class="page-header"><h1 id="rswap-">rswap <img src="reference/figures/rswap.png" align="right" width="20%" height="20%"><a class="anchor" aria-label="anchor" href="#rswap-"></a>
 </h1></div>
-<p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP 4.2.0</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration proccess. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
+<p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP 4.2.0</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
 <div class="section level2">
 <h2 id="how-to-install">How to install?<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
 </h2>
 <p>You can install <code>rswap</code> from GitHub:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install remotes, if not already present</span></span>
+<pre><code><span><span class="co"># install remotes, if not already present</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"moritzshore/rswap"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://moritzshore.github.io/rswap/" class="external-link">rswap</a></span><span class="op">)</span></span></code></pre></div>
-<p>A useful place to start would be the <code><a href="reference/rswap_init.html">rswap_init()</a></code> function. This function creates the “Hupselbrook” example case in the same directory as your <code>swap.exe</code>. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished succesfully, you know <code>rswap</code> is working properly.</p>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://moritzshore.github.io/rswap/" class="external-link">rswap</a></span><span class="op">)</span></span></code></pre>
+<p>A useful place to start would be the <code><a href="reference/rswap_init.html">rswap_init()</a></code> function. This function creates the “Hupselbrook” example case in the same directory as your <code>swap.exe</code>. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know <code>rswap</code> is working properly.</p>
 <pre><code><span><span class="fu"><a href="reference/rswap_init.html">rswap_init</a></span><span class="op">(</span>swapexe <span class="op">=</span> <span class="st">"C:/path/to/swap.exe"</span><span class="op">)</span></span></code></pre>
 <p>for help on any specific function, use <code>&gt; ?functionname</code></p>
-<p><strong>⚠️IMPORTANT⚠️</strong> Its important to know that rswap never modifies files in your project directory (<code>project_path</code>), instead all files are <em>copied</em> from <code>project_path</code> to <code>project_path/rswap</code>, modified there, and executed. All results are stored there as well, and will be overwritten over time. Remeber to save your results if you would like to keep them, and remeber that anything in the <code>project_path/rswap</code> directory is temporary!</p>
+<p><strong>⚠️IMPORTANT⚠️</strong> Its important to know that <code>rswap</code> never modifies files in your project directory (<code>project_path</code>), instead all files are <em>copied</em> from <code>project_path</code> to <code>project_path/rswap</code>, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them, and remember that anything in the <code>project_path/rswap</code> directory is temporary!</p>
 </div>
 <div class="section level2">
 <h2 id="how-to-run-swap">How to run SWAP?<a class="anchor" aria-label="anchor" href="#how-to-run-swap"></a>
@@ -100,9 +99,9 @@
 <div class="section level2">
 <h2 id="how-to-access-the-data">How to access the data?<a class="anchor" aria-label="anchor" href="#how-to-access-the-data"></a>
 </h2>
-<p>To read the output of your executed SWAP run, you can use the following command</p>
+<p>To read the output of your executed SWAP run, you can use the following command.</p>
 <pre><code><span><span class="va">modelled_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_swap_output.html">read_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre>
-<p><code><a href="reference/read_swap_output.html">read_swap_output()</a></code> returns two dataframes, <code>daily_output</code> which contains depthwise values of various variables.</p>
+<p><code><a href="reference/read_swap_output.html">read_swap_output()</a></code> returns two dataframes, <code>daily_output</code> which contains depth wise values of various variables.</p>
 <pre><code>&gt; modelled_data$daily_output
 # A tibble: 17,520 x 5
    DATE       DEPTH     H    WC  TEMP
@@ -112,7 +111,7 @@
  3 2013-01-01  -2.5 -680. 0.118     0
 # i 17,517 more rows
 # i Use `print(n = ...)` to see more rows</code></pre>
-<p>The other is <code>custom_depth</code> which contains custom variables at custom depths either explictly altered by the user, or automatically parsed by the <code>autoset_output</code> flag of <code><a href="reference/run_swap.html">run_swap()</a></code>. This dataframe is used widely throughout the package. (more/all results will be added over time)</p>
+<p>The other is <code>custom_depth</code> which contains custom variables at custom depths either explicitly altered by the user, or automatically parsed by the <code>autoset_output</code> flag of <code><a href="reference/run_swap.html">run_swap()</a></code>. This dataframe is used widely throughout the package. (more/all results will be added over time)</p>
 <pre><code>&gt; modelled_data$custom_depth
 # A tibble: 730 x 14
    DATE        RAIN  SNOW DRAINAGE    DSTOR  H_10  H_20  H_30 WC_15 WC_40 WC_70 TEMP_15 TEMP_40 TEMP_70
@@ -155,26 +154,26 @@
 </blockquote>
 <p>For a more detailed look at multiple variables at once, you can use the <code><a href="reference/soft_calibration_plot.html">soft_calibration_plot()</a></code></p>
 <pre><code>&gt; soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))</code></pre>
-<p>This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is avaiable, they will be displayed as well.</p>
+<p>This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.</p>
 <p align="center">
 <img src="reference/figures/softcalplot.png" width="60%" height="60%"></p>
 </div>
 <div class="section level2">
 <h2 id="model-performance">Model performance<a class="anchor" aria-label="anchor" href="#model-performance"></a>
 </h2>
-<p>A few functions focus on assesing model performance by comparing modelling values to user provided observed values. This functionality is based on the <code><a href="reference/get_performance.html">get_performance()</a></code> function:</p>
+<p>A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the <code><a href="reference/get_performance.html">get_performance()</a></code> function:</p>
 <pre><code>&gt; get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
 # A tibble: 1 × 2                                                                                           
   var     NSE
   &lt;chr&gt; &lt;dbl&gt;
 1 WC_15  0.62</code></pre>
-<p>This function is very flexible, and can be passed any number of <code>variables</code>, <code>depths</code>, and performance indicators <code>stat</code> (currently supported are <code>NSE</code>, <code>PBIAS</code>, <code>RSR</code>, and <code>RMSE</code>.</p>
+<p>This function is very flexible and can be passed any number of <code>variables</code>, <code>depths</code>, and performance indicators <code>stat</code> (currently supported are <code>NSE</code>, <code>PBIAS</code>, <code>RSR</code>, and <code>RMSE</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="saving-model-runs">Saving model runs<a class="anchor" aria-label="anchor" href="#saving-model-runs"></a>
 </h2>
-<p>While calibrating a model it can be useful to keep track of different model runs with different parameterization. <code>rswap</code> aids this proccess with a vareity of functions, such as</p>
+<p>While calibrating a model it can be useful to keep track of different model runs with different parameterization. <code>rswap</code> aids this process with a variety of functions, such as</p>
 <pre><code><span><span class="fu"><a href="reference/save_run.html">save_run</a></span><span class="op">(</span><span class="va">project_path</span>, run_name <span class="op">=</span> <span class="st">"COFRED = 0.35"</span><span class="op">)</span></span></code></pre>
 <p>This function saves your entire model set up in a directory (<code>project_directory/rswap_saved</code>). Once a model run has been saved, it can be compared to other model runs, with the following functions.</p>
 </div>
@@ -190,7 +189,7 @@
 <pre><code><span><span class="fu"><a href="reference/plot_statistics.html">plot_statistics</a></span><span class="op">(</span><span class="va">project_path</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">40</span>,<span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p align="center">
 <img src="reference/figures/stat_plot1.png" width="60%" height="60%"></p>
-<p>This plot is equally flexible, and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>. the graph type can be switched between <code>default</code>, <code>sorted</code> and <code>ggplot</code></p>
+<p>This plot is equally flexible and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>. the graph type can be switched between <code>default</code>, <code>sorted</code> and <code>ggplot</code></p>
 </div>
 <div class="section level2">
 <h2 id="modification-of-parameters-and-swap-input-files">Modification of Parameters and SWAP input files.<a class="anchor" aria-label="anchor" href="#modification-of-parameters-and-swap-input-files"></a>
@@ -200,7 +199,7 @@
 <p>This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a “list of dataframes” to work in R, instead of just writing tables #TODO!)</p>
 <p>You can modify the dataframe how you wish, with whatever tools you would like, however <code>rswap</code> does have a simple dedicated function to do this for you.</p>
 <pre><code><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/change_swap_par.html">change_swap_par</a></span><span class="op">(</span>param <span class="op">=</span> <span class="va">parsed</span><span class="op">$</span><span class="va">parameters</span>, name <span class="op">=</span> <span class="st">"COFRED"</span>, value <span class="op">=</span> <span class="fl">0.55</span><span class="op">)</span></span></code></pre>
-<p>This function takes in the dataframe parsed by the previous function, and returns that same dataframe with the modified parameter.</p>
+<p>This function takes in the dataframe parsed by the previous function and returns that same dataframe with the modified parameter.</p>
 <p>If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:</p>
 <pre><code><span><span class="fu"><a href="reference/write_swap_file.html">write_swap_file</a></span><span class="op">(</span>parameters <span class="op">=</span> <span class="va">parameters</span>, table_path <span class="op">=</span> <span class="va">parsed</span><span class="op">$</span><span class="va">table_path</span>, outpath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="st">"/modified.swp"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p>And to run this modified SWAP main file, you would of course use <code><a href="reference/run_swap.html">run_swap()</a></code> with the corresponding <code>project_path</code> and <code>swap_file</code> parameters.</p>
@@ -208,7 +207,7 @@
 <div class="section level2">
 <h2 id="miscellaneous-functions">Miscellaneous functions<a class="anchor" aria-label="anchor" href="#miscellaneous-functions"></a>
 </h2>
-<p>The aformentioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assitance to the end user. These are listed below.</p>
+<p>The aforementioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assistance to the end user. These are listed below.</p>
 <blockquote>
 <p><code><a href="reference/NSE.html">NSE() # statistical performance calculation</a></code></p>
 </blockquote>
@@ -240,29 +239,45 @@
 <div class="section level2">
 <h2 id="roadmap">Roadmap<a class="anchor" aria-label="anchor" href="#roadmap"></a>
 </h2>
+<div class="section level3">
+<h3 id="major">Major<a class="anchor" aria-label="anchor" href="#major"></a>
+</h3>
 <ul>
 <li>Linux Support</li>
-<li>Sensitivity Analysis</li>
+<li>Multi-core running</li>
+<li>Sensitivity analysis</li>
 <li>Autocalibration / PEST support</li>
-<li>Parsing support for all swap files, not just the main file.</li>
-<li>Add documentation in the excel sheet (and switch to supporting .csv instead!)</li>
+<li>Scenario runs</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="minor">Minor<a class="anchor" aria-label="anchor" href="#minor"></a>
+</h3>
+<ul>
+<li>Parsing support for all SWAP files, not just the main file.</li>
 <li>Add support for multiple variables at differing depths for <code>autoset_output</code>
 </li>
-<li>Fix the x-axis on the over/under plot, and support missing values</li>
-<li>Give all exported rswap functions a consistent naming scheme (<code>verb_swap_noun()</code>)</li>
-<li>Move change_swap_parameter() from io.R to rw_parameters.R</li>
-<li>Add a “filename” par to write_swap_output()</li>
-<li>Wrapper function to combine <code><a href="reference/parse_swp_file.html">parse_swp_file()</a></code> and <code><a href="reference/change_swap_par.html">change_swap_par()</a></code> (and <code><a href="reference/write_swap_file.html">write_swap_file()</a></code>?)</li>
-<li>Expand and improve documentation</li>
-<li>plot_stat sorting to follow stat property</li>
-<li>Improve r/w of tables</li>
-<li>Add error message for when stat_plot / compare runs / melt runs encounters runs with differing output formats</li>
-<li>Add “exact variable matching” and stop removing “RAIN” in io.R-&gt;<code><a href="reference/melt_all_runs.html">melt_all_runs()</a></code>
+<li>Fix the x-axis to <code><a href="reference/plot_over_under.html">plot_over_under()</a></code>, and support missing values</li>
+<li>Give all exported <code>rswap</code> functions a consistent naming scheme (<code>verb_swap_noun()</code>)</li>
+<li>Move <code>change_swap_parameter()</code> from <code>io.R</code> to <code>rw_parameters.R</code>
 </li>
-<li>Move output modifying code to set_swap_output, and expand on it. ## Support and Contributing</li>
+<li>Add a “filename” par to <code>write_swap_output()</code>
+</li>
+<li>Wrapper function to combine <code><a href="reference/parse_swp_file.html">parse_swp_file()</a></code> and <code><a href="reference/change_swap_par.html">change_swap_par()</a></code> (and <code><a href="reference/write_swap_file.html">write_swap_file()</a></code>?)</li>
+<li>
+<code><a href="reference/plot_statistics.html">plot_statistics()</a></code> sorting to follow stat property</li>
+<li>Improve r/w of tables</li>
+<li>Add “exact variable matching” and stop removing “RAIN” in <code>io.R</code> -&gt; <code><a href="reference/melt_all_runs.html">melt_all_runs()</a></code>
+</li>
+<li>Move output modifying code to <code><a href="reference/set_swap_output.html">set_swap_output()</a></code>, and expand on it.</li>
 </ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="support-and-contributing">Support and Contributing<a class="anchor" aria-label="anchor" href="#support-and-contributing"></a>
+</h2>
 <p>If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: <a href="mailto:moritz.shore@nibio.no" class="email">moritz.shore@nibio.no</a>) The same goes for if you have any suggestions for improvement. If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)</p>
-<p>Any OPTAIN case-studies which use <code>rswap</code> are required to bake Moritz Shore a cake using a local reciepe from the case-study country.</p>
+<p>Any OPTAIN case-studies which use <code>rswap</code> are required to bake Moritz Shore a cake using a local recipe from the case-study country.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -277,7 +292,7 @@
 <div class="section level2">
 <h2 id="section"></h2>
 <p align="center">
-<img src="reference/figures/support_banner.png" width="80%" height="80%"></p>
+<img src="reference/figures/support_banner.png" width="70%" height="70%"></p>
 </div>
 </div>
   </div>
