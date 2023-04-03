@@ -226,7 +226,6 @@ The aforementioned functions rely on more basic general functions which, while a
 - Add support for multiple variables at differing depths for `autoset_output`
 - Fix the x-axis to `plot_over_under()`, and support missing values
 - Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
-- Move `change_swap_parameter()` from `io.R` to `rw_parameters.R`
 - Add a "filename" par to `write_swap_output()`
 - Wrapper function to combine `parse_swp_file()` and `change_swap_par()` (and `write_swap_file()`?)
 - `plot_statistics()` sorting to follow stat property
