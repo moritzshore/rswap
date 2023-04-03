@@ -4,11 +4,10 @@ rswap is an R-package designed to help interface and work with [SWAP 4.2.0](http
 
 ![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap)
 ![GitHub Release Date](https://img.shields.io/github/release-date/moritzshore/rswap)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 ![GitHub last commit](https://img.shields.io/github/last-commit/moritzshore/rswap)
 ![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
 ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap)
-![GitHub all releases](https://img.shields.io/github/downloads/moritzshore/rswap/total)
-![GitHub repo size](https://img.shields.io/github/repo-size/moritzshore/rswap)
 ## How to install?
 
 You can install `rswap` from GitHub: 
