@@ -1,0 +1,12 @@
+bibentry(
+  bibtype = "Manual",
+  author  = person("Moritz", "Shore",
+                email = "moritz.shore@nibio.no",
+                role = c("aut", "cre"),
+                comment = c(ORCID = '0000-0002-7586-997X')),
+  title   = "rswap: an R interface for the SWAP model",
+  year    = "2023",
+  note = "R package version 0.1.1",
+  doi = "10.xxxx/zenodo.xxxxxxx",
+  url     = "https://moritzshore.github.io/rswap/",
+)
