@@ -74,7 +74,7 @@ The other is `custom_depth` which contains custom variables at custom depths eit
 # i Use `print(n = ...)` to see more rows
 ```
 
-As rswap heavily revolves around calibration, observed data is of high importance. When running either `build_rswap_directory()` or `run_swap()`, a template observed file will be copied into the `project_directory` (if not already existing). It is up to the user to fill this excel sheet with the appropriate data and column names. Documentation for how to do this will be found in the excel sheet. (I will switch to .csv format soon)
+As rswap heavily revolves around calibration, observed data is of high importance. When running either `build_rswap_directory()` or `run_swap()`, a template observed file will be copied into the `project_directory` (if not already existing). It is up to the user to fill this file with the appropriate data and column names. Documentation for how to do this is in the file itself. 
 
 To load your observed file, you can use the following command:
 ```
