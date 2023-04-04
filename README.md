@@ -220,17 +220,19 @@ The aforementioned functions rely on more basic general functions which, while a
 
 ### Major
 
-- Linux Support
-- Multi-core running
-- Sensitivity analysis
-- Autocalibration / PEST support
-- Scenario runs
+- Linux Support (0.2.0)
+- Sensitivity analysis (0.3.0)
+- SWAPtools integration (0.4.0)
+- Multi-core running (0.5.0)
+- Autocalibration / PEST integration (0.6.0)
+- Scenario runs (0.7.0)
+- ...(1.0)
 
 ### Minor
 
 - Parsing support for all SWAP files, not just the main file.
 - Add support for multiple variables at differing depths for `autoset_output`
-- Fix the x-axis to `plot_over_under()`, and support missing values
+- Update `plot_over_under()` to  use [ggbraid](https://nsgrantham.github.io/ggbraid/)
 - Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
 - Add a "filename" par to `write_swap_output()`
 - Wrapper function to combine `parse_swp_file()` and `change_swap_par()` (and `write_swap_file()`?)
