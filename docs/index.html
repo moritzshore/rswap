@@ -66,6 +66,7 @@
 <div class="page-header"><h1 id="rswap-">rswap <img src="reference/figures/rswap.png" align="right" width="20%" height="20%"><a class="anchor" aria-label="anchor" href="#rswap-"></a>
 </h1></div>
 <p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP 4.2.0</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
+<p><img src="https://img.shields.io/github/r-package/v/moritzshore/rswap" alt="GitHub R package version"><img src="https://img.shields.io/github/release-date/moritzshore/rswap" alt="GitHub Release Date"><a href="https://doi.org/10.5281/zenodo.7795153" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg" alt="DOI"></a> <img src="https://img.shields.io/github/last-commit/moritzshore/rswap" alt="GitHub last commit"><img src="https://img.shields.io/github/license/moritzshore/rswap" alt="GitHub"><img src="https://img.shields.io/github/issues/moritzshore/rswap" alt="GitHub issues"></p>
 <div class="section level2">
 <h2 id="how-to-install">How to install?<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
 </h2>
@@ -121,7 +122,7 @@
  3 2013-01-03   0       0        0 -0.0305  -618. -595. -568. 0.124 0.104 0.111       0       0       0
 # i 727 more rows
 # i Use `print(n = ...)` to see more rows</code></pre>
-<p>As rswap heavily revolves around calibration, observed data is of high importance. When running either <code><a href="reference/build_rswap_directory.html">build_rswap_directory()</a></code> or <code><a href="reference/run_swap.html">run_swap()</a></code>, a template observed file will be copied into the <code>project_directory</code> (if not already existing). It is up to the user to fill this excel sheet with the appropriate data and column names. Documentation for how to do this will be found in the excel sheet. (I will switch to .csv format soon)</p>
+<p>As rswap heavily revolves around calibration, observed data is of high importance. When running either <code><a href="reference/build_rswap_directory.html">build_rswap_directory()</a></code> or <code><a href="reference/run_swap.html">run_swap()</a></code>, a template observed file will be copied into the <code>project_directory</code> (if not already existing). It is up to the user to fill this file with the appropriate data and column names. Documentation for how to do this is in the file itself.</p>
 <p>To load your observed file, you can use the following command:</p>
 <pre><code><span><span class="va">observed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_observed.html">load_observed</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre>
 <p>which will return a dataframe of the user-entered observed data:</p>
@@ -227,7 +228,7 @@
 <p><code><a href="reference/filter_swap_data.html">filter_swap_data() # filters SWAP data (observed or modelled) by var and depth</a></code></p>
 </blockquote>
 <blockquote>
-<p><code><a href="reference/get_swap_units.html">get_swap_units() # returns unit of SWAP variable. (WIP)</a></code></p>
+<p><code>get_swap_units() # returns unit of SWAP variable. (WIP)</code></p>
 </blockquote>
 <blockquote>
 <p><code><a href="reference/match_mod_obs.html">match_mod_obs() # matches dataframe structure of observed and modelled</a></code></p>
@@ -243,11 +244,13 @@
 <h3 id="major">Major<a class="anchor" aria-label="anchor" href="#major"></a>
 </h3>
 <ul>
-<li>Linux Support</li>
-<li>Multi-core running</li>
-<li>Sensitivity analysis</li>
-<li>Autocalibration / PEST support</li>
-<li>Scenario runs</li>
+<li>Linux Support (0.2.0)</li>
+<li>Sensitivity analysis (0.3.0)</li>
+<li>SWAPtools integration (0.4.0)</li>
+<li>Multi-core running (0.5.0)</li>
+<li>Autocalibration / PEST integration (0.6.0)</li>
+<li>Scenario runs (0.7.0)</li>
+<li>…(1.0)</li>
 </ul>
 </div>
 <div class="section level3">
@@ -257,7 +260,8 @@
 <li>Parsing support for all SWAP files, not just the main file.</li>
 <li>Add support for multiple variables at differing depths for <code>autoset_output</code>
 </li>
-<li>Fix the x-axis to <code><a href="reference/plot_over_under.html">plot_over_under()</a></code>, and support missing values</li>
+<li>Update <code><a href="reference/plot_over_under.html">plot_over_under()</a></code> to use <a href="https://nsgrantham.github.io/ggbraid/" class="external-link">ggbraid</a>
+</li>
 <li>Give all exported <code>rswap</code> functions a consistent naming scheme (<code>verb_swap_noun()</code>)</li>
 <li>Add a “filename” par to <code>write_swap_output()</code>
 </li>

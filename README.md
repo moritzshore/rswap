@@ -8,6 +8,7 @@ rswap is an R-package designed to help interface and work with [SWAP 4.2.0](http
 ![GitHub last commit](https://img.shields.io/github/last-commit/moritzshore/rswap)
 ![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
 ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap)
+
 ## How to install?
 
 You can install `rswap` from GitHub: 
