@@ -13,7 +13,13 @@ get_swap_units <- function(variable){
 
   if(variable == "WC"){
     unit = "cm3/cm3"
+  # check if SWAPtools was installed correctly.
+  ST <- install_SWAPtools()
+  if(ST==FALSE){
+    stop("SWAPtools is required for this functionality!")
   }
+  return(NA)
+}
 
   if(variable == "H"){
     unit = "cm"
@@ -21,11 +27,59 @@ get_swap_units <- function(variable){
 
   if(variable == "TEMP"){
     unit = "oC"
+#' Create the SWAPtools database environment
+#'
+#' which gives package wide access to the SWAPtools databases, and means
+#' individual function calls do not need to re-load the database for their
+#' individual environments.
+#'
+#' @returns returns TRUE if database has been loaded (for now just SWAP_variables.rds)
+#' and FALSE if it has not been loaded.
+create_stdb <- function() {
+  # check if SWAPtools was installed correctly.
+  ST <- install_SWAPtools()
+  if (ST == FALSE) {
+    stop("SWAPtools is required for this functionality!")
   }
 
   if(variable == "DRAINAGE"){
     unit = "cm/d"
+  # What does this do?
+  # it checks to see if the database already exists, and if it does, if
+  # swap_variables has already been loaded. if it hasn't, it loads it. if the
+  # environment doesn't exist, it creates it. if the object exists, but is not
+  # an environment, then it overwrites it. (although this last case should never
+  # actually happen). This could be rewritten with recursion, but its already
+  # 4 PM..
+  if (exists("st_db")) {
+    if (is.environment(st_db)) {
+      if (exists("st_db$swap_variables")) {
+        return(TRUE)
+      }
+      else{
+        cat("\n loading SWAPtools database...\n")
+        swap_variables <-
+          system.file("rds/swap_variables.rds", package = "SWAPtools")
+        st_db$swap_variables <- swap_variables %>% readRDS()
+      }
+    } else{
+      st_db  <- new.env(parent = emptyenv())
+      cat("\n loading SWAPtools database...\n")
+      swap_variables <-
+        system.file("rds/swap_variables.rds", package = "SWAPtools")
+      st_db$swap_variables <- swap_variables %>% readRDS()
+    }
+  } else{
+    st_db  <- new.env(parent = emptyenv())
+    cat("\n loading SWAPtools database...\n")
+    swap_variables <-
+      system.file("rds/swap_variables.rds", package = "SWAPtools")
+    st_db$swap_variables <- swap_variables %>% readRDS()
   }
+  return(is.list(st_db$swap_variables))
+}
+
+
 
   if(variable == "RAIN"){
     unit = "cm/d"
@@ -53,7 +107,7 @@ install_SWAPtools <- function() {
       cat("\nSWAPtools installed succesfully\n")
       return(TRUE)
     } else{
-      cat("\n SWAPtools install unsuccessfull! ")
+      stop("SWAPtools install unsuccessful!")
       return(FALSE)
     }
   }
