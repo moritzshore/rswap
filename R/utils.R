@@ -17,6 +17,9 @@ create_stdb <- function() {
   if (exists("swap_variables") == FALSE) {
     cat("\n loading SWAPtools database...\n")
     swap_variables_path <- system.file("rds/swap_variables.rds", package = "SWAPtools")
+    # probably shouldn't do it like this because it shows up in the environment pane,
+    # but for now its going to have to do. It must be possible to somehow assign to
+    # package environment but i havent figured it out yet
     swap_variables <<- swap_variables_path %>% readRDS()
   }
 
