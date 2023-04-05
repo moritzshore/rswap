@@ -14,43 +14,22 @@ create_stdb <- function() {
     stop("SWAPtools is required for this functionality!")
   }
 
-  # What does this do?
-  # it checks to see if the database already exists, and if it does, if
-  # swap_variables has already been loaded. if it hasn't, it loads it. if the
-  # environment doesn't exist, it creates it. if the object exists, but is not
-  # an environment, then it overwrites it. (although this last case should never
-  # actually happen). This could be rewritten with recursion, but its already
-  # 4 PM..
-  if (exists("st_db")) {
-    if (is.environment(st_db)) {
-      if (exists("st_db$swap_variables")) {
-        cat("\nSWAPtools database loaded.\n")
-        return(TRUE)
-      }
-      else{
-        # if the enthronement already exists, but the database doesn't
-        cat("\n loading SWAPtools database...\n")
-        swap_variables <-
-          system.file("rds/swap_variables.rds", package = "SWAPtools")
-        st_db$swap_variables <- swap_variables %>% readRDS()
-      }
-    } else{
-      # if the environment does not exist, but the var name does (should never happen)
-      st_db  <- new.env(parent = emptyenv())
-      cat("\n loading SWAPtools database...\n")
-      swap_variables <-
-        system.file("rds/swap_variables.rds", package = "SWAPtools")
-      st_db$swap_variables <- swap_variables %>% readRDS()
-    }
-  } else{
-    # if the object, environment, and database don't exist yet
-    st_db  <- new.env(parent = emptyenv())
+  if (exists("swap_variables") == FALSE) {
     cat("\n loading SWAPtools database...\n")
-    swap_variables <-
-      system.file("rds/swap_variables.rds", package = "SWAPtools")
-    st_db$swap_variables <- swap_variables %>% readRDS()
+    swap_variables_path <- system.file("rds/swap_variables.rds", package = "SWAPtools")
+    swap_variables <<- swap_variables_path %>% readRDS()
   }
-  return(is.list(st_db$swap_variables))
+
+  status <- is.list(swap_variables)
+
+
+  if (status) {
+    cat("\nSWAPtools database loaded.\n")
+  } else{
+    stop("could not load SWAPtools database")
+  }
+
+  return(status)
 }
 
 #' Install SWAPtools
