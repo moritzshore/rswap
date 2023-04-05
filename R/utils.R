@@ -4,8 +4,9 @@
 #' individual function calls do not need to re-load the database for their
 #' individual environments.
 #'
-#' @returns returns TRUE if database has been loaded (for now just SWAP_variables.rds)
-#' and FALSE if it has not been loaded.
+#' @returns returns `TRUE` if database has been loaded (for now just SWAP_variables.rds)
+#' and `FALSE` if it has not been loaded.
+#' @export
 create_stdb <- function() {
   # check if SWAPtools was installed correctly.
   ST <- install_SWAPtools()
@@ -23,15 +24,18 @@ create_stdb <- function() {
   if (exists("st_db")) {
     if (is.environment(st_db)) {
       if (exists("st_db$swap_variables")) {
+        cat("\nSWAPtools database loaded.\n")
         return(TRUE)
       }
       else{
+        # if the enthronement already exists, but the database doesn't
         cat("\n loading SWAPtools database...\n")
         swap_variables <-
           system.file("rds/swap_variables.rds", package = "SWAPtools")
         st_db$swap_variables <- swap_variables %>% readRDS()
       }
     } else{
+      # if the environment does not exist, but the var name does (should never happen)
       st_db  <- new.env(parent = emptyenv())
       cat("\n loading SWAPtools database...\n")
       swap_variables <-
@@ -39,6 +43,7 @@ create_stdb <- function() {
       st_db$swap_variables <- swap_variables %>% readRDS()
     }
   } else{
+    # if the object, environment, and database don't exist yet
     st_db  <- new.env(parent = emptyenv())
     cat("\n loading SWAPtools database...\n")
     swap_variables <-
@@ -52,8 +57,10 @@ create_stdb <- function() {
 #'
 #' Installs SWAPtools from waterwijzerlandbouw.wur.nl/repo
 #'
-#' @returns returns TRUE if package is already installed, or if installation
-#' was successful. returns FALSE if installation failed.
+#' @returns returns `TRUE` if package is already installed, or if installation
+#' was successful. returns `FALSE` if installation failed.
+#'
+#' @export
 #'
 install_SWAPtools <- function() {
   if ("SWAPtools" %in% installed.packages()) {
@@ -68,8 +75,25 @@ install_SWAPtools <- function() {
       cat("\nSWAPtools installed succesfully\n")
       return(TRUE)
     } else{
-      stop("SWAPtools install unsuccessful!")
+      stop("SWAPtools install unsuccessful! \nYou can try installing the package manually from the SWAP website.")
       return(FALSE)
     }
   }
+}
+
+#' Get SWAP unit
+#'
+#' Gets the unit of the a SWAP variable.
+#' @param variable
+#'
+#' @returns Returns unit of passed SWAP variable in string form.
+#' @export
+get_swap_unit <- function(variable){
+
+  status = create_stdb()
+  if(status==FALSE){
+    stop("SWAPtools variable database could not be loaded!")
+  }
+
+  print(st_db$swap_variables$PROJECT$label)
 }
