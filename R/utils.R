@@ -4,7 +4,7 @@
 #' individual function calls do not need to re-load the database for their
 #' individual environments.
 #'
-#' @returns returns `TRUE` if database has been loaded (for now just SWAP_variables.rds)
+#' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
 #' @export
 create_stdb <- function() {
@@ -14,20 +14,20 @@ create_stdb <- function() {
     stop("SWAPtools is required for this functionality!")
   }
 
-  if (exists("swap_variables") == FALSE) {
-    cat("\n loading SWAPtools database...\n")
-    swap_variables_path <- system.file("rds/swap_variables.rds", package = "SWAPtools")
+  if(exists("SWAPtools_variables") == FALSE) {
+    cat("loading SWAPtools database...\n")
+    SWAPtools_variables_path <- system.file("rds/swap_variables.rds", package = "SWAPtools")
     # probably shouldn't do it like this because it shows up in the environment pane,
     # but for now its going to have to do. It must be possible to somehow assign to
     # package environment but i havent figured it out yet
-    swap_variables <<- swap_variables_path %>% readRDS()
+    SWAPtools_variables <<- SWAPtools_variables_path %>% readRDS()
   }
 
-  status <- is.list(swap_variables)
+  status <- is.list(SWAPtools_variables)
 
 
   if (status) {
-    cat("\nSWAPtools database loaded.\n")
+    #cat("SWAPtools database loaded.\n")
   } else{
     stop("could not load SWAPtools database")
   }
@@ -48,13 +48,13 @@ install_SWAPtools <- function() {
   if ("SWAPtools" %in% installed.packages()) {
     return(TRUE)
   } else{
-    cat("\n SWAPtools is required for this functionality. Installing...\n")
+    cat("SWAPtools is required for this functionality. Installing...\n")
 
     install.packages(pkg = "SWAPtools",
                      dependencies = TRUE,
                      repos = "https://waterwijzerlandbouw.wur.nl/repo",)
     if ("SWAPtools" %in% installed.packages()) {
-      cat("\nSWAPtools installed succesfully\n")
+      cat("SWAPtools installed succesfully\n")
       return(TRUE)
     } else{
       stop("SWAPtools install unsuccessful! \nYou can try installing the package manually from the SWAP website.")
@@ -63,19 +63,25 @@ install_SWAPtools <- function() {
   }
 }
 
-#' Get SWAP unit
+#' check SWAP format
 #'
-#' Gets the unit of the a SWAP variable.
-#' @param variable
+#' Gets the format of a SWAP parameter
+#' @param parameter
 #'
 #' @returns Returns unit of passed SWAP variable in string form.
 #' @export
-get_swap_unit <- function(variable){
-
+check_swap_format <- function(variable){
   status = create_stdb()
   if(status==FALSE){
     stop("SWAPtools variable database could not be loaded!")
   }
 
-  print(st_db$swap_variables$PROJECT$label)
+  extract<-SWAPtools_variables[[variable]]
+
+  return(extract$format)
+
+  SWAPtools_variables$SHAPE$format
+
+  SWAPtools_variables$SWBLC$format
+
 }
