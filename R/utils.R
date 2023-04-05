@@ -1,32 +1,3 @@
-#' Get SWAP Units
-#'
-#' returns default swap units for the given variable (Work in progress). Will
-#' possibly also include a database on what variables are depth-wise.
-#'
-#' @param variable SWAP variable (string)
-#' @returns Returns unit in string from
-#' @importFrom tibble %>%
-#' @export
-get_swap_units <- function(variable){
-  unit = NA
-  # todo: improve format and maybe use expression()
-
-  if(variable == "WC"){
-    unit = "cm3/cm3"
-  # check if SWAPtools was installed correctly.
-  ST <- install_SWAPtools()
-  if(ST==FALSE){
-    stop("SWAPtools is required for this functionality!")
-  }
-  return(NA)
-}
-
-  if(variable == "H"){
-    unit = "cm"
-  }
-
-  if(variable == "TEMP"){
-    unit = "oC"
 #' Create the SWAPtools database environment
 #'
 #' which gives package wide access to the SWAPtools databases, and means
@@ -42,8 +13,6 @@ create_stdb <- function() {
     stop("SWAPtools is required for this functionality!")
   }
 
-  if(variable == "DRAINAGE"){
-    unit = "cm/d"
   # What does this do?
   # it checks to see if the database already exists, and if it does, if
   # swap_variables has already been loaded. if it hasn't, it loads it. if the
@@ -79,13 +48,6 @@ create_stdb <- function() {
   return(is.list(st_db$swap_variables))
 }
 
-
-
-  if(variable == "RAIN"){
-    unit = "cm/d"
-  }
-
-  if(unit %>% is.na()){warning("variable not listed")}
 #' Install SWAPtools
 #'
 #' Installs SWAPtools from waterwijzerlandbouw.wur.nl/repo
@@ -99,7 +61,6 @@ install_SWAPtools <- function() {
   } else{
     cat("\n SWAPtools is required for this functionality. Installing...\n")
 
-  return(unit)
     install.packages(pkg = "SWAPtools",
                      dependencies = TRUE,
                      repos = "https://waterwijzerlandbouw.wur.nl/repo",)
