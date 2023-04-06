@@ -1,4 +1,8 @@
-#' Create the SWAPtools database environment
+# creates a package wide enviroment to store SWAPtools data in. (hopefully)
+SWAPtools_env <- new.env(parent = emptyenv())
+
+
+#' Loads the SWAPtools variables database
 #'
 #' which gives package wide access to the SWAPtools databases, and means
 #' individual function calls do not need to re-load the database for their
@@ -7,37 +11,32 @@
 #' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
 #' @export
-create_stdb <- function() {
+load_variables_db <- function() {
   # check if SWAPtools was installed correctly.
   ST <- install_SWAPtools()
   if (ST == FALSE) {
     stop("SWAPtools is required for this functionality!")
   }
-
-  if(exists("SWAPtools_variables") == FALSE) {
-    cat("loading SWAPtools database...\n")
-    SWAPtools_variables_path <- system.file("rds/swap_variables.rds", package = "SWAPtools")
-    # probably shouldn't do it like this because it shows up in the environment pane,
-    # but for now its going to have to do. It must be possible to somehow assign to
-    # package environment but i havent figured it out yet
-    SWAPtools_variables <<- SWAPtools_variables_path %>% readRDS()
-  }
-
-  status <- is.list(SWAPtools_variables)
-
-
-  if (status) {
-    #cat("SWAPtools database loaded.\n")
+  if (exists("SWAPtools_env")) {
+    if (is.list(SWAPtools_env$swap_variables)) {
+      return(TRUE)
+    } else{
+      cat("loading SWAPtools variables database..\n")
+      SWAPtools_variables_path <-
+        system.file("rds/swap_variables.rds", package = "SWAPtools")
+      SWAPtools_variables <- SWAPtools_variables_path %>% readRDS()
+      SWAPtools_env$swap_variables <- SWAPtools_variables
+      return(is.list(SWAPtools_env$swap_variables))
+    }
   } else{
-    stop("could not load SWAPtools database")
+    stop("SWAPtools_env does not exist. Internal error, should never happen")
   }
-
-  return(status)
 }
+
 
 #' Install SWAPtools
 #'
-#' Installs SWAPtools from waterwijzerlandbouw.wur.nl/repo
+#' Installs SWAPtools from `waterwijzerlandbouw.wur.nl/repo`
 #'
 #' @returns returns `TRUE` if package is already installed, or if installation
 #' was successful. returns `FALSE` if installation failed.
@@ -63,25 +62,18 @@ install_SWAPtools <- function() {
   }
 }
 
-#' check SWAP format
+#' Get SWAP Format
 #'
 #' Gets the format of a SWAP parameter
-#' @param parameter
-#'
+#' @param parameter SWAP parameter to get the format of.
+#
 #' @returns Returns unit of passed SWAP variable in string form.
 #' @export
-check_swap_format <- function(variable){
-  status = create_stdb()
-  if(status==FALSE){
+get_swap_format <- function(parameter) {
+  status = load_variables_db()
+  if (status == FALSE) {
     stop("SWAPtools variable database could not be loaded!")
   }
-
-  extract<-SWAPtools_variables[[variable]]
-
+  extract <- SWAPtools_env$swap_variables[[variable]]
   return(extract$format)
-
-  SWAPtools_variables$SHAPE$format
-
-  SWAPtools_variables$SWBLC$format
-
 }
