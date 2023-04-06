@@ -221,12 +221,12 @@ The aforementioned functions rely on more basic general functions which, while a
 
 ### Major
 
-- Linux Support (0.2.0)
-- Sensitivity analysis (0.3.0)
 - SWAPtools integration (0.4.0)
-- Multi-core running (0.5.0)
-- Autocalibration / PEST integration (0.6.0)
-- Scenario runs (0.7.0)
+- Linux Support (0.5.0)
+- Sensitivity analysis (0.6.0)
+- Multi-core running (0.7.0)
+- Autocalibration / PEST integration (0.8.0)
+- Scenario runs (0.9.0)
 - ...(1.0)
 
 ### Minor
