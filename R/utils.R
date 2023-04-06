@@ -96,11 +96,20 @@ set_swap_format <- function(parameter, value){
   }
 
   format <- get_swap_format(parameter)
+  #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
 
+  # case: switch
+  if(format %in% c(0,1)){
+    value %>% as.character() %>% return()
+  }else{
+    stop("format of ",parameter, " is a SWITCH and must therefore be either '0' or '1', value passed is: ", value)
+  }
 
   if(format == "string"){
     value %>% as.character() %>% return()
   }
+
+  if(TRUE){}
 
   if(format == "integer"){
     value %>% round(0) %>% as.character() return()
