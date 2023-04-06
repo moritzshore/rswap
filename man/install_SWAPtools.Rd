@@ -11,5 +11,5 @@ returns \code{TRUE} if package is already installed, or if installation
 was successful. returns \code{FALSE} if installation failed.
 }
 \description{
-Installs SWAPtools from waterwijzerlandbouw.wur.nl/repo
+Installs SWAPtools from \code{waterwijzerlandbouw.wur.nl/repo}
 }
