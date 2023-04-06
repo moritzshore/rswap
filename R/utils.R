@@ -74,6 +74,53 @@ get_swap_format <- function(parameter) {
   if (status == FALSE) {
     stop("SWAPtools variable database could not be loaded!")
   }
-  extract <- SWAPtools_env$swap_variables[[variable]]
+  extract <- SWAPtools_env$swap_variables[[parameter]]
   return(extract$format)
 }
+
+#' Set SWAP Format
+#'
+#' This function converts a parameter value into the SWAP (FORTRAN) required
+#' format. This functionality relies on SWAPtools.
+#'
+#' @param parameter the SWAP parameter name, in string form
+#' @param value the value to be converted
+#'
+#' @importFrom dplyr %>%
+set_swap_format <- function(parameter, value){
+
+  # check if the database was loaded successfully
+  status <- load_variables_db()
+  if (status == FALSE) {
+    stop("SWAPtools variable database could not be loaded!")
+  }
+
+  format <- get_swap_format(parameter)
+
+
+  if(format == "string"){
+    value %>% as.character() %>% return()
+  }
+
+  if(format == "integer"){
+    value %>% round(0) %>% as.character() return()
+  }
+
+  if(format == "float"){
+
+    if(value %>% is.character()){
+      # need to implement this
+
+      # detect decimals
+    }
+
+    if(value %>% is.numeric()){
+
+    }
+
+    value %>% sprintf("%.2f", .)
+  }
+
+}
+
+
