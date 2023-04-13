@@ -660,4 +660,5 @@ rswap_init <- function(swap_exe){
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
   cat("\nrswap initilization complete, you can find the project folder here:\n")
   cat(example_path)
+  return(example_path)
 }

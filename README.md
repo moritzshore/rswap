@@ -21,9 +21,9 @@ remotes::install_github("moritzshore/rswap")
 
 library(rswap)
 ```
-A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly. 
+A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly.
 ```
-rswap_init(swapexe = "C:/path/to/swap.exe")
+project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 for help on any specific function, use ```> ?functionname```
 
