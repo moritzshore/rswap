@@ -1,13 +1,13 @@
-# rswap <img src="man/figures/logo.png" align="right" height="138" />
+# rswap 0.4.0 <img src="man/figures/logo.png" align="right" height="138" />
 
-rswap is an R-package designed to help interface and work with [SWAP 4.2.0](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP4](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
-![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap)  
-![GitHub Release Date](https://img.shields.io/github/release-date/moritzshore/rswap)  
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)  
-![GitHub last commit](https://img.shields.io/github/last-commit/moritzshore/rswap)  
-![GitHub](https://img.shields.io/github/license/moritzshore/rswap)  
-![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap)  
+![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap)
+![GitHub Release Date](https://img.shields.io/github/release-date/moritzshore/rswap)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
+![GitHub last commit](https://img.shields.io/github/last-commit/moritzshore/rswap)
+![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
+![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap)
 
 ## How to install?
 
@@ -25,9 +25,8 @@ A useful place to start would be the `rswap_init()` function. This function crea
 ```
 project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
-for help on any specific function, use ```> ?functionname```
 
-**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them, and remember that anything in the `project_path/rswap` directory is temporary!
+**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run()`), and remember that anything in the `project_path/rswap` directory is temporary!
 
 ## How to run SWAP?
 
@@ -40,12 +39,12 @@ run_swap(project_path)
 `run_swap()` can be further customized with the following parameters:
 
 - `swap_file` can be set to a custom name for your SWAP main file (*.swp)
-- `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data (more on that later)
+- `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data
 - `timeout` sets the max allowed runtime of SWAP
 
 ## How to access the data?
 
-To read the output of your executed SWAP run, you can use the following command.
+To read the output of your executed SWAP run, you can use the following command:
 ```
 modelled_data <- read_swap_output(project_path)
 ```
@@ -153,7 +152,6 @@ This function saves your entire model set up in a directory (`project_directory/
 
 ## Comparing model runs
 
-Once you have saved at least one run, you can compare them using the 
 ```
 comparative_plot(project_path, variable = "WC", depth = 15)
 ```
@@ -175,7 +173,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 
 This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
 
-## Modification of Parameters and SWAP input files.
+## Modification of Parameters
 
 changing a parameter in rswap can be done using the `parse_swp_file()` function. 
 ```
@@ -188,6 +186,16 @@ You can modify the dataframe how you wish, with whatever tools you would like, h
 parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
 ```
 This function takes in the dataframe parsed by the previous function and returns that same dataframe with the modified parameter.
+
+`get_swap_format()` returns the format of the given parameter, whereas `set_swap_format()` forces the value of the given parameter into the FORTRAN-required format. These functions rely on data from package `SWAPtools`. (Over time, `change_swap_par()` will use these automatically to protect you from incorrect formats)
+
+```
+get_swap_format(parameters = "ALTW")
+[1] "float"
+
+set_swap_format(parameter = "ALTW", value = 5)
+[1] "5.0"
+```
 
 If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:
 ```
@@ -210,8 +218,6 @@ The aforementioned functions rely on more basic general functions which, while a
 >`clean_swp_file() # returns swap main file sans comments`
 
 > `filter_swap_data() # filters SWAP data (observed or modelled) by var and depth`
-
->`get_swap_units() # returns unit of SWAP variable. (WIP)`
 
 >`match_mod_obs() # matches dataframe structure of observed and modelled` 
 
@@ -241,11 +247,11 @@ The aforementioned functions rely on more basic general functions which, while a
 - Improve r/w of tables
 - Add "exact variable matching" and stop removing "RAIN" in `io.R` -> `melt_all_runs()`
 - Move output modifying code to `set_swap_output()`, and expand on it.
+- Renovate `soft_calibration_plot()` to accept any variable using new system.
 
 ## Support and Contributing
 
-If you run into any bugs or problems, please open an issue on the repository page. (or contact me directly: moritz.shore@nibio.no)
-The same goes for if you have any suggestions for improvement.
+If you run into any bugs or problems, please open an [issue](https://github.com/moritzshore/rswap/issues). The same goes for if you have any suggestions for improvement.
 If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)
 
 Any OPTAIN case-studies which use `rswap` are required to bake Moritz Shore a cake using a local recipe from the case-study country.  
