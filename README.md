@@ -3,9 +3,9 @@
 rswap is an R-package designed to help interface and work with [SWAP4](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
-![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
 ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap)
+![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 
 ## How to install?
 
