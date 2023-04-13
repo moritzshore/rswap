@@ -74,7 +74,7 @@
 <div class="page-header"><h1 id="rswap-020-">rswap 0.2.0 <img src="reference/figures/logo.png" align="right" height="138"><a class="anchor" aria-label="anchor" href="#rswap-020-"></a>
 </h1></div>
 <p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP4</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
-<p><img src="https://img.shields.io/github/r-package/v/moritzshore/rswap" alt="GitHub R package version"><a href="https://doi.org/10.5281/zenodo.7795153" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg" alt="DOI"></a> <img src="https://img.shields.io/github/license/moritzshore/rswap" alt="GitHub"><img src="https://img.shields.io/github/issues/moritzshore/rswap" alt="GitHub issues"></p>
+<p><img src="https://img.shields.io/github/r-package/v/moritzshore/rswap" alt="GitHub R package version"><img src="https://img.shields.io/github/issues/moritzshore/rswap" alt="GitHub issues"><img src="https://img.shields.io/github/license/moritzshore/rswap" alt="GitHub"><a href="https://doi.org/10.5281/zenodo.7795153" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg" alt="DOI"></a></p>
 <div class="section level2">
 <h2 id="how-to-install">How to install?<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
 </h2>
@@ -161,7 +161,7 @@
 <p>(this plot heavily relies on code from <a href="https://www.nsgrantham.com/fill-between-two-lines-ggplot2/" class="external-link">Neal Grantham</a>)</p>
 </blockquote>
 <p>For a more detailed look at multiple variables at once, you can use the <code><a href="reference/soft_calibration_plot.html">soft_calibration_plot()</a></code></p>
-<pre><code>&gt; soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))</code></pre>
+<pre><code><span><span class="fu"><a href="reference/soft_calibration_plot.html">soft_calibration_plot</a></span><span class="op">(</span><span class="va">project_path</span>, vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"WC"</span>, <span class="st">"DRAINAGE"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p>This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.</p>
 <p align="center">
 <img src="reference/figures/softcalplot.png" width="60%" height="60%"></p>
@@ -172,10 +172,10 @@
 <p>A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the <code><a href="reference/get_performance.html">get_performance()</a></code> function:</p>
 <pre><code>&gt; get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
-# A tibble: 1 × 2                                                                                           
-  var     NSE
-  &lt;chr&gt; &lt;dbl&gt;
-1 WC_15  0.62</code></pre>
+# # A tibble: 1 × 2                                                                                           
+#   var     NSE
+#   &lt;chr&gt; &lt;dbl&gt;
+# 1 WC_15  0.62</code></pre>
 <p>This function is very flexible and can be passed any number of <code>variables</code>, <code>depths</code>, and performance indicators <code>stat</code> (currently supported are <code>NSE</code>, <code>PBIAS</code>, <code>RSR</code>, and <code>RMSE</code>.</p>
 </div>
 <div class="section level2">
@@ -208,11 +208,11 @@
 <pre><code><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/change_swap_par.html">change_swap_par</a></span><span class="op">(</span>param <span class="op">=</span> <span class="va">parsed</span><span class="op">$</span><span class="va">parameters</span>, name <span class="op">=</span> <span class="st">"COFRED"</span>, value <span class="op">=</span> <span class="fl">0.55</span><span class="op">)</span></span></code></pre>
 <p>This function takes in the dataframe parsed by the previous function and returns that same dataframe with the modified parameter.</p>
 <p><code><a href="reference/get_swap_format.html">get_swap_format()</a></code> returns the format of the given parameter, whereas <code><a href="reference/set_swap_format.html">set_swap_format()</a></code> forces the value of the given parameter into the FORTRAN-required format. These functions rely on data from package <code>SWAPtools</code>. (Over time, <code><a href="reference/change_swap_par.html">change_swap_par()</a></code> will use these automatically to protect you from incorrect formats)</p>
-<pre><code>get_swap_format(parameters = "ALTW")
-[1] "float"
-
-set_swap_format(parameter = "ALTW", value = 5)
-[1] "5.0"</code></pre>
+<pre><code><span><span class="fu"><a href="reference/get_swap_format.html">get_swap_format</a></span><span class="op">(</span>parameters <span class="op">=</span> <span class="st">"ALTW"</span><span class="op">)</span></span>
+<span><span class="co"># [1] "float"</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/set_swap_format.html">set_swap_format</a></span><span class="op">(</span>parameter <span class="op">=</span> <span class="st">"ALTW"</span>, value <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co"># [1] "5.0"</span></span></code></pre>
 <p>If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:</p>
 <pre><code><span><span class="fu"><a href="reference/write_swap_file.html">write_swap_file</a></span><span class="op">(</span>parameters <span class="op">=</span> <span class="va">parameters</span>, table_path <span class="op">=</span> <span class="va">parsed</span><span class="op">$</span><span class="va">table_path</span>, outpath <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="st">"/modified.swp"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p>And to run this modified SWAP main file, you would of course use <code><a href="reference/run_swap.html">run_swap()</a></code> with the corresponding <code>project_path</code> and <code>swap_file</code> parameters.</p>
