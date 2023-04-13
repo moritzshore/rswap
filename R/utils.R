@@ -98,38 +98,79 @@ set_swap_format <- function(parameter, value){
   format <- get_swap_format(parameter)
   #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
 
-  # case: switch
+  # if FORTRAN wants a switch,
   if(format %in% c(0,1)){
     value %>% as.character() %>% return()
   }else{
     stop("format of ",parameter, " is a SWITCH and must therefore be either '0' or '1', value passed is: ", value)
   }
 
+  # if FORTRAN wants a string,
+  # as a string
   if(format == "string"){
+    # and it already is a string, then just return it
     value %>% as.character() %>% return()
   }
 
-  if(TRUE){}
-
+  # if FORTRAN wants an integer
   if(format == "integer"){
-    value %>% round(0) %>% as.character() return()
-  }
 
-  if(format == "float"){
-
-    if(value %>% is.character()){
-      # need to implement this
-
-      # detect decimals
-    }
-
+    # and the value is numeric, then round it to the nearest integer and return
+    # as a string
     if(value %>% is.numeric()){
-
+      value %>% round(0) %>% as.character() %>% return()
     }
 
-    value %>% sprintf("%.2f", .)
+    # if the value is already in string form, turn it into a number,
+    # and then round it to the nearest integer, and then return it back as a
+    # character again.
+    else if(value %>% is.character()){
+
+      # check to see if the conversion fails
+      if(value %>% as.numeric() %>% is.na()){
+        stop("rswap error: Value conversion failed! from ", value, " to ", value %>% as.numeric())
+      }
+
+      # otherwise return.
+      value %>% as.numeric() %>% round(0) %>% as.character() %>% return()
+    }else{
+      stop("rswap error: Do not know how to convert this to integer: " , value)
+    }
   }
 
+  # if FORTRAN wants an float
+  if (format == "float") {
+    # first convert value to string
+    value_string <- value %>% as.character()
+
+    # check if it failed
+    if(value_string %>% is.na()){
+      stop("rswap error: Value conversion failed! from ", value, " to ", value %>% as.numeric())
+    }
+
+    # then detect whether it has a decimal
+    # (double period to escape the single period special character)
+    has_dec <- str_detect(value_string, "..")
+
+    # if the string already has a decimal place, then return as is.
+    if (has_dec) {
+      value_string %>% return()
+    } else{
+      # otherwise, add a .0 onto it
+      paste0(value_string, ".0") %>% return()
+    }
+  }
+
+  # if FORTRAN wants a date
+  ## TODO: How to implement this? what date format does FORTRAN need?
+  ## FORTRAN wants this format: 01-jan-2017..
+
+  # if FORTRAN wants a vector
+  ## no idea what to do here. need to check what swap variables are even vectors
+
+  # same goes for ARRAY (what is the difference between vector and array)
+
+  # I currently dont need to convert TABLE but if i do it will be done here.
 }
 
 
