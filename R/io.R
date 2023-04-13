@@ -616,6 +616,8 @@ melt_all_runs <-
 #'
 #' @param swap_exe path to swap.exe (string)
 #'
+#' @returns Returns the project path of "hupselbrook" SWAP setup.
+#'
 #' @importFrom stringr str_split str_remove
 #' @importFrom dplyr %>%
 #' @export
