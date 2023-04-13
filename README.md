@@ -1,4 +1,4 @@
-# rswap 0.4.0 <img src="man/figures/logo.png" align="right" height="138" />
+# rswap 0.2.0 <img src="man/figures/logo.png" align="right" height="138" />
 
 rswap is an R-package designed to help interface and work with [SWAP4](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
@@ -227,12 +227,12 @@ The aforementioned functions rely on more basic general functions which, while a
 
 ### Major
 
-- Linux Support (0.5.0)
-- Sensitivity analysis (0.6.0)
-- Multi-core running (0.7.0)
-- Autocalibration / PEST integration (0.8.0)
-- Scenario runs (0.9.0)
-- SWAPtools plotting integration (0.10.0)
+- Linux Support (0.3.0)
+- Sensitivity analysis (0.4.0)
+- Multi-core running (0.5.0)
+- Autocalibration / PEST integration (0.6.0)
+- Scenario runs (0.7.0)
+- SWAPtools plotting integration (0.8.0)
 - ...(1.0)
 
 ### Minor
