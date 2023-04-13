@@ -131,7 +131,7 @@ This function can be passed up to 3 variables, and will display them interactive
 
 A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
 ```
-> get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
+get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
 # # A tibble: 1 × 2                                                                                           
 #   var     NSE
