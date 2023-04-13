@@ -17,7 +17,6 @@
 #' @importFrom stringr str_split
 #' @importFrom glue glue
 #' @importFrom plotly plot_ly add_trace layout hide_colorbar
-#' @importFrom grDevices palette
 #'
 #' @export
 #'
