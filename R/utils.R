@@ -95,7 +95,7 @@ get_swap_format <- function(parameters) {
     extract[which(extract == "NULL")] = NA
   }
 
-  return(extract)
+  return(extract %>% unlist())
 }
 
 #' Set SWAP Format
@@ -110,6 +110,9 @@ get_swap_format <- function(parameters) {
 #'
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_detect
+#'
+#' @export
+#'
 set_swap_format <- function(parameter, value){
 
   # check if the database was loaded successfully
@@ -118,19 +121,21 @@ set_swap_format <- function(parameter, value){
     stop("SWAPtools variable database could not be loaded!")
   }
 
-  format <- get_swap_format(parameter)
   #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
+  format <- get_swap_format(parameter)
 
   # if FORTRAN wants a switch,
-  if(format %in% c(0,1)){
-    value %>% as.character() %>% return()
-  }else{
-    stop("format of ",parameter, " is a SWITCH and must therefore be either '0' or '1', value passed is: ", value)
+  if (format == "switch") {
+    if (format %in% c(0, 1)) {
+      value %>% as.character() %>% return()
+    } else{
+      stop("format of ", parameter, " is a SWITCH and must therefore be either '0' or '1', value passed is: ", value)
+    }
   }
 
   # if FORTRAN wants a string,
   # as a string
-  if(format == "string"){
+  if (format == "string") {
     # and it already is a string, then just return it
     value %>% as.character() %>% return()
   }
