@@ -69,13 +69,23 @@ install_SWAPtools <- function() {
 #
 #' @returns Returns unit of passed SWAP variable in string form.
 #' @export
-get_swap_format <- function(parameter) {
+get_swap_format <- function(parameters) {
+
+  # current issue: omitting the ones it cant find instead of returning ERROR
+
   status = load_variables_db()
   if (status == FALSE) {
     stop("SWAPtools variable database could not be loaded!")
   }
-  extract <- SWAPtools_env$swap_variables[[parameter]]
-  return(extract$format)
+
+  par_names <- SWAPtools_variables %>% names()
+
+  # hopefully now vectorized:
+  matched <- match(parameters, par_names) %>% na.omit()
+
+
+  extract <- SWAPtools_env$swap_variables[matched] %>% map(2) %>% unlist() %>% unname()
+  return(extract)
 }
 
 #' Set SWAP Format
@@ -85,6 +95,8 @@ get_swap_format <- function(parameter) {
 #'
 #' @param parameter the SWAP parameter name, in string form
 #' @param value the value to be converted
+#'
+#' @author Moritz Shore, Martin Mulder
 #'
 #' @importFrom dplyr %>%
 set_swap_format <- function(parameter, value){
