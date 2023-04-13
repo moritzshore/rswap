@@ -9,6 +9,9 @@ rswap_init(swap_exe)
 \arguments{
 \item{swap_exe}{path to swap.exe (string)}
 }
+\value{
+Returns the project path of "hupselbrook" SWAP setup.
+}
 \description{
 This function is an optional starting point when using rswap for the first
 time. What it does is copy in the example swap setup "hupselbrook" into a

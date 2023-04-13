@@ -13,6 +13,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/LICENSE.html</loc>
+  </url>
+  <url>
     <loc>/reference/build_rswap_directory.html</loc>
   </url>
   <url>
@@ -25,6 +28,9 @@
     <loc>/reference/comparative_plot.html</loc>
   </url>
   <url>
+    <loc>/reference/create_stdb.html</loc>
+  </url>
+  <url>
     <loc>/reference/filter_swap_data.html</loc>
   </url>
   <url>
@@ -34,13 +40,25 @@
     <loc>/reference/get_performance.html</loc>
   </url>
   <url>
+    <loc>/reference/get_swap_format.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_swap_unit.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_swap_units.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/install_SWAPtools.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_observed.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_variables_db.html</loc>
   </url>
   <url>
     <loc>/reference/match_mod_obs.html</loc>
@@ -83,6 +101,9 @@
   </url>
   <url>
     <loc>/reference/save_run.html</loc>
+  </url>
+  <url>
+    <loc>/reference/set_swap_format.html</loc>
   </url>
   <url>
     <loc>/reference/set_swap_output.html</loc>

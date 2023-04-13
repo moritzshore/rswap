@@ -616,6 +616,8 @@ melt_all_runs <-
 #'
 #' @param swap_exe path to swap.exe (string)
 #'
+#' @returns Returns the project path of "hupselbrook" SWAP setup.
+#'
 #' @importFrom stringr str_split str_remove
 #' @importFrom dplyr %>%
 #' @export
@@ -660,4 +662,5 @@ rswap_init <- function(swap_exe){
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
   cat("\nrswap initilization complete, you can find the project folder here:\n")
   cat(example_path)
+  return(example_path)
 }
