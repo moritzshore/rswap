@@ -118,7 +118,7 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 
 For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
 ```
-> soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
+soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
 ```
 This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.  
 
@@ -133,10 +133,10 @@ A few functions focus on assessing model performance by comparing modelling valu
 ```
 > get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 
-# A tibble: 1 × 2                                                                                           
-  var     NSE
-  <chr> <dbl>
-1 WC_15  0.62
+# # A tibble: 1 × 2                                                                                           
+#   var     NSE
+#   <chr> <dbl>
+# 1 WC_15  0.62
 ```
 This function is very flexible and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
@@ -189,10 +189,10 @@ This function takes in the dataframe parsed by the previous function and returns
 
 ```
 get_swap_format(parameters = "ALTW")
-[1] "float"
+# [1] "float"
 
 set_swap_format(parameter = "ALTW", value = 5)
-[1] "5.0"
+# [1] "5.0"
 ```
 
 If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:
