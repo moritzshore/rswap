@@ -68,6 +68,9 @@ install_SWAPtools <- function() {
 #' @param parameter SWAP parameter to get the format of.
 #
 #' @returns Returns unit of passed SWAP variable in string form.
+#'
+#' @importFrom tibble %>%
+#' @importFrom purrr map
 #' @export
 get_swap_format <- function(parameters) {
 
@@ -78,13 +81,20 @@ get_swap_format <- function(parameters) {
     stop("SWAPtools variable database could not be loaded!")
   }
 
-  par_names <- SWAPtools_variables %>% names()
+  par_names <- SWAPtools_env$swap_variables %>% names()
 
   # hopefully now vectorized:
-  matched <- match(parameters, par_names) %>% na.omit()
+  matched <- match(parameters, par_names)
 
+  extract <- SWAPtools_env$swap_variables[matched] %>% map(2) %>% unname()
 
-  extract <- SWAPtools_env$swap_variables[matched] %>% map(2) %>% unlist() %>% unname()
+  # convert the nulls to NA
+  if(which(extract == "NULL") %>% length() > 0){
+    warning("rswap warning: some formats were not detected, and returned as NA!")
+    extract <- extract %>% as.character()
+    extract[which(extract == "NULL")] = NA
+  }
+
   return(extract)
 }
 
@@ -99,6 +109,7 @@ get_swap_format <- function(parameters) {
 #' @author Moritz Shore, Martin Mulder
 #'
 #' @importFrom dplyr %>%
+#' @importFrom stringr str_detect
 set_swap_format <- function(parameter, value){
 
   # check if the database was loaded successfully
