@@ -124,6 +124,12 @@ set_swap_format <- function(parameter, value){
   #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
   format <- get_swap_format(parameter)
 
+  supported <- c("switch","string", "integer", "float")
+
+  if((format %in% supported) == FALSE){
+    warning("[rswap] Sorry, this format is not supported yet (", format, "). returning NA")
+    return(NA)
+  }
   # if FORTRAN wants a switch,
   if (format == "switch") {
     if (format %in% c(0, 1)) {
