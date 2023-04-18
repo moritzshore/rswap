@@ -9,13 +9,15 @@
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #'
-#' @keywords internal
+#' @export
 #'
 build_rswap_directory <- function(project_path){
 
+  # TODO should this delete the previous one?
+
   temp_directory <- glue("{project_path}/rswap")
 
-  # list files found in project path (Note, this includes all the saved runs as\
+  # list files found in project path (Note, this includes all the saved runs as
   # well, which we dont want, which is why we need to remove them)
   file_list <- list.files(project_path, full.names = T, recursive = T)
   ignore <- file_list %>% grepl(x=., "\\b/rswap_saved/\\b") %>% which()
