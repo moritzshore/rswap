@@ -63,6 +63,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' @importFrom stringr str_trim str_split
 #' @importFrom purrr map
 #' @importFrom tibble tibble
+#' @importFrom crayon green underline
 #'
 #' @returns Returns SWAP parameters in a dataframe format and path to where the tables
 #' were saved in a csv format (until i figure out how to return an array of
@@ -211,8 +212,11 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     } # END of for loop
 
     if (verbose) {
-      cat("...tables have been saved in .csv format here:\n",
-          table_path,
+      cat("SWAP tables have been saved in .csv format here:\n",
+          green(underline(table_path)),
+          "\n")
+      cat("SWAP vectors have been saved in .csv format here:\n",
+          green(underline((vector_path))),
           "\n")
     }
 
@@ -236,9 +240,11 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #' @param outpath path where to save the swap file (string)
 #' @param verbose print status? (flag)
 #'
+#'
 #' @returns Returns path of written file
 #'
 #' @importFrom dplyr %>%
+#' @importFrom crayon underline green\
 #'
 #' @export
 #'
@@ -304,6 +310,7 @@ write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
         sep = " "
       ) %>% suppressWarnings()
     }
+
     if (verbose) {
       cat("...swap file written to:\n", outpath, "\n")
     }
