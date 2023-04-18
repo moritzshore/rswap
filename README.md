@@ -11,7 +11,7 @@ rswap is an R-package designed to help interface and work with [SWAP4](https://w
 1. [Installing rswap](#install)
 2. [Running SWAP](#run)
 3. [Accessing data](#data)
-4. [Visuals](#install)
+4. [Visuals](#visuals)
 5. [Model Performance](#performance)
 6. [Saving model runs](#saving)
 7. [Comparing model runs](#compare)
@@ -22,7 +22,7 @@ rswap is an R-package designed to help interface and work with [SWAP4](https://w
 12. [Acknowledgements](#ack)
 [References](#ref)
 
-## How to install <a name="install"></a>
+## Installing `rswap` <a name="install"></a>
 
 You can install `rswap` from GitHub: 
 
@@ -55,7 +55,7 @@ run_swap(project_path)
 - `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data
 - `timeout` sets the max allowed runtime of SWAP
 
-## How to access the data?  <a name="data"></a>
+## Accessing the data  <a name="data"></a>
 
 To read the output of your executed SWAP run, you can use the following command:
 ```
@@ -186,7 +186,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 
 This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
 
-## Modification of Parameters  <a name="mod"></a>
+## Modification of parameters  <a name="mod"></a>
 
 changing a parameter in rswap can be done using the `parse_swp_file()` function. 
 ```
@@ -254,10 +254,8 @@ The aforementioned functions rely on more basic general functions which, while a
 - Add support for multiple variables at differing depths for `autoset_output`
 - Update `plot_over_under()` to  use [ggbraid](https://nsgrantham.github.io/ggbraid/)
 - Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
-- Add a "filename" par to `write_swap_output()`
-- Wrapper function to combine `parse_swp_file()` and `change_swap_par()` (and `write_swap_file()`?)
+- Wrapper function to combine load/change/write functions
 - `plot_statistics()` sorting to follow stat property
-- Improve r/w of tables
 - Add "exact variable matching" and stop removing "RAIN" in `io.R` -> `melt_all_runs()`
 - Move output modifying code to `set_swap_output()`, and expand on it.
 - Renovate `soft_calibration_plot()` to accept any variable using new system.
@@ -275,7 +273,7 @@ This package was developed for the [OPTAIN](https://optain.eu) project and has r
 
 ## References  <a name="ref"></a>
 
-[1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000.
+[1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000. <a name="1"></a>
 
 ## 
 
