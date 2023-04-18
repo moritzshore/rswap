@@ -245,7 +245,7 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #' @returns Returns path of written file
 #'
 #' @importFrom dplyr %>%
-#' @importFrom crayon underline green\
+#' @importFrom crayon underline green
 #' @importFrom readr read_csv
 #'
 #' @export
