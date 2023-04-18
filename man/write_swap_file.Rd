@@ -4,14 +4,12 @@
 \alias{write_swap_file}
 \title{Write SWAP File}
 \usage{
-write_swap_file(parameters, table_path, outpath, verbose = F)
+write_swap_file(project_path, outfile, verbose = F)
 }
 \arguments{
-\item{parameters}{dataframe of project parameters as created by \code{parse_swap_file()} (dataframe)}
+\item{project_path}{path to project directory}
 
-\item{table_path}{path of project tables as created by \code{parse_swap_file()} (string)}
-
-\item{outpath}{path where to save the swap file (string)}
+\item{outfile}{name of the SWAP file to write. will be stored in project directory (string)}
 
 \item{verbose}{print status? (flag)}
 }
@@ -19,9 +17,8 @@ write_swap_file(parameters, table_path, outpath, verbose = F)
 Returns path of written file
 }
 \description{
-Writes a SWAP main file from the passed parameter dataframe, and the passed path
-to the tables stored as .csv from the \code{parse_swap_file()} function. The SWAP
-main file will be written to the location specified by \code{outpath}.
+Writes a SWAP main file from the parameters, vectors, and tables stored in
+the rswap directory. \strong{Before you use this function, you need to have parsed a SWAP file}
 }
 \details{
 This function currently is only intended for the SWAP main file, but will be

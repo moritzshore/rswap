@@ -14,20 +14,14 @@ parse_swp_file(project_path, swap_file = "swap.swp", verbose = F)
 \item{verbose}{print status? (flag)}
 }
 \value{
-Returns SWAP parameters in a dataframe format and path to where the tables
-were saved in a csv format (until i figure out how to return an array of
-dataframes)
+Returns paths to where the parameters, vectors, and tables are written
 }
 \description{
-This function reads in a SWAP main file and returns the parameter set in a
-dataset form. It also converts the tables in the main file into .csv format
-and saves them in the rswap directory. In this format it is easy to make
-alterations to the SWAP parameters and tables.
+This function reads in a SWAP main file writes the parameters, vectors, and
+tables into csv format into the rswap directory. these can then be loaded
+using \code{load_swap_parameters()}, \code{load_swap_tables()} and \code{load_swap_vectors()}
 }
 \details{
-I am working on getting tables to be returned as a "list of dataframes"
-instead of saving them as a file.
-
 Also, this parsing technique was designed to work with the SWAP example cases.
 If your SWAP main file structure does something different, you might run into trouble.
 

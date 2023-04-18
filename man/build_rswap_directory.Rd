@@ -12,4 +12,3 @@ build_rswap_directory(project_path)
 \description{
 Makes a temporary sub-directory workspace for the package to run SWAP in.
 }
-\keyword{internal}
