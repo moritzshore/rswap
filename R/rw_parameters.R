@@ -220,7 +220,6 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
       cat("SWAP vectors have been saved in .csv format here:\n",
           green(underline((vector_path))),
           "\n")
-    }
 
     }
     return(list(
@@ -232,9 +231,8 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
 #' Write SWAP File
 #'
-#' Writes a SWAP main file from the passed parameter dataframe, and the passed path
-#' to the tables stored as .csv from the `parse_swap_file()` function. The SWAP
-#' main file will be written to the location specified by `outpath`.
+#' Writes a SWAP main file from the parameters, vectors, and tables stored in
+#' the rswap directory. **Before you use this function, you need to have parsed a SWAP file**
 #'
 #' This function currently is only intended for the SWAP main file, but will be
 #' expanded to handle the other SWAP input files over time.
@@ -249,19 +247,21 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #'
 #' @importFrom dplyr %>%
 #' @importFrom crayon underline green\
+#' @importFrom readr read_csv
 #'
 #' @export
 #'
-write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
+write_swap_file <- function(project_path, outfile, verbose = F) {
 
     version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
-    # Give a message if the file was overwritten
-    removed <- file.remove(outpath) %>% suppressWarnings()
-    if (removed & verbose) {
-      cat("...overwriting file:\n", outpath, "\n")
+    if(file.exists(paste0(project_path,"/rswap/parameters/parameters.csv"))==FALSE){
+      stop("[rswap] no swap file has been parsed by rswap yet. You must do so before writing a swap file!")
     }
 
+    outpath <- paste0(project_path,"/",outfile)
+
+    # Write header
     write.table(
       x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
       file = outpath,
@@ -271,6 +271,8 @@ write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
       append = F
     )
 
+    # Append parameters
+    parameters = load_swap_parameters(project_path = project_path, verbose = verbose)
     par_write = paste(parameters$param, "=", parameters$value)
 
     write.table(
@@ -282,6 +284,8 @@ write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
       append = T
     )
 
+    # Append tables
+    table_path <- paste0(project_path, "/rswap/tables")
     tables <- list.files(table_path, full.names = T)
 
     for (table in tables) {
@@ -303,7 +307,35 @@ write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
 
       # Theoretically don't need this, but its nice to have
       eol_table <- data.frame("* End of table")
+      write.table(
+        eol_table,
+        file = outpath,
+        quote = F,
+        row.names = F,
+        col.names = F,
+        append = T,
+        sep = " "
+      ) %>% suppressWarnings()
+    }
 
+    # Write vectors
+    vector_path <- paste0(project_path, "/rswap/vectors/")
+    vectors <- list.files(vector_path, full.names = T)
+    for (vector in vectors) {
+      read <- readr::read_csv(vector,col_names = T, col_types = cols(.default = "c"), quote = '"')
+
+      write.table(
+        read,
+        file = outpath,
+        quote = F,
+        row.names = F,
+        col.names = T,
+        append = T,
+        sep = " "
+      ) %>% suppressWarnings()
+
+      # Theoretically don't need this, but its nice to have
+      eol_table <- data.frame("* End of table")
       write.table(
         eol_table,
         file = outpath,
@@ -316,7 +348,7 @@ write_swap_file <- function(parameters, table_path, outpath, verbose = F) {
     }
 
     if (verbose) {
-      cat("...swap file written to:\n", outpath, "\n")
+      cat("swap file written to:\n", green(underline(outpath)), "\n")
     }
     return(outpath)
   }
