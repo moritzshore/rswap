@@ -42,13 +42,9 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 
 #' Parse SWAP File
 #'
-#' This function reads in a SWAP main file and returns the parameter set in a
-#' dataset form. It also converts the tables in the main file into .csv format
-#' and saves them in the rswap directory. In this format it is easy to make
-#' alterations to the SWAP parameters and tables.
-#'
-#' I am working on getting tables to be returned as a "list of dataframes"
-#' instead of saving them as a file.
+#' This function reads in a SWAP main file writes the parameters, vectors, and
+#' tables into csv format into the rswap directory. these can then be loaded
+#' using `load_swap_parameters()`, `load_swap_tables()` and `load_swap_vectors()`
 #'
 #' Also, this parsing technique was designed to work with the SWAP example cases.
 #' If your SWAP main file structure does something different, you might run into trouble.
@@ -65,9 +61,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' @importFrom tibble tibble
 #' @importFrom crayon green underline
 #'
-#' @returns Returns SWAP parameters in a dataframe format and path to where the tables
-#' were saved in a csv format (until i figure out how to return an array of
-#' dataframes)
+#' @returns Returns paths to where the parameters, vectors, and tables are written
 #'
 #' @export
 #'
@@ -104,8 +98,13 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     new_i = 0
 
     table_path = paste0(project_path, "/rswap/tables")
-    unlink(table_path, recursive = T)
-    dir.create(table_path, showWarnings = F)
+    vector_path =  paste0(project_path, "/rswap/vectors")
+    parameter_path = paste0(project_path, "/rswap/parameters")
+
+    dirs <- c(table_path, vector_path, parameter_path)
+
+    unlink(dirs, recursive = T)
+    dir_stat<-lapply(dirs, function(x) dir.create(x, showWarnings = F))
 
     # loop through the main swap file line by line
     # why for loop and not vectorized?
@@ -165,11 +164,11 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
           table_name = header %>% str_remove("=") %>% str_trim()
           write.table(
             x = swap_table,
-            file = paste0(table_path, "/", table_name, ".csv"),
+            file = paste0(vector_path, "/", table_name, ".csv"),
             sep = ",",
             row.names = F,
             col.names = F,
-            quote = F
+            quote = T
           )
 
           # skip the next rows because you already read them in
@@ -195,7 +194,7 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
           colnames(swap_table3) <- header
           swap_table3 <- swap_table3[-1, ]
           swap_table3 <- swap_table3 %>% tibble()
-          table_name <- header %>% paste(collapse = "_")
+          table_name <- header %>% paste(collapse = "-")
 
           write.table(
             x = swap_table3,
@@ -203,13 +202,16 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
             sep = ",",
             row.names = F,
             col.names = T,
-            quote = F
+            quote = T
           )
           # skip the next rows because you already read them in
           new_i = i + swap_table_end
         } # END of table not special
       } # END of table
     } # END of for loop
+
+    # write parameters:
+    write_swap_parameters(project_path, par_df, verbose)
 
     if (verbose) {
       cat("SWAP tables have been saved in .csv format here:\n",
@@ -220,9 +222,11 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
           "\n")
     }
 
+    }
     return(list(
-      parameters = (par_df %>% tibble()),
-      table_path = table_path
+      parameter_path = parameter_path,
+      table_path = table_path,
+      vector_path = vector_path
     ))
   }
 
