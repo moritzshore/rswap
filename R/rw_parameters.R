@@ -409,3 +409,323 @@ change_swap_par <- function(param, name, value){
   param$value[which(param$param == name)] = value
   return(param)
 }
+
+#' Load SWAP tables
+#'
+#' This function loads all the SWAP tables as parsed by `parse_swp_file()`
+#'
+#' @param project_path Path to project directory (string)
+#' @param swap_file name of the swap file to parse (string)
+#' @param verbose print status? (flag)
+#'
+#' @importFrom magrittr %>%
+#' @importFrom tibble tibble
+#' @importFrom purrr map
+#' @importFrom readr read_csv
+#' @importFrom stringr str_remove
+#' @returns Returns list of tibbles named by their column names.
+#'
+#' @export
+load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
+
+  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
+    warning("[rswap] project has not been parsed yet. Doing so now with '",
+            swap_file, "'")
+    p <- parse_swp_file(project_path, swap_file, verbose = T)
+  }
+
+
+  table_path <- paste0(project_path,"/rswap/tables/")
+
+  files <- list.files(table_path, full.names = T)
+  file_names <- list.files(table_path, full.names = F) %>% str_remove(".csv")
+
+  # this forces the files to read in all the values as strings, so that no type
+  # conversion is done. Changing the type will break the fragile FORTRAN format
+  # important line of code here is the "col_types = cols(.default = "c")" which
+  # forces every column to be read as char.
+  custom_read <- function(x){
+    readr::read_csv(file = x, col_names = T, col_types = cols(.default = "c"), quote = '"')
+  }
+
+  table_list <- files %>% map(., custom_read)
+
+  names(table_list) <- file_names
+
+  table_list %>% return()
+
+}
+
+#' Load SWAP Vectors
+#'
+#' This function loads all the SWAP vectors as parsed by `parse_swp_file()`
+#'
+#' Something to consider: Currently the function returns the vectors as a normal
+#' dataframe with the first row being "VARNAME = ". this is because this is the
+#' format in which the vectors are written to be understood by SWAP. One could
+#' return the vectors in a real vector format, but then one would have to do
+#' some extra steps when writing them again. I'll consider what will be best, but
+#' for now I'll stick to the dataframe version.
+#'
+#' @param project_path path to project_directory (string)
+#' @param swap_file name of the swap file to parse (string)
+#' @param verbose print status? (flag)
+#'
+#' @returns Returns a list of vectors
+#'
+#' @importFrom magrittr %>%
+#' @importFrom tibble tibble
+#' @importFrom purrr map
+#' @importFrom readr read_csv
+#' @importFrom stringr str_remove
+#'
+#' @export
+#'
+load_swap_vectors <- function(project_path, swap_file = "swap.swp") {
+
+  # TODO: load only specific table with extra param
+
+  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
+    warning("[rswap] project has not been parsed yet. Doing so now with '",
+            swap_file, "'")
+    p <- parse_swp_file(project_path, swap_file, verbose = verbsose)
+  }
+
+  vector_path <- paste0(project_path, "/rswap/vectors/")
+
+  files <- list.files(vector_path, full.names = T)
+  file_names <- list.files(vector_path, full.names = F) %>% str_remove(".csv")
+  # this forces the files to read in all the values as strings, so that no type
+  # conversion is done. Changing the type will break the fragile FORTRAN format
+  # important line of code here is the "col_types = cols(.default = "c")" which
+  # forces every column to be read as char.
+  custom_read <- function(x){
+    readr::read_csv(file = x, col_names = T, col_types = cols(.default = "c"), quote = '"')
+  }
+
+  vector_list <- files %>% map(., custom_read)
+
+  names(vector_list) <- file_names
+
+  vector_list %>% return()
+}
+
+#' Load SWAP parameters
+#'
+#' Loads the SWAP parameters as parsed by `parse_swp_file()` and returns them as
+#' a tibble
+#'
+#' @param project_path path to project directory (string
+#' @param swap_file name of the swap file to parse (string)
+#' @param verbose print status? (flag)
+#' @importFrom tibble tibble
+#' @importFrom magrittr %>%
+#'
+#' @returns Tibble of parameter set
+#'
+#' @export
+load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose = F){
+
+  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
+    warning("[rswap] project has not been parsed yet. Doing so now with '",
+            swap_file, "'")
+    p <- parse_swp_file(project_path, swap_file, verbose = verbose)
+  }
+
+  param_path <- paste0(project_path, "/rswap/parameters/parameters.csv")
+  table <- read.table(param_path, header = T, sep = ",", quote = '"') %>% tibble()
+  table %>% return()
+
+}
+
+#' Write SWAP parameters
+#'
+#' Writes the SWAP parameter set into the rswap directory in .csv format
+#'
+#' @param project_path path to project directory
+#' @param parameters parameter set as loaded by `load_swap_parameters()` (dataframe)
+#' @param verbose print status? (flag)
+#'
+#' @export
+write_swap_parameters <- function(project_path, parameters, verbose = F){
+
+  file_dir = paste0(project_path, "/rswap/parameters/" )
+  file_path = paste0(project_path, "/rswap/parameters/parameters.csv" )
+
+  if(dir.exists(file_dir) == FALSE){
+    dir.create(file_dir)
+  }
+
+  write.table(
+    x = parameters,
+    file = file_path,
+    sep = ",",
+    row.names = F,
+    col.names = T,
+    quote = T
+  )
+  if(verbose){
+    cat("SWAP parameters have been saved in .csv format here:\n",
+        green(underline(file_dir)),
+        "\n")
+  }
+}
+
+#' Write SWAP Tables
+#'
+#' Writes the SWAP table set into the rswap directory in .csv format
+#'
+#' @param project_path path to project directory
+#' @param tables tables as loaded by `load_swap_tables()` (list of dataframes)
+#' @param verbose print status? (flag)
+#'
+#' @export
+write_swap_tables <- function(project_path, tables, verbose = F) {
+
+  file_path <-  paste0(project_path, "/rswap/tables/")
+
+  if(dir.exists(file_path) == FALSE){
+    dir.create(file_path)
+  }
+
+  for (table in tables){
+
+    table_name <- names(table) %>% paste0(collapse = "-")
+    table_path <- paste0(file_path, table_name, ".csv")
+    write.table(
+      x = table,
+      file = table_path,
+      sep = ",",
+      row.names = F,
+      col.names = T,
+      quote = T
+    )
+  }
+
+  if (verbose) {
+    cat("SWAP tables have been saved in .csv format here:\n",
+        green(underline(file_path)),
+        "\n")
+  }
+}
+
+#' Write SWAP Vectors
+#'
+#' Writes the SWAP vector set into the rswap directory in .csv format
+#'
+#' @param project_path path to project directory
+#' @param vectors vectors as loaded by `load_swap_vectors()` (list of dataframes)
+#' @param verbose print status? (flag)
+#'
+#' @importFrom stringr str_remove str_trim
+#'
+#' @export
+write_swap_vectors <- function(project_path, vectors, verbose = F) {
+
+
+  file_path <-  paste0(project_path, "/rswap/vectors/")
+
+  if(dir.exists(file_path) == FALSE){
+    dir.create(file_path)
+  }
+
+  for (vector in vectors){
+
+    vector_name <- vector %>% colnames() %>% str_remove("=") %>% str_trim()
+    vector_path <- paste0(file_path, vector_name, ".csv")
+    write.table(
+      x = vector,
+      file = vector_path,
+      sep = ",",
+      row.names = F,
+      col.names = T,
+      quote = T
+    )
+  }
+
+  if (verbose) {
+    cat("SWAP vectors have been saved in .csv format here:\n",
+        green(underline(file_path)),
+        "\n")
+  }
+}
+
+#' Change SWAP Table
+#'
+#' changes the value of a variable in the given row of a SWAP table.
+#'
+#' @param table can be one SWAP table, or a list of SWAP tables as loaded by
+#' `load_swap_tables()`.
+#' @param variable the name of the variable you would like to alter (string)
+#' @param row the row you would like to alter (integer)
+#' @param value the value you would like to enter (must be SWAP-FORTRAN compatible)
+#' @param verbose print status? (flag)
+#'
+#' @importFrom magrittr  %>%
+#'
+#' @returns Returns the same table / list of tables passed to the function, with
+#' the desired variable modified at the given row.
+#'
+#' @export
+change_swap_table <- function(table, variable, row, value, verbose = F){
+
+  # \\b for exact match of var name.
+  table_match <- names(table) %>% str_split("-") %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
+
+  if((table_match %>% length()) > 1){
+    stop("[rswap] more than one table has this variable '",variable,"' this should never happen, report to maintainer!")
+  }
+
+  if((table_match %>% length()) < 1){
+    stop("[rswap] no columns with '",variable,"' detected in passed table(s) cannot change table value")
+  }
+
+  # set the value of the row/var
+  table[[table_match]][[variable]][row] = value
+
+  # return the modified table set.
+  return(table)
+}
+
+#' Change SWAP vector
+#'
+#' Alters a SWAP vector with the given value at the given index. Can optionally
+#' pass a list of vectors as returning by `load_swap_vectors()`, and the variable
+#' name, and rswap will find the right vector for you
+#'
+#' @param vector dataframe of vector to alter. (Optionally, one can pass a list
+#'  of vectors as returned by `load_swap_vectors()` and then also pass the variable name)
+#' @param index index of the vector to alter (integer)
+#' @param value value to set the vector at the given index (SWAP-FORTRAN compatible)
+#' @param variable optional, only required if passing a list of multiple vectors. (string)
+#'
+#' @returns the same vector or vector list as passed, but with the modified value
+#'
+#' @importFrom tibble  %>%
+#'
+#' @export
+#'
+change_swap_vector <- function(vector, index, value, variable = NULL, verbose = F){
+
+  # for now, adjust the index by one because the first element is the variable
+  index = index+1
+
+  vector_match <- names(vector) %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
+
+
+  if((vector_match %>% length()) > 1){
+    stop("[rswap] more than one vector has this variable '",variable,"' this should never happen, report to maintainer!")
+    }
+
+  if((vector_match %>% length()) < 1){
+    stop("[rswap] no vectors with '",variable,"' detected in passed vector(s) cannot change vector value!")
+  }
+
+  # always column one because its actually a vector! .. this really should be fixed sometime
+  vector[[vector_match]][[1]][index] = value
+
+  return(vector)
+
+}
+
+
