@@ -237,9 +237,8 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #' This function currently is only intended for the SWAP main file, but will be
 #' expanded to handle the other SWAP input files over time.
 #'
-#' @param parameters dataframe of project parameters as created by `parse_swap_file()` (dataframe)
-#' @param table_path path of project tables as created by `parse_swap_file()` (string)
-#' @param outpath path where to save the swap file (string)
+#' @param project_path path to project directory
+#' @param outfile name of the SWAP file to write. will be stored in project directory (string)
 #' @param verbose print status? (flag)
 #'
 #'
@@ -287,7 +286,6 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     # Append tables
     table_path <- paste0(project_path, "/rswap/tables")
     tables <- list.files(table_path, full.names = T)
-
     for (table in tables) {
       read <- read.csv(table, colClasses = "character") %>% tibble()
 
