@@ -7,7 +7,22 @@ rswap is an R-package designed to help interface and work with [SWAP4](https://w
 ![GitHub](https://img.shields.io/github/license/moritzshore/rswap)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 
-## How to install?
+# Table of contents
+1. [Installing rswap](#install)
+2. [Running SWAP](#run)
+3. [Accessing data](#data)
+4. [Visuals](#install)
+5. [Model Performance](#performance)
+6. [Saving model runs](#saving)
+7. [Comparing model runs](#compare)
+8. [Modification of Parameters](#mod)
+9. [Miscellaneous functions](#misc)
+10. [Roadmap](#roadmap)
+11. [Support and Contributing](#support)
+12. [Acknowledgements](#ack)
+[References](#ref)
+
+## How to install <a name="install"></a>
 
 You can install `rswap` from GitHub: 
 
@@ -26,7 +41,7 @@ project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 
 **⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`), instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run()`), and remember that anything in the `project_path/rswap` directory is temporary!
 
-## How to run SWAP?
+## How to run SWAP? <a name="run"></a>
 
 The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located (`project_path`). The `swap.exe` must be located in the parent directory of `project_path`!
 
@@ -40,7 +55,7 @@ run_swap(project_path)
 - `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data
 - `timeout` sets the max allowed runtime of SWAP
 
-## How to access the data?
+## How to access the data?  <a name="data"></a>
 
 To read the output of your executed SWAP run, you can use the following command:
 ```
@@ -101,7 +116,7 @@ get_depths(observed_data$data)
 ```
 ..this can also be filtered by a specific variable by passing `variable`
 
-## Visuals
+## Visuals  <a name="visuals"></a>
 
 There are a variety of functions used to visualize your SWAP data, such as `plot_over_under()`
 ```
@@ -127,7 +142,7 @@ This function can be passed up to 3 variables, and will display them interactive
 <img src="man/figures/softcalplot.png" width=60% height=60%>
 </p>
 
-## Model performance
+## Model performance  <a name="performance"></a>
 
 A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
 ```
@@ -140,7 +155,7 @@ get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
 ```
 This function is very flexible and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`. 
 
-## Saving model runs
+## Saving model runs  <a name="saving"></a>
 
 While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this process with a variety of functions, such as
 ```
@@ -148,7 +163,7 @@ save_run(project_path, run_name = "COFRED = 0.35")
 ```
 This function saves your entire model set up in a directory (`project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
 
-## Comparing model runs
+## Comparing model runs  <a name="compare"></a>
 
 ```
 comparative_plot(project_path, variable = "WC", depth = 15)
@@ -171,7 +186,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 
 This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
 
-## Modification of Parameters
+## Modification of Parameters  <a name="mod"></a>
 
 changing a parameter in rswap can be done using the `parse_swp_file()` function. 
 ```
@@ -201,7 +216,7 @@ write_swap_file(parameters = parameters, table_path = parsed$table_path, outpath
 ```
 And to run this modified SWAP main file, you would of course use `run_swap()` with the corresponding `project_path` and `swap_file` parameters. 
 
-## Miscellaneous functions
+## Miscellaneous functions  <a name="misc"></a>
 
 The aforementioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assistance to the end user. These are listed below. 
 
@@ -221,7 +236,7 @@ The aforementioned functions rely on more basic general functions which, while a
 
 >`melt_all_runs() # melts together all saved runs + current into` [tidy](https://towardsdatascience.com/what-is-tidy-data-d58bb9ad2458) `format` 
 
-## Roadmap
+## Roadmap  <a name="roadmap"></a>
 
 ### Major
 
@@ -247,18 +262,18 @@ The aforementioned functions rely on more basic general functions which, while a
 - Move output modifying code to `set_swap_output()`, and expand on it.
 - Renovate `soft_calibration_plot()` to accept any variable using new system.
 
-## Support and Contributing
+## Support and Contributing  <a name="support"></a>
 
 If you run into any bugs or problems, please open an [issue](https://github.com/moritzshore/rswap/issues). The same goes for if you have any suggestions for improvement.
 If would you like to contribute to the project, let me know! Very open towards collaborative improvement. Fork/Branch off as you please :)
 
 Any OPTAIN case-studies which use `rswap` are required to bake Moritz Shore a cake using a local recipe from the case-study country.  
 
-## Acknowledgements
+## Acknowledgements  <a name="ack"></a>
 
 This package was developed for the [OPTAIN](https://optain.eu) project and has received funding from the European Union's Horizon 2020 research and innovation program under grant agreement No. 862756.
 
-## References
+## References  <a name="ref"></a>
 
 [1] Van Dam, J. Field-Scale Water Flow and Solute Transport: SWAP Model Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis, Wageningen University, Wageningen, The Netherlands, 2000.
 
