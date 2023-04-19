@@ -59,13 +59,14 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #' @importFrom stringr str_trim str_split
 #' @importFrom purrr map
 #' @importFrom tibble tibble
-#' @importFrom crayon green underline
+#' @importFrom crayon green underline blue
 #'
 #' @returns Returns paths to where the parameters, vectors, and tables are written
 #'
 #' @export
 #'
 parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
+
 
     # TODO rename to parse_swap_file()
     # finds the end of the table when passed a snipped of the swap file
@@ -91,6 +92,13 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
     rswap_dir <- build_rswap_directory(project_path)
     swp <- clean_swp_file(rswap_dir, swap_file = swap_file)
+
+    swp_file <- paste0(rswap_dir, "/", swap_file)
+    if(verbose){
+      cat(blue("ℹ"),
+          blue("Parsing swap file:"),"\n")
+      cat(green((underline(glue("{swp_file}")))), "\n")
+    }
 
     # predefine for-loop vars
     par_df <- data.frame()
@@ -213,15 +221,16 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     # write parameters:
     write_swap_parameters(project_path, par_df, verbose)
 
-    if (verbose) {
-      cat("SWAP tables have been saved in .csv format here:\n",
-          green(underline(table_path)),
-          "\n")
-      cat("SWAP vectors have been saved in .csv format here:\n",
-          green(underline((vector_path))),
-          "\n")
-
+    if(verbose){
+      cat(blue("📝 SWAP tables have been generated in .csv format here: \n"))
+      cat(green(underline(vector_path)), "\n")
     }
+
+    if(verbose){
+      cat(blue("📝 SWAP vectors have been generated in .csv format here: \n"))
+      cat(green(underline(table_path)), "\n")
+    }
+
     return(list(
       parameter_path = parameter_path,
       table_path = table_path,
@@ -246,7 +255,7 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #'
 #' @importFrom dplyr %>%
 #' @importFrom crayon underline green
-#' @importFrom readr read_csv
+#' @importFrom readr read_csv cols
 #'
 #' @export
 #'
@@ -270,6 +279,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
       append = F
     )
 
+    if (verbose) {
+      cat("📝",
+          bold(blue("created SWAP main file.")), "\n")
+    }
+
     # Append parameters
     parameters = load_swap_parameters(project_path = project_path, verbose = verbose)
     par_write = paste(parameters$param, "=", parameters$value)
@@ -282,6 +296,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
       col.names = F,
       append = T
     )
+
+    if (verbose) {
+      cat("📝",
+          blue("SWAP parameters appended to main file."), "\n")
+    }
 
     # Append tables
     tables<-load_swap_tables(project_path = project_path,
@@ -309,6 +328,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
         append = T,
         sep = " "
       ) %>% suppressWarnings()
+    }
+
+    if (verbose) {
+      cat("📝",
+          blue("SWAP tables appended to main file."), "\n")
     }
 
     # Write vectors
@@ -340,7 +364,14 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     }
 
     if (verbose) {
-      cat("swap file written to:\n", green(underline(outpath)), "\n")
+      cat("📝",
+          blue("SWAP vectors appended to main file."), "\n")
+    }
+
+    if (verbose) {
+      cat(glue(blue("✅",
+      "SWAP main file written to: \n")))
+      cat(green(underline(outpath)), "\n")
     }
     return(outpath)
   }
@@ -359,6 +390,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 #'
 #' @importFrom glue glue
 #' @importFrom dplyr %>% last
+#' @importFrom crayon blue green underline bold
 #'
 #' @returns Returns parameter dataframe with modified INLIST_CSV parameter.
 #'
@@ -480,18 +512,11 @@ set_swap_output <-
             add_var <- glue("{var},")
           }
         } else{
-          add_var <- glue("{var},")
+          stop(glue("variable {var} not supported yet"))
         }
-      } else{
-        stop(glue("variable {var} not supported yet"))
+        outstring <- glue("{outstring}{add_var}")
       }
-      outstring <- glue("{outstring}{add_var}")
-    }
-
-    parameters <- change_swap_par(parameters, "INLIST_CSV", outstring)
-
-    if (verbose) {
-      cat(glue("...updating parameter:\n INLIST_CSV = {outstring} \n"))
+      parameters <- change_swap_par(parameters, "INLIST_CSV", outstring, verbose)
     }
     return(parameters)
 }
@@ -513,17 +538,22 @@ set_swap_output <-
 #' @param param Parameter set (dataframe)
 #' @param name name of the parameter to change (string)
 #' @param value value the parameter should take on (string)
+#' @param verbose print status? (flag)
 #'
 #' @returns This function returns the same dataframe it was passed, with the
 #' parameter value altered.
 #'
 #' @importFrom glue glue
+#' @importFrom crayon bold blue
 #'
 #' @export
-change_swap_par <- function(param, name, value){
+change_swap_par <- function(param, name, value, verbose = F){
   version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
-  value <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
-  param$value[which(param$param == name)] = value
+  value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
+  param$value[which(param$param == name)] = value2
+
+  if(verbose){cat(blue("💬 setting"), bold(glue("{name} = {value}")), "\n")}
+
   return(param)
 }
 
@@ -569,6 +599,12 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
   names(table_list) <- file_names
 
+  if (verbose) {
+    cat("📖",
+        blue("SWAP table set loaded."),
+        "\n")
+  }
+
   table_list %>% return()
 
 }
@@ -598,7 +634,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 #'
 #' @export
 #'
-load_swap_vectors <- function(project_path, swap_file = "swap.swp") {
+load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
   # TODO: load only specific table with extra param
 
@@ -623,6 +659,13 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp") {
   vector_list <- files %>% map(., custom_read)
 
   names(vector_list) <- file_names
+
+
+  if (verbose) {
+    cat("📖",
+        blue("SWAP vector set loaded."),
+        "\n")
+  }
 
   vector_list %>% return()
 }
@@ -649,9 +692,16 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
     p <- parse_swp_file(project_path, swap_file, verbose = verbose)
   }
 
+  if (verbose) {
+    cat("📖",
+        blue("SWAP parameter set loaded."),
+        "\n")
+  }
+
   param_path <- paste0(project_path, "/rswap/parameters/parameters.csv")
   table <- read.table(param_path, header = T, sep = ",", quote = '"') %>% tibble()
   table %>% return()
+
 
 }
 
@@ -662,6 +712,8 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
 #' @param project_path path to project directory
 #' @param parameters parameter set as loaded by `load_swap_parameters()` (dataframe)
 #' @param verbose print status? (flag)
+#'
+#' @importFrom crayon blue green underline
 #'
 #' @export
 write_swap_parameters <- function(project_path, parameters, verbose = F){
@@ -681,10 +733,11 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
     col.names = T,
     quote = T
   )
+
   if(verbose){
-    cat("SWAP parameters have been saved in .csv format here:\n",
-        green(underline(file_dir)),
-        "\n")
+    cat("📝",
+        blue("SWAP parameter set written to: \n"))
+        cat(green(underline(file_path)),"\n")
   }
 }
 
@@ -696,6 +749,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
 #' @param tables tables as loaded by `load_swap_tables()` (list of dataframes)
 #' @param verbose print status? (flag)
 #'
+#' @importFrom crayon blue green underline
 #' @export
 write_swap_tables <- function(project_path, tables, verbose = F) {
 
@@ -719,10 +773,10 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
     )
   }
 
-  if (verbose) {
-    cat("SWAP tables have been saved in .csv format here:\n",
-        green(underline(file_path)),
-        "\n")
+  if(verbose){
+    cat("📝",
+        blue("SWAP table set written to: \n"),
+        green(underline(table_path)),"\n")
   }
 }
 
@@ -733,7 +787,7 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
 #' @param project_path path to project directory
 #' @param vectors vectors as loaded by `load_swap_vectors()` (list of dataframes)
 #' @param verbose print status? (flag)
-#'
+#' @importFrom crayon blue green underline
 #' @importFrom stringr str_remove str_trim
 #'
 #' @export
@@ -760,10 +814,10 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
     )
   }
 
-  if (verbose) {
-    cat("SWAP vectors have been saved in .csv format here:\n",
-        green(underline(file_path)),
-        "\n")
+  if(verbose){
+    cat("📝",
+        blue("SWAP table set written to: \n"),
+        green(underline(vector_path)),"\n")
   }
 }
 
