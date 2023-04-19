@@ -880,11 +880,7 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 #'
 change_swap_vector <- function(vector, index, value, variable = NULL, verbose = F){
 
-  # for now, adjust the index by one because the first element is the variable
-  index = index+1
-
   vector_match <- names(vector) %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
-
 
   if((vector_match %>% length()) > 1){
     stop("[rswap] more than one vector has this variable '",variable,"' this should never happen, report to maintainer!")
