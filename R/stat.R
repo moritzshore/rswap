@@ -133,6 +133,8 @@ RMSE <- function(obs, mod) {
 #' @param obs numeric vector of observed values
 #' @param mod numeric vector of modeled values
 #'
+#' @importFrom stats sd
+#'
 #' @returns numeric RSR value rounded to 2 digits
 #'
 #' @export

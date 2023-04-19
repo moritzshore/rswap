@@ -87,7 +87,6 @@ build_rswap_directory <- function(project_path, verbose = F){
 #' @param project_path path to the temp directory (string)
 #' @param swap_exe path to swap.exe (string)
 #' @param parameters SWAP main file parameters (string)
-#' @param autoset_output flag if output should match observed file
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue

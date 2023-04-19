@@ -8,19 +8,25 @@ Authors@R:
            comment = c(ORCID = "0000-0002-7586-997X"))
 Maintainer: Moritz Shore <moritz.shore@nibio.no>
 Description: R-based interface for calibrating the SWAP model (among other
-    things)
+    things).
 License: GPL (>= 3)
 URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
 Depends: 
     R (>= 4.0)
 Imports: 
+    crayon,
     dplyr,
+    ggplot2,
     ggpubr,
     glue,
+    jsonlite,
+    magrittr,
     plotly,
     processx,
     purrr,
+    readr,
+    rlang (>= 0.4.11),
     stringi,
     stringr,
     tibble,
@@ -28,7 +34,8 @@ Imports:
     vroom
 Suggests: 
     devtools,
-    rmarkdown
+    rmarkdown,
+    roxygen2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

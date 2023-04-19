@@ -14,8 +14,6 @@ update_swp_paths(project_path, swap_exe, parameters, verbose = F)
 \item{parameters}{SWAP main file parameters (string)}
 
 \item{verbose}{print status? (flag)}
-
-\item{autoset_output}{flag if output should match observed file}
 }
 \value{
 Returns the SWAP parameter dataframe with modified path values

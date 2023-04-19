@@ -65,7 +65,7 @@ install_SWAPtools <- function() {
 #' Get SWAP Format
 #'
 #' Gets the format of a SWAP parameter
-#' @param parameter SWAP parameter to get the format of.
+#' @param parameters SWAP parameter to get the format of.
 #
 #' @returns Returns unit of passed SWAP variable in string form.
 #'

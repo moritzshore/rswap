@@ -750,6 +750,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
 #' @param verbose print status? (flag)
 #'
 #' @importFrom crayon blue green underline
+#' @importFrom utils write.table
 #' @export
 write_swap_tables <- function(project_path, tables, verbose = F) {
 
@@ -763,7 +764,7 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
 
     table_name <- names(table) %>% paste0(collapse = "-")
     table_path <- paste0(file_path, table_name, ".csv")
-    write.table(
+    utils::write.table(
       x = table,
       file = table_path,
       sep = ",",
@@ -869,6 +870,7 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 #' @param index index of the vector to alter (integer)
 #' @param value value to set the vector at the given index (SWAP-FORTRAN compatible)
 #' @param variable optional, only required if passing a list of multiple vectors. (string)
+#' @param verbose print status? (flag)
 #'
 #' @returns the same vector or vector list as passed, but with the modified value
 #'

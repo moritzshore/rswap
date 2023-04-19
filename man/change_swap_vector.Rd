@@ -15,6 +15,8 @@ of vectors as returned by \code{load_swap_vectors()} and then also pass the vari
 \item{value}{value to set the vector at the given index (SWAP-FORTRAN compatible)}
 
 \item{variable}{optional, only required if passing a list of multiple vectors. (string)}
+
+\item{verbose}{print status? (flag)}
 }
 \value{
 the same vector or vector list as passed, but with the modified value
