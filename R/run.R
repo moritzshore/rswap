@@ -29,7 +29,7 @@
 #' @importFrom glue glue
 #' @importFrom processx run
 #' @importFrom dplyr %>%
-#' @importFrom crayon blue magenta bgYellow bold
+#' @importFrom crayon blue magenta bgYellow bold yellow
 #'
 #' @export
 #'
@@ -111,7 +111,7 @@ run_swap <- function(project_path,
   # run the model
 
   if(verbose){
-    cat(blue(bold(">> Running")),yellow(bold("swap.exe")), blue(bold("in working directory: ")))
+    cat(blue(bold(">> Running")), yellow(bold("swap.exe")), blue(bold("in working directory: ")))
     cat(green(underline(work_dir)),"\n")
     cat(blue(bold(">> Executing the following file: ")))
     cat(green(underline(swap_file_path)),"\n")
