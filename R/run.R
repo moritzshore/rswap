@@ -137,26 +137,4 @@ check_swap_message <- function(msg, verbose = F){
     }
   }
 
-  # Move reruns.log and swap.ok to the temp directory.
-  reruns <- paste0(work_dir, "/reruns.log")
-  if (file.exists(reruns)) {
-    file.copy(from  = reruns,
-              to = paste0(work_dir, "/", project, "/rswap/reruns.log"))
-    file.remove(reruns)
-    if (verbose) {
-      cat("\n...copying reruns.log to rswap directory\n")
-    }
-  }
-  swap_ok <- paste0(work_dir, "/swap.ok")
-  if (file.exists(swap_ok)) {
-    file.copy(from  = swap_ok,
-              to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
-    file.remove(swap_ok)
-    if (verbose) {
-      cat("\n...copying swap.ok to rswap directory\n")
-    }
-  }
-
-  # return status of run
-  return(msg$status)
 }
