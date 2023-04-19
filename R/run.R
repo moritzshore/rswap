@@ -100,6 +100,35 @@ run_swap <- function(project_path,
     echo = verbose
   )
 
+  # check SWAP message
+  check_swap_message(msg, verbose)
+
+  # move run files to temp dir
+  move_run_files(work_dir, project, verbose)
+
+  if(verbose){
+    cat("🏁",
+        blue(bold("rswap run routine complete.",
+                  "\n"))
+    )
+  }
+
+  # return status of run
+  return(msg$status)
+}
+
+#' checks SWAP error message
+#' @keywords internal
+#' @param msg file from processx
+check_swap_message <- function(msg, verbose = F){
+
+  if(msg$status == 100){
+    if(verbose){
+      cat((bold(blue("✅",
+                   "SWAP run complete! \n"))))
+    }
+  }
+
   # TODO expand this
   if (msg$status != "100") {
     warning(glue("SWAP error, code {msg$status}"))
