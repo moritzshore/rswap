@@ -5,17 +5,24 @@
 #' Makes a temporary sub-directory workspace for the package to run SWAP in.
 #'
 #' @param project_path path to project directory (string)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
+#' @importFrom crayon blue underline green
 #'
 #' @export
 #'
-build_rswap_directory <- function(project_path){
+build_rswap_directory <- function(project_path, verbose = F){
 
   # TODO should this delete the previous one?
 
   temp_directory <- glue("{project_path}/rswap")
+
+  if(verbose){
+    cat(blue("👷 Building rswap directory: \n"))
+    cat(green(underline(temp_directory)), "\n")
+  }
 
   # list files found in project path (Note, this includes all the saved runs as
   # well, which we dont want, which is why we need to remove them)
@@ -44,7 +51,7 @@ build_rswap_directory <- function(project_path){
   required_files <- file_list %>% grepl(x = ., match_string) %>% which()
   required_file_list <- file_list[required_files]
 
-  # create the hidden temp directory
+  # create the temp directory
   dir.create(temp_directory, showWarnings = F)
   # and copy over the desired files
   status <- file.copy(from = required_file_list, to = temp_directory)
@@ -64,7 +71,8 @@ build_rswap_directory <- function(project_path){
     obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.csv"))
     obs_status <- file.copy(from = template_instructions, to = paste0(project_path, "/instructions_rswap_observed_data.txt"))
 
-    cat("copying template sheet 'rswap_observed_data.csv' into project directory\n ...along with 'instructions_rswap_observed_data.txt'\n")
+    cat("ℹ",
+        blue("copying template sheet"), green(underline("'rswap_observed_data.csv'")), blue("and"), green(underline("'instructions_rswap_observed_data.txt'")), blue("into project directory\n"))
     }
   # return the path to the temp directory
   return(temp_directory)
@@ -84,12 +92,12 @@ build_rswap_directory <- function(project_path){
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #'
-#' @keywords internal
+#' @export
 #'
 #' @returns Returns the SWAP parameter dataframe with modified path values
 #'
 update_swp_paths <- function(project_path, swap_exe,
-                             parameters, verbose) {
+                             parameters, verbose = F) {
 
     version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
@@ -103,7 +111,7 @@ update_swp_paths <- function(project_path, swap_exe,
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
     for (par in update_par) {
       val = glue("'{swap_main_file_path}'")
-      parameters = change_swap_par(parameters, par, val)
+      parameters = change_swap_par(parameters, par, val, verbose)
     }
 
     # Update the SWINCO path if needed. If SWINCO is set to 3, then INIFIL needs
@@ -116,10 +124,7 @@ update_swp_paths <- function(project_path, swap_exe,
         if ((infil_index %>% length()) > 0) {
           val <-  parameters$value[infil_index] %>% str_remove_all("'")
           newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap v{version} @ {Sys.time()}")
-          parameters = change_swap_par(parameters, "INIFIL", newval )
-          if(verbose){
-            cat(glue("\n...INIFIL parameter set to\n {parameters$value[infil_index]}\n"))
-          }
+          parameters = change_swap_par(parameters, "INIFIL", newval, verbose)
         }
       }
     }
@@ -145,6 +150,7 @@ update_swp_paths <- function(project_path, swap_exe,
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_replace_all
+#' @importFrom crayon red
 #'
 #' @export
 #'
@@ -178,11 +184,12 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 
   if (verbose) {
     if (any(status == FALSE)) {
-      cat("some files were not copied!\n")
-      cat(to_copy[which(status == FALSE)], sep = "\n")
+      warning("some files were not copied!\n")
+      cat(red(to_copy[which(status == FALSE)], sep = "\n"))
     } else{
-      cat("all files succesfully copied to:\n")
-      cat(to_path, "\n")
+      cat("✅",
+      blue("all files succesfully saved to:\n"))
+      cat(green(underline(to_path)), "\n")
     }
   }
   #TODO generate a preview plot of the model run in the directory?
@@ -240,8 +247,11 @@ load_observed <- function(project_path, archived = F, verbose = F){
   return_df <- list(data = data, observed_variables = obs_vars)
 
   if(verbose){
-    cat("observed data loaded, following variables detected:", sep = "\n")
-    cat(obs_vars, "\n", sep = " ")
+    cat("✅",
+        blue("Observed data with the following variables loaded:"),
+        green(bold(underline((obs_vars)))),
+        "\n")
+
   }
 
   return_df %>% return()
