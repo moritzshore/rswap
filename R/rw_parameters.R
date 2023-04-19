@@ -358,9 +358,9 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 #' Currently it only modifies INLIST_CSV, but more functionality will be placed
 #' here over time.
 #'
-#' @param parameters parameter dataframe as returned by `parse_swap_file()`
-#' @param variables  variables desired for output (string)
-#' @param depths depths depth at which to output them (string)
+#' @param project_path path to project directory
+#' @param parameters parameter dataframe
+#' @param autoset_output flag for matching output to observed file.
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
@@ -370,39 +370,121 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 #'
 #' @export
 #'
-set_swap_output <- function(parameters, variables, depths, verbose = F) {
+set_swap_output <-
+  function(project_path,
+           parameters,
+           autoset_output = F,
+           verbose = F) {
 
-    variables <- variables %>% toupper()
+    # change console output based on verbose flag
+    if (verbose) {
+      parameters <- change_swap_par(parameters, "SWSCRE", 2, verbose)
+    } else{
+      parameters <- change_swap_par(parameters, "SWSCRE", 0, verbose)
 
-    # CREATING INLIST_CSV
-    # TODO need to expand these... or figure out how to do this.
-    # but I think I just need a database of every parameter with their properties
-    # (Depth-wise? and Units)
-    depthwise <- c("TEMP", "WC", "H")
-    nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
-
-    string <- "["
-    for (d in depths) {
-      if (d == last(depths)) {
-        string <- glue("{string}-{d}]")
-      } else{
-        string <- glue("{string}-{d},")
-      }
     }
 
-    # rain must always be present! (for the soft calibration plot)
-    outstring <- "'RAIN,"
-    for (var in variables) {
-      if (var %in% depthwise) {
-        if (var == last(variables)) {
-          add_var <- glue("{var}{string}'")
 
+    # add the critical output params if they are not present.
+    if("INLIST_CSV" %in% parameters$param == FALSE){
+      if(verbose){
+        cat("➕",
+            blue("adding", bold("INLIST_CSV = ''"), "to parameter list"))
+      }
+      add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
+      parameters <- rbind(parameters, add)
+    }
+
+    # add the critical output params if they are not present.
+    if("INLIST_CSV_TZ" %in% parameters$param == FALSE){
+      if(verbose){
+        cat("➕",
+            blue("adding", bold("INLIST_CSV_TZ = ''"), "to parameter list"))
+      }
+      add <- data.frame(param = "INLIST_CSV_TZ ", value = "''", comment = glue("added by rswap on {Sys.time()}"))
+      parameters <- rbind(parameters, add)
+    }
+
+    # SWCSV needs to be present in the SWAP main file, such that the needed
+    # output can be printed. If this parameter already exists within the
+    # parameter dataframe, we can simply adjust the value to 1. If it does
+    # not exist yet, we need to add it, with the value of 1.
+    if ("SWCSV" %in% parameters$param) {
+      parameters = change_swap_par(parameters, "SWCSV", "1", verbose)
+    } else{
+      if(verbose){
+        cat("➕",
+            blue("adding", bold("SWCSV = 1"), "to parameter list"))
+      }
+      rbind(parameters,
+            data.frame(
+              param = "SWCSV",
+              value = "1",
+              comment = glue("added by rswap v{version} @ {Sys.time()}")
+            ))
+    }
+    # The exact same thing goes for SWCSV...
+    if ("SWCSV_TZ" %in% parameters$param) {
+      parameters = change_swap_par(parameters, "SWCSV_TZ", "1", verbose)
+    } else{
+      if(verbose){
+        cat("➕",
+            blue("adding", bold("SWCSV_TZ = 1"), "to parameter list"))
+      }
+      rbind(parameters,
+            data.frame(
+              param = "SWCSV_TZ",
+              value = "1",
+              comment = glue("added by rswap v{version} {Sys.time()}")
+            ))
+    }
+    # when more output is needed, I will need to add more and more, so this
+    # should / will be updated to do as a loop, as it is done below:
+
+
+    if(autoset_output){
+
+      if(verbose){cat(blue("⏺ Autosetting output to match observed file!"),"\n")}
+
+      # load variables and depths
+      obs <- load_observed(project_path, archived = F, verbose)
+      variables <- obs$observed_variables %>% toupper()
+      depths <- get_depths(data = obs$data) %>% sort()
+      cat("✅",
+          blue("Follwing depths detected"),
+          green(bold(underline(depths))), "\n")
+
+      # CREATING INLIST_CSV
+      # TODO need to expand these... or figure out how to do this.
+      # but I think I just need a database of every parameter with their properties
+      # (Depth-wise? and Units)
+      depthwise <- c("TEMP", "WC", "H")
+      nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
+
+      string <- "["
+      for (d in depths) {
+        if (d == last(depths)) {
+          string <- glue("{string}-{d}]")
         } else{
-          add_var <- glue("{var}{string},")
+          string <- glue("{string}-{d},")
         }
-      } else if (var %in% nodepth) {
-        if (var == last(variables)) {
-          add_var <- glue("{var}'")
+      }
+      # rain must always be present! (for the soft calibration plot)
+      outstring <- "'RAIN,"
+      for (var in variables) {
+        if (var %in% depthwise) {
+          if (var == last(variables)) {
+            add_var <- glue("{var}{string}'")
+
+          } else{
+            add_var <- glue("{var}{string},")
+          }
+        } else if (var %in% nodepth) {
+          if (var == last(variables)) {
+            add_var <- glue("{var}'")
+          } else{
+            add_var <- glue("{var},")
+          }
         } else{
           add_var <- glue("{var},")
         }
