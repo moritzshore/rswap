@@ -43,7 +43,7 @@ run_swap <- function(project_path,
 
   # Parse paths
   seperated <- project_path %>% str_split("/") %>% unlist()
-  project <- seperated %>% tail(1)
+  project <- seperated %>% utils::tail(1)
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
   swap_file_path <- glue("{project}/rswap/{swap_file}")
@@ -58,7 +58,7 @@ run_swap <- function(project_path,
     stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
   } else{
     if (verbose) {
-      cat("✔",
+      cat("\u2714",
           blue(underline("swap.exe")),
           blue("found"), "\n")
     }
@@ -66,7 +66,7 @@ run_swap <- function(project_path,
 
   if(dir.exists(paste0(project_path, "/rswap"))){
     if(verbose){
-      cat("🧹",
+      cat("\U0001f9f9�",
           blue("Deleting the old rswap diretory"),"\n")
     }
     # Refresh the temp directory
@@ -121,7 +121,7 @@ run_swap <- function(project_path,
   io_end <- Sys.time()
 
   model_start <- Sys.time()
-  msg <- run(
+  msg <- processx::run(
     command = "swap.exe",
     wd = work_dir,
     args = swap_file_path,
@@ -144,17 +144,17 @@ run_swap <- function(project_path,
   model_timer <- (model_end-model_start) %>% round(2)
 
   if (verbose) {
-    cat("⏲",
+    cat("\u23f2",
         blue("I/O duration:"),
         blue(bold(io_time)),
         blue("seconds"),
         "\n")
-    cat("⏳",
+    cat("\u23f3",
         blue("Model run time:"),
         blue(bold(model_timer)),
         blue("seconds"),
         "\n")
-    cat("🏁",
+    cat("\U0001f3c1�",
         blue(bold("rswap run routine complete.",
                   "\n")))
   }
@@ -172,7 +172,7 @@ check_swap_message <- function(msg, verbose = F){
 
   if(msg$status == 100){
     if(verbose){
-      cat((bold(blue("✅",
+      cat((bold(blue("\u2705",
                    "SWAP run complete! \n"))))
     }
   }
