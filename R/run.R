@@ -39,6 +39,7 @@ run_swap <- function(project_path,
                      verbose = F,
                      timeout = Inf) {
 
+  io_start <- Sys.time()
 
   # Parse paths
   seperated <- project_path %>% str_split("/") %>% unlist()
@@ -117,6 +118,9 @@ run_swap <- function(project_path,
     cat(blue(bold(glue(">> With max runtime of:"))), underline(glue("{timeout} seconds")),"\n")
   }
 
+  io_end <- Sys.time()
+
+  model_start <- Sys.time()
   msg <- run(
     command = "swap.exe",
     wd = work_dir,
@@ -126,19 +130,36 @@ run_swap <- function(project_path,
     echo_cmd = verbose,
     echo = verbose
   )
-
+  model_end <- Sys.time()
+  io_start2 <- Sys.time()
   # check SWAP message
   check_swap_message(msg, verbose)
 
   # move run files to temp dir
   move_run_files(work_dir, project, verbose)
 
-  if(verbose){
+  io_end2 <- Sys.time()
+  io_time <- ((io_end-io_start)+(io_end2-io_start2)) %>% round(2)
+
+  model_timer <- (model_end-model_start) %>% round(2)
+
+  if (verbose) {
+    cat("⏲",
+        blue("I/O duration:"),
+        blue(bold(io_time)),
+        blue("seconds"),
+        "\n")
+    cat("⏳",
+        blue("Model run time:"),
+        blue(bold(model_timer)),
+        blue("seconds"),
+        "\n")
     cat("🏁",
         blue(bold("rswap run routine complete.",
-                  "\n"))
-    )
+                  "\n")))
   }
+
+
 
   # return status of run
   return(msg$status)
