@@ -77,17 +77,18 @@ run_swap <- function(project_path,
   rswap_directory <- build_rswap_directory(project_path, verbose)
 
   # reads in the swap parameters and tables
-  parse_result <- parse_swp_file(project_path, swap_file, verbose)
+  parse_result <- parse_swp_file(project_path = project_path,
+                                 swap_file = swap_file,
+                                 verbose = verbose)
+
+  # load in the parameters to be altered
+  parameters <- load_swap_parameters(project_path, swap_file, verbose)
 
   # changes the paths in the swap main file to reflect the temporary location
-  params <-
-    update_swp_paths(
-      project_path = project_path,
-      swap_exe = swap_exe,
-      parameters = load_swap_parameters(project_path, swap_file),
-      verbose =  verbose
-    )
-
+  parameters <- update_swp_paths(project_path = project_path,
+                                 swap_exe = swap_exe,
+                                 parameters = parameters,
+                                 verbose = verbose)
 
   # set the output of SWAP
   parameters <- set_swap_output(project_path = project_path,
@@ -99,7 +100,6 @@ run_swap <- function(project_path,
   write_swap_parameters(project_path, parameters = parameters, verbose = verbose)
 
   # location for where the swap file is to be written
-
   outpath <- paste0("rswap/",swap_file)
 
   # Write swap file
