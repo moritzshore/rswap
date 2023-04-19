@@ -99,34 +99,6 @@ update_swp_paths <- function(project_path, swap_exe,
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
-    # SWCSV needs to be present in the SWAP main file, such that the needed
-    # output can be printed. If this parameter already exists within the
-    # parameter dataframe, we can simply adjust the value to 1. If it does
-    # not exist yet, we need to add it, with the value of 1.
-    if ("SWCSV" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV", "1")
-    } else{
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV",
-              value = "1",
-              comment = glue("added by rswap v{version} @ {Sys.time()}")
-            ))
-    }
-    # The exact same thing goes for SWCSV...
-    if ("SWCSV_TZ" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV_TZ", "1")
-    } else{
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV_TZ",
-              value = "1",
-              comment = glue("added by rswap v{version} {Sys.time()}")
-            ))
-    }
-    # when more output is needed, I will need to add more and more, so this
-    # should / will be updated to do as a loop, as it is done below:
-
     # these are the parameters that need a path to be updated
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
     for (par in update_par) {
