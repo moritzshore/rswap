@@ -44,15 +44,15 @@ load_variables_db <- function() {
 #' @export
 #'
 install_SWAPtools <- function() {
-  if ("SWAPtools" %in% installed.packages()) {
+  if ("SWAPtools" %in% utils::installed.packages()) {
     return(TRUE)
   } else{
     cat("SWAPtools is required for this functionality. Installing...\n")
 
-    install.packages(pkg = "SWAPtools",
+    utils::install.packages(pkg = "SWAPtools",
                      dependencies = TRUE,
                      repos = "https://waterwijzerlandbouw.wur.nl/repo",)
-    if ("SWAPtools" %in% installed.packages()) {
+    if ("SWAPtools" %in% utils::installed.packages()) {
       cat("SWAPtools installed succesfully\n")
       return(TRUE)
     } else{
