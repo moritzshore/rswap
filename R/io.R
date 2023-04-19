@@ -638,3 +638,34 @@ rswap_init <- function(swap_exe){
   cat(example_path)
   return(example_path)
 }
+
+#' Move run files
+#'
+#' Moves swap.ok and reruns.log to rswap dir
+#' @keywords internal
+#'
+#' @param work_dir work dir
+#' @param project proj name
+#' @param verbose print?
+move_run_files <- function(work_dir, project, verbose = F){
+  # Move reruns.log and swap.ok to the temp directory.
+  reruns <- paste0(work_dir, "/reruns.log")
+  if (file.exists(reruns)) {
+    file.copy(from  = reruns,
+              to = paste0(work_dir, "/", project, "/rswap/reruns.log"))
+    file.remove(reruns)
+    if (verbose) {
+      cat(blue("ℹ Moving reruns.log to rswap directory..\n"))
+    }
+  }
+  swap_ok <- paste0(work_dir, "/swap.ok")
+  if (file.exists(swap_ok)) {
+    file.copy(from  = swap_ok,
+              to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
+    file.remove(swap_ok)
+    if (verbose) {
+      cat(blue("ℹ Moving swap.ok to rswap directory..\n"))
+    }
+  }
+}
+
