@@ -284,17 +284,12 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     )
 
     # Append tables
-    table_path <- paste0(project_path, "/rswap/tables")
-    tables <- list.files(table_path, full.names = T)
+    tables<-load_swap_tables(project_path = project_path,
+                     swap_file = swap_file,
+                     verbose = verbose)
     for (table in tables) {
-      read <- read.csv(table, colClasses = "character") %>% tibble()
-
-      # band-aid fix for the special cases
-      # TODO improve this
-      colnames(read) <- colnames(read) %>% str_replace("\\..", " = ")
-
       write.table(
-        read,
+        table,
         file = outpath,
         quote = F,
         row.names = F,
@@ -317,13 +312,12 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     }
 
     # Write vectors
-    vector_path <- paste0(project_path, "/rswap/vectors/")
-    vectors <- list.files(vector_path, full.names = T)
+    vectors <- load_swap_vectors(project_path = project_path,
+                                 swap_file = swap_file, verbose = verbose)
     for (vector in vectors) {
-      read <- readr::read_csv(vector,col_names = T, col_types = cols(.default = "c"), quote = '"')
 
       write.table(
-        read,
+        vector,
         file = outpath,
         quote = F,
         row.names = F,
