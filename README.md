@@ -31,7 +31,7 @@ You can install `rswap` from GitHub:
 # install remotes, if not already present
 install.packages("remotes")
 
-remotes::install_github("moritzshore/rswap")
+remotes::install_github(repo = "moritzshore/rswap", ref = remotes::github_release())
 
 library(rswap)
 ```
