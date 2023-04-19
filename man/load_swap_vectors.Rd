@@ -4,7 +4,7 @@
 \alias{load_swap_vectors}
 \title{Load SWAP Vectors}
 \usage{
-load_swap_vectors(project_path, swap_file = "swap.swp")
+load_swap_vectors(project_path, swap_file = "swap.swp", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project_directory (string)}

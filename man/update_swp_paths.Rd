@@ -4,7 +4,7 @@
 \alias{update_swp_paths}
 \title{Update SWAP Main File Paths}
 \usage{
-update_swp_paths(project_path, swap_exe, parameters, verbose)
+update_swp_paths(project_path, swap_exe, parameters, verbose = F)
 }
 \arguments{
 \item{project_path}{path to the temp directory (string)}
@@ -14,6 +14,8 @@ update_swp_paths(project_path, swap_exe, parameters, verbose)
 \item{parameters}{SWAP main file parameters (string)}
 
 \item{verbose}{print status? (flag)}
+
+\item{autoset_output}{flag if output should match observed file}
 }
 \value{
 Returns the SWAP parameter dataframe with modified path values
@@ -22,4 +24,3 @@ Returns the SWAP parameter dataframe with modified path values
 As \code{rswap} creates a new directory for the model file, the paths in the those
 files need to be update to still be correct. This function does just that.
 }
-\keyword{internal}

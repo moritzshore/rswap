@@ -4,7 +4,7 @@
 \alias{change_swap_par}
 \title{Change SWAP Parameter}
 \usage{
-change_swap_par(param, name, value)
+change_swap_par(param, name, value, verbose = F)
 }
 \arguments{
 \item{param}{Parameter set (dataframe)}
@@ -12,6 +12,8 @@ change_swap_par(param, name, value)
 \item{name}{name of the parameter to change (string)}
 
 \item{value}{value the parameter should take on (string)}
+
+\item{verbose}{print status? (flag)}
 }
 \value{
 This function returns the same dataframe it was passed, with the
