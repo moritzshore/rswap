@@ -16,17 +16,23 @@
 #'
 #' @export
 #'
+#' @importFrom dplyr filter
+#' @importFrom grDevices colorRampPalette
+#' @importFrom plotly plot_ly add_trace layout
+#' @importFrom rswap melt_all_runs
+#' @importFrom stringr str_split
+#' @importFrom utils tail
 comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F) {
   # TODO: rename to compare_swap_runs
   # Custom color palette
-  color_palette <- colorRampPalette(c("red", "blue", "green"))
+  color_palette <- grDevices::colorRampPalette(c("red", "blue", "green"))
 
   # Grab data from last model run
-  project_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
+  project_name <- project_path %>% stringr::str_split("./") %>% unlist() %>% utils::tail(1)
 
   # combine the past runs, the current run
   master_df <-
-    melt_all_runs(
+    rswap::melt_all_runs(
       project_path = project_path,
       variable = variable,
       depth = depth,
@@ -38,12 +44,12 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
   custom_colors = master_df$run %>% unique() %>% length() %>% color_palette(.)
 
   # create a base plot with the custom color palette
-  plot <- plot_ly(colors = custom_colors)
+  plotly_plot <- plotly::plot_ly(colors = custom_colors)
 
   # add observed trace
-  plot <-
-    plot %>% add_trace(
-      data = master_df %>% filter(tag == "observed"),
+  plotly_plot <-
+    plotly_plot %>% plotly::add_trace(
+      data = master_df %>% dplyr::filter(tag == "observed"),
       x = ~ DATE,
       y = ~ value,
       name = "observed",
@@ -58,9 +64,9 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
     )
 
   # add the most recent run
-  plot <-
-    plot %>% add_trace(
-      data = master_df %>% filter(tag == "present"),
+  plotly_plot <-
+    plotly_plot %>% plotly::add_trace(
+      data = master_df %>% dplyr::filter(tag == "present"),
       x = ~ DATE,
       y = ~ value,
       name = "Current Run",
@@ -71,9 +77,9 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
     )
 
   # add all the previous runs
-  plot <-
-    plot %>% add_trace(
-      data = master_df %>% filter(tag == "past"),
+  plotly_plot <-
+    plotly_plot %>% plotly::add_trace(
+      data = master_df %>% dplyr::filter(tag == "past"),
       x = ~ DATE,
       y = ~ value,
       name = ~ run,
@@ -90,7 +96,7 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
     )
 
   # modify the layout
-  plot %>% layout(
+  plotly_plot %>% plotly::layout(
     autosize = T,
     title = paste("Comparative plot:", "<b>", project_name, "</b>", variable, depth, "cm"),
     plot_bgcolor = "white",
