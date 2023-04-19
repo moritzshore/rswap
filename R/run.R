@@ -127,7 +127,7 @@ run_swap <- function(project_path,
     args = swap_file_path,
     error_on_status = F,
     timeout = timeout,
-    echo_cmd = verbose,
+    echo_cmd = F,
     echo = verbose
   )
   model_end <- Sys.time()
