@@ -95,7 +95,7 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
     swp_file <- paste0(rswap_dir, "/", swap_file)
     if(verbose){
-      cat(blue("ℹ"),
+      cat(blue("\u2139"),
           blue("Parsing swap file:"),"\n")
       cat(green((underline(glue("{swp_file}")))), "\n")
     }
@@ -222,12 +222,12 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     write_swap_parameters(project_path, par_df, verbose)
 
     if(verbose){
-      cat(blue("📝 SWAP tables have been generated in .csv format here: \n"))
+      cat(blue("\U0001f4dd SWAP tables have been generated in .csv format here: \n"))
       cat(green(underline(vector_path)), "\n")
     }
 
     if(verbose){
-      cat(blue("📝 SWAP vectors have been generated in .csv format here: \n"))
+      cat(blue("\U0001f4dd SWAP vectors have been generated in .csv format here: \n"))
       cat(green(underline(table_path)), "\n")
     }
 
@@ -280,7 +280,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     )
 
     if (verbose) {
-      cat("📝",
+      cat("\U0001f4dd�",
           bold(blue("created SWAP main file.")), "\n")
     }
 
@@ -298,7 +298,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     )
 
     if (verbose) {
-      cat("📝",
+      cat("\U0001f4dd�",
           blue("SWAP parameters appended to main file."), "\n")
     }
 
@@ -331,7 +331,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     }
 
     if (verbose) {
-      cat("📝",
+      cat("\U0001f4dd",
           blue("SWAP tables appended to main file."), "\n")
     }
 
@@ -364,12 +364,12 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     }
 
     if (verbose) {
-      cat("📝",
+      cat("\U0001f4d",
           blue("SWAP vectors appended to main file."), "\n")
     }
 
     if (verbose) {
-      cat(glue(blue("✅",
+      cat(glue(blue("\u2705",
       "SWAP main file written to: \n")))
       cat(green(underline(outpath)), "\n")
     }
@@ -414,7 +414,7 @@ set_swap_output <-
     # add the critical output params if they are not present.
     if("INLIST_CSV" %in% parameters$param == FALSE){
       if(verbose){
-        cat("➕",
+        cat("\u2795",
             blue("adding", bold("INLIST_CSV = ''"), "to parameter list"))
       }
       add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
@@ -424,7 +424,7 @@ set_swap_output <-
     # add the critical output params if they are not present.
     if("INLIST_CSV_TZ" %in% parameters$param == FALSE){
       if(verbose){
-        cat("➕",
+        cat("\u2795",
             blue("adding", bold("INLIST_CSV_TZ = ''"), "to parameter list"))
       }
       add <- data.frame(param = "INLIST_CSV_TZ ", value = "''", comment = glue("added by rswap on {Sys.time()}"))
@@ -439,7 +439,7 @@ set_swap_output <-
       parameters = change_swap_par(parameters, "SWCSV", "1", verbose)
     } else{
       if(verbose){
-        cat("➕",
+        cat("\u2795",
             blue("adding", bold("SWCSV = 1"), "to parameter list"))
       }
       rbind(parameters,
@@ -454,7 +454,7 @@ set_swap_output <-
       parameters = change_swap_par(parameters, "SWCSV_TZ", "1", verbose)
     } else{
       if(verbose){
-        cat("➕",
+        cat("\u2795",
             blue("adding", bold("SWCSV_TZ = 1"), "to parameter list"))
       }
       rbind(parameters,
@@ -470,13 +470,13 @@ set_swap_output <-
 
     if(autoset_output){
 
-      if(verbose){cat(blue("⏺ Autosetting output to match observed file!"),"\n")}
+      if(verbose){cat(blue("\u23fa Autosetting output to match observed file!"),"\n")}
 
       # load variables and depths
       obs <- load_observed(project_path, archived = F, verbose)
       variables <- obs$observed_variables %>% toupper()
       depths <- get_depths(data = obs$data) %>% sort()
-      cat("✅",
+      cat("\u2705",
           blue("Follwing depths detected"),
           green(bold(underline(depths))), "\n")
 
@@ -552,7 +552,7 @@ change_swap_par <- function(param, name, value, verbose = F){
   value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
   param$value[which(param$param == name)] = value2
 
-  if(verbose){cat(blue("💬 setting"), bold(glue("{name} = {value}")), "\n")}
+  if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{name} = {value}")), "\n")}
 
   return(param)
 }
@@ -600,7 +600,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
   names(table_list) <- file_names
 
   if (verbose) {
-    cat("📖",
+    cat("\U0001f4d6",
         blue("SWAP table set loaded."),
         "\n")
   }
@@ -662,7 +662,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 
 
   if (verbose) {
-    cat("📖",
+    cat("\U0001f4d6",
         blue("SWAP vector set loaded."),
         "\n")
   }
@@ -693,7 +693,7 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
   }
 
   if (verbose) {
-    cat("📖",
+    cat("\U0001f4d6",
         blue("SWAP parameter set loaded."),
         "\n")
   }
@@ -735,7 +735,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
   )
 
   if(verbose){
-    cat("📝",
+    cat("\U0001f4dd",
         blue("SWAP parameter set written to: \n"))
         cat(green(underline(file_path)),"\n")
   }
@@ -775,7 +775,7 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
   }
 
   if(verbose){
-    cat("📝",
+    cat("\U0001f4dd",
         blue("SWAP table set written to: \n"),
         green(underline(table_path)),"\n")
   }
@@ -816,7 +816,7 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
   }
 
   if(verbose){
-    cat("📝",
+    cat("\U0001f4dd",
         blue("SWAP table set written to: \n"),
         green(underline(vector_path)),"\n")
   }
