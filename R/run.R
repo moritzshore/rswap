@@ -71,55 +71,11 @@ run_swap <- function(project_path,
     )
 
 
-  # load observed data
-  observed_path <- paste0(rswap_directory, "/rswap_observed_data.csv")
-  if(file.exists(observed_path) == FALSE){
-    warning("Observed file not found!\n",observed_path )
-  }
-
-  # routine for automatically setting output (could be improved)
-  # TODO move all of this to set_swap_output()
-  if (autoset_output) {
-
-    obs <- load_observed(project_path)
-    variables <- obs$observed_variables
-    depths <- get_depths(data = obs$data) %>% sort()
-
-    # add the critical output params if they are not present.
-    if("INLIST_CSV" %in% params$param == FALSE){
-      add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
-      params <- rbind(params, add)
-    }
-
-    # add the critical output params if they are not present.
-    if("SWCSV_TZ" %in% params$param == FALSE){
-      add <- data.frame(param = "SWCSV_TZ", value = "1", comment = glue("added by rswap on {Sys.time()}"))
-      params <- rbind(params, add)
-    }
-
-    # add the critical output params if they are not present.
-    if("INLIST_CSV_TZ" %in% params$param == FALSE){
-      add <- data.frame(param = "INLIST_CSV_TZ ", value = "'WC,H,TEMP'", comment = glue("added by rswap on {Sys.time()}"))
-      params <- rbind(params, add)
-    }else{
-      params$value[which(params$param=="INLIST_CSV_TZ")] = "'WC,H,TEMP'"
-    }
-
-    # Set output wrapper function
-    params <- set_swap_output(params, variables, depths, verbose)
-
-    # print
-    if (verbose) {
-      cat(
-        "\n...autosetting SWAP output to match observed files\n")
-    }
-  }
-
-  # change console output based on verbose flag
-  if (verbose) {
-    params <- change_swap_par(params, "SWSCRE", 2)
-  }else{
-    params <- change_swap_par(params, "SWSCRE", 0)
+  # set the output of SWAP
+  parameters <- set_swap_output(project_path = project_path,
+                               parameters = parameters,
+                               autoset_output = autoset_output,
+                               verbose = verbose)
 
   }
 
