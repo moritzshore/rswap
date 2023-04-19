@@ -29,6 +29,7 @@
 #' @importFrom glue glue
 #' @importFrom processx run
 #' @importFrom dplyr %>%
+#' @importFrom crayon blue magenta bgYellow bold
 #'
 #' @export
 #'
@@ -46,17 +47,34 @@ run_swap <- function(project_path,
   swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
   swap_file_path <- glue("{project}/rswap/{swap_file}")
 
-
-  if(file.exists(swap_exe)==FALSE){
-   stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
+  # Print run info
+  if(verbose){
+    cat(magenta(bold(("Running SWAP project"))), bgYellow(project), bold(magenta("with main file")), bgYellow(swap_file),"\n")
   }
 
-  # Refesh the temp directory
-  unlink(paste0(project_path, "/rswap"), recursive = T)
+  # check if SWAP.exe is in the right place
+  if (file.exists(swap_exe) == FALSE) {
+    stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
+  } else{
+    if (verbose) {
+      cat("✔",
+          blue(underline("swap.exe")),
+          blue("found"), "\n")
+    }
+  }
+
+  if(dir.exists(paste0(project_path, "/rswap"))){
+    if(verbose){
+      cat("🧹",
+          blue("Deleting the old rswap diretory"),"\n")
+    }
+    # Refresh the temp directory
+    unlink(paste0(project_path, "/rswap"), recursive = T)
+  }
 
 
   # builds a directory for performing package actions, and returns the path
-  rswap_directory <- build_rswap_directory(project_path)
+  rswap_directory <- build_rswap_directory(project_path, verbose)
 
   # reads in the swap parameters and tables
   parse_result <- parse_swp_file(project_path, swap_file, verbose)
@@ -77,19 +95,28 @@ run_swap <- function(project_path,
                                autoset_output = autoset_output,
                                verbose = verbose)
 
-  }
+  # write the modified parameter set
+  write_swap_parameters(project_path, parameters = parameters, verbose = verbose)
 
   # location for where the swap file is to be written
 
   outpath <- paste0("rswap/",swap_file)
 
-  write_swap_parameters(project_path, parameters = params, verbose = verbose)
   # Write swap file
   write_swap_file(project_path = project_path,
                   outfile = outpath,
-                  verbose = verbose)
+                  verbose = T)
 
   # run the model
+
+  if(verbose){
+    cat(blue(bold(">> Running")),yellow(bold("swap.exe")), blue(bold("in working directory: ")))
+    cat(green(underline(work_dir)),"\n")
+    cat(blue(bold(">> Executing the following file: ")))
+    cat(green(underline(swap_file_path)),"\n")
+    cat(blue(bold(glue(">> With max runtime of:"))), underline(glue("{timeout} seconds")),"\n")
+  }
+
   msg <- run(
     command = "swap.exe",
     wd = work_dir,
