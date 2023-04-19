@@ -66,7 +66,7 @@ run_swap <- function(project_path,
 
   if(dir.exists(paste0(project_path, "/rswap"))){
     if(verbose){
-      cat("\U0001f9f9�",
+      cat("\U0001f9f9",
           blue("Deleting the old rswap diretory"),"\n")
     }
     # Refresh the temp directory
@@ -154,7 +154,7 @@ run_swap <- function(project_path,
         blue(bold(model_timer)),
         blue("seconds"),
         "\n")
-    cat("\U0001f3c1�",
+    cat("\U0001f3c1",
         blue(bold("rswap run routine complete.",
                   "\n")))
   }
