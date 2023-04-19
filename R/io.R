@@ -20,7 +20,7 @@ build_rswap_directory <- function(project_path, verbose = F){
   temp_directory <- glue("{project_path}/rswap")
 
   if(verbose){
-    cat(blue("👷 Building rswap directory: \n"))
+    cat(blue("\U0001f477 Building rswap directory: \n"))
     cat(green(underline(temp_directory)), "\n")
   }
 
@@ -71,7 +71,7 @@ build_rswap_directory <- function(project_path, verbose = F){
     obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.csv"))
     obs_status <- file.copy(from = template_instructions, to = paste0(project_path, "/instructions_rswap_observed_data.txt"))
 
-    cat("ℹ",
+    cat("\u2139",
         blue("copying template sheet"), green(underline("'rswap_observed_data.csv'")), blue("and"), green(underline("'instructions_rswap_observed_data.txt'")), blue("into project directory\n"))
     }
   # return the path to the temp directory
@@ -188,7 +188,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
       warning("some files were not copied!\n")
       cat(red(to_copy[which(status == FALSE)], sep = "\n"))
     } else{
-      cat("✅",
+      cat("\u2705",
       blue("all files succesfully saved to:\n"))
       cat(green(underline(to_path)), "\n")
     }
@@ -248,7 +248,7 @@ load_observed <- function(project_path, archived = F, verbose = F){
   return_df <- list(data = data, observed_variables = obs_vars)
 
   if(verbose){
-    cat("✅",
+    cat("\u2705",
         blue("Observed data with the following variables loaded:"),
         green(bold(underline((obs_vars)))),
         "\n")
@@ -666,7 +666,7 @@ move_run_files <- function(work_dir, project, verbose = F){
               to = paste0(work_dir, "/", project, "/rswap/reruns.log"))
     file.remove(reruns)
     if (verbose) {
-      cat(blue("ℹ Moving reruns.log to rswap directory..\n"))
+      cat(blue("\u2139 Moving reruns.log to rswap directory..\n"))
     }
   }
   swap_ok <- paste0(work_dir, "/swap.ok")
@@ -675,7 +675,7 @@ move_run_files <- function(work_dir, project, verbose = F){
               to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
     file.remove(swap_ok)
     if (verbose) {
-      cat(blue("ℹ Moving swap.ok to rswap directory..\n"))
+      cat(blue("\u2139 Moving swap.ok to rswap directory..\n"))
     }
   }
 }
