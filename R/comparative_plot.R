@@ -19,7 +19,6 @@
 #' @importFrom dplyr filter
 #' @importFrom grDevices colorRampPalette
 #' @importFrom plotly plot_ly add_trace layout
-#' @importFrom rswap melt_all_runs
 #' @importFrom stringr str_split
 #' @importFrom utils tail
 comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F) {
@@ -32,7 +31,7 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
 
   # combine the past runs, the current run
   master_df <-
-    rswap::melt_all_runs(
+    melt_all_runs(
       project_path = project_path,
       variable = variable,
       depth = depth,
