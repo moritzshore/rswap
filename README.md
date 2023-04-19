@@ -16,10 +16,11 @@ rswap is an R-package designed to help interface and work with [SWAP4](https://w
 6. [Saving model runs](#saving)
 7. [Comparing model runs](#compare)
 8. [Modification of Parameters](#mod)
-9. [Miscellaneous functions](#misc)
-10. [Roadmap](#roadmap)
-11. [Support and Contributing](#support)
-12. [Acknowledgements](#ack)
+9. [SWAPtools Integration](#swaptools)
+10. [Miscellaneous functions](#misc)
+11. [Roadmap](#roadmap)
+12. [Support and Contributing](#support)
+13. [Acknowledgements](#ack)
 [References](#ref)
 
 ## Installing `rswap` <a name="install"></a>
@@ -188,17 +189,45 @@ This plot is equally flexible and can be passed any `variable` and any amount of
 
 ## Modification of parameters  <a name="mod"></a>
 
-changing a parameter in rswap can be done using the `parse_swp_file()` function. 
+Changing of parameters, tables, and vectors of the SWAP main file can be done with `rswap`. First, the SWAP file must be parsed, this is done by the `parse_swp_file()` function. 
 ```
-parsed <- parse_swp_file(project_path, swap_file)
+paths <- parse_swp_file(project_path, swap_file = "swap.swp")
 ```
-This returns both a dataframe of all the parameters, as well as a path to where the saved tables are located (I am working on getting a "list of dataframes" to work in R, instead of just writing tables #TODO!)
+Once they have been parsed, they can be loaded, with the following functions for parameters, tables, and vectors, respectively:
+```
+param <- load_swap_parameters(project_path)
+tables <- load_swap_tables(project_path)
+vectors <- load_swap_vectors(project_path)
+```
+⚠️ If the project has not already been parsed by `rswap`, these functions will automatically parse the `swap_file` argument. 
 
-You can modify the dataframe how you wish, with whatever tools you would like, however `rswap` does have a simple dedicated function to do this for you. 
+Now, with the parameters, tables, and vectors parsed and loaded, we can alter them using:
 ```
-parameters <- change_swap_par(param = parsed$parameters, name = "COFRED", value = 0.55)
+param <- change_swap_par(param, name = "SHAPE", value = "0.75")
+tables <- change_swap_table(tables, variable = "OSAT", row = 1, value = "0.34")
+vectors <- change_swap_vector(vectors, variable = "OUTDAT", index = 1, value = "10-Jun-2013")
 ```
-This function takes in the dataframe parsed by the previous function and returns that same dataframe with the modified parameter.
+These functions then return the object, with the modified value(s). Please note this is a `dataframe` for the parameters, **but** a `list` of `dataframes` for the tables and vectors. You have the option of passing all the `dataframes` as returned by the `load_swap_tables()` function, or just the one you are interested in altering, or anything in-between.
+
+⚠️ You have the choice of passing the value in `character` format as shown above, to assure `FORTRAN` compatbile format, or you can use
+the `set_swap_format()` function, to convert your value to the `FORTRAN` compatbile format. 
+
+
+If you would like to run SWAP with the modified parameter/table/vector set, you first would need write the new SWAP main file:
+```
+write_swap_file(project_path, outfile = "swap_modified.swp")
+```
+And to run this modified SWAP main file, you would of course use `run_swap()` with the corresponding `project_path` and `swap_file` parameters. 
+
+You might be thinking right about now.. 
+
+> Gee that is a lot of work just to change a parameter!
+
+And you are correct, which is why I am going to implement a wrapper function to all these steps for you at once... `soon`
+
+## SWAPtools integrations <a name="install"></a>
+
+The foillowing features are possible when using `rswap` with another SWAP-related R-package: `SWAPtools`
 
 `get_swap_format()` returns the format of the given parameter, whereas `set_swap_format()` forces the value of the given parameter into the FORTRAN-required format. These functions rely on data from package `SWAPtools`. (Over time, `change_swap_par()` will use these automatically to protect you from incorrect formats)
 
@@ -210,11 +239,7 @@ set_swap_format(parameter = "ALTW", value = 5)
 # [1] "5.0"
 ```
 
-If you would like to run SWAP with the modified parameter set, you first would write the new SWAP main file:
-```
-write_swap_file(parameters = parameters, table_path = parsed$table_path, outpath = paste0(project_path, "/modified.swp"))
-```
-And to run this modified SWAP main file, you would of course use `run_swap()` with the corresponding `project_path` and `swap_file` parameters. 
+More functionality will be implemented over time.
 
 ## Miscellaneous functions  <a name="misc"></a>
 
