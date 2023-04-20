@@ -71,7 +71,7 @@ know where your model setup is located (`project_path`). The `swap.exe`
 must be located in the parent directory of `project_path`!
 
 ``` r
-run_swap(project_path)
+run_swap(project_path, autoset_output = TRUE)
 ```
 
 `run_swap()` can be further customized with the following parameters:
@@ -123,7 +123,7 @@ get_depths(observed_data$data)
 
 ..this can also be filtered by a specific variable by passing `variable`
 
-## Visuals <a name="visuals"></a> {#visuals}
+## Visuals <a name="visuals"></a>
 
 There are a variety of functions used to visualize your SWAP data, such
 as `plot_over_under()`
@@ -250,9 +250,9 @@ documentation.
 
 ``` r
 # removes any non-essential data from the input file:
-clean_swp_file(project_path, swap_file) 
+clean_swp_file(project_path) 
 # parses the data to be R-readable:
-parse_swp_file(project_path, swap_file) 
+parse_swp_file(project_path) 
  # writes the SWAP main file sourced from ".csv" files stored in the rswap directory
 write_swap_file(project_path, outfile = "swap_modified.swp")
 ```
@@ -276,7 +276,7 @@ write_swap_tables(project_path, tables)
 #### Vector specific functions:
 
 ``` r
-vectors <- load_swap_vectors()
+vectors <- load_swap_vectors(project_path)
 vectors <- change_swap_vector(vectors, variable = "OUTDAT", index = 1, value = "10-jun-2013")
 write_swap_vectors(project_path, vectors)
 ```
@@ -322,15 +322,23 @@ while are designed for internal use, can possibly also be of assistance
 to the end user. These are listed below.
 
 ``` r
-# Model performance metrics
-NSE(obs = ob_dat, mod = mod_dat)
-PBIAS(obs = ob_dat, mod = mod_dat)
-RMSE(obs = ob_dat, mod = mod_dat)
-RSR(obs = ob_dat, mod = mod_dat)
+# Load data
+ob_dat <- load_observed(project_path)
+mod_dat <- read_swap_output(project_path)
+
 # Filters SWAP data (observed or modelled) by variable and depth
-filter_swap_data(data = mod_dat, var = "WC", depth = 15)
-# Matches dataframe structure of observed and modelled
-match_mod_obs(project_path, variable = "WC", depth = 15)
+mod_filt <- filter_swap_data(data = mod_dat$custom_depth, var = "WC", depth = 15)
+ob_filt <-  filter_swap_data(data = mod_dat$custom_depth, var = "WC", depth = 15)
+
+# Filters and Matches dataframe structure of observed and modelled
+data <- match_mod_obs(project_path, variable = "WC", depth = 15)
+
+# Model performance metrics
+NSE(obs = data$obs$WC_15, mod = data$mod$WC_15)
+PBIAS(obs = data$obs$WC_15, mod = data$mod$WC_15)
+RMSE(obs = data$obs$WC_15, mod = data$mod$WC_15)
+RSR(obs = data$obs$WC_15, mod = data$mod$WC_15)
+
 # Melts together all saved runs + current into tidy format
 melt_all_runs(project_path, variable = "WC", depth = 15)
 ```
@@ -361,7 +369,6 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
     `melt_all_runs()`
 -   Renovate `soft_calibration_plot()` to accept any variable using the
     new system.
--   Have all the example code in the readme work with the data from `rswap_init()`
 -   Add D-Statistic from Moriasi et al 2017. 
 
 ## Support and Contributing <a name="support"></a>
