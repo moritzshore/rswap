@@ -104,7 +104,7 @@ contains depth wise values of various variables.
 modelled_data$daily_output
 ```
 
-``` R
+``` r
 # A tibble: 17,520 x 5
    DATE       DEPTH     H    WC  TEMP
    <chr>      <dbl> <dbl> <dbl> <dbl>
@@ -205,7 +205,7 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 For a more detailed look at multiple variables at once, you can use the
 `soft_calibration_plot()`
 
-```         
+``` r
 soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
 ```
 
@@ -287,8 +287,24 @@ switched between `default`, `sorted` and `ggplot`
 ## Modification of parameters <a name="mod"></a>
 
 Changing of parameters, tables, and vectors of the SWAP main file can be
-done with `rswap`. First, the SWAP file must be parsed, this is done by
-the `parse_swp_file()` function.
+done with `rswap`. The simple way of doing this is by using the
+`modify_swap_file()` function:
+
+```{r}
+modify_swap_file(
+  project_path = project_path,
+  input_file = "swap.swp",
+  output_file = "swap.swp",
+  variable = "ORES",
+  value = "0.43",
+  row = 2,
+  fast = F,
+  verbose = T
+)
+```
+
+First, the SWAP file must be parsed, this is done by the
+`parse_swp_file()` function.
 
 ``` r
 paths <- parse_swp_file(project_path, swap_file = "swap.swp")
