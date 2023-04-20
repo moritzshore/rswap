@@ -85,6 +85,7 @@ run_swap(project_path)
 
 ## Accessing Data <a name="data"></a>
 
+### Modelled Data
 To read the output of your executed SWAP run, you can use the following
 command:
 
@@ -93,79 +94,25 @@ modelled_data <- read_swap_output(project_path)
 ```
 
 `read_swap_output()` returns two dataframes, `daily_output` which
-contains depth wise values of various variables.
-
-``` r
-modelled_data$daily_output
-```
-
-``` r
-# A tibble: 17,520 x 5
-   DATE       DEPTH     H    WC  TEMP
-   <chr>      <dbl> <dbl> <dbl> <dbl>
- 1 2013-01-01  -0.5 -687. 0.118     0
- 2 2013-01-01  -1.5 -684. 0.118     0
- 3 2013-01-01  -2.5 -680. 0.118     0
-# i 17,517 more rows
-# i Use `print(n = ...)` to see more rows
-```
-
-The other is `custom_depth` which contains custom variables at custom
+contains depth wise values of various variables. The other is `custom_depth` which contains custom variables at custom
 depths either explicitly altered by the user, or automatically parsed by
 the `autoset_output` flag of `run_swap()`. This dataframe is used widely
 throughout the package. (more/all results will be added over time)
 
-``` r
-modelled_data$custom_depth
-```
+### Observed Data
 
-``` r
-# A tibble: 730 x 14
-   DATE        RAIN  SNOW DRAINAGE    DSTOR  H_10  H_20  H_30 WC_15 WC_40 WC_70 TEMP_15 TEMP_40 TEMP_70
-   <date>     <dbl> <dbl>    <dbl>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>   <dbl>   <dbl>   <dbl>
- 1 2013-01-01   0       0        0 -0.0266  -648. -603. -550. 0.122 0.111 0.111       0       0       0
- 2 2013-01-02   0       0        0 -0.027   -624. -597. -564. 0.124 0.107 0.111       0       0       0
- 3 2013-01-03   0       0        0 -0.0305  -618. -595. -568. 0.124 0.104 0.111       0       0       0
-# i 727 more rows
-# i Use `print(n = ...)` to see more rows
-```
-
-As rswap heavily revolves around calibration, observed data is of high
-importance. When running either `build_rswap_directory()` or
-`run_swap()`, a template observed file will be copied into the
+As `rswap` heavily revolves around calibration, observed data is of high
+importance. When running `build_rswap_directory()` a template observed file will be copied into the
 `project_directory` (if not already existing). It is up to the user to
 fill this file with the appropriate data and column names. Documentation
-for how to do this is in the file itself.
+for how to do this is in a companion text file. 
 
 To load your observed file, you can use the following command:
 
 ``` r
 observed_data <- load_observed(project_path)
 ```
-
-which will return a dataframe of the user-entered observed data:
-
-``` r
-observed_data$data
-```
-
-``` r
-# A tibble: 168 x 11
-    DATE       WC_15 WC_40 WC_70  H_15  H_40  H_70 DRAINAGE TEMP_15 TEMP_40 TEMP_70
-    <date>     <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>   <dbl>   <dbl>   <dbl>
-  1 2013-10-10  0.21  0.12  0.08  0.21  0.12  0.08     0.21    0.12    0.08    0.21
-  2 2013-10-11  0.21  0.12  0.08  0.21  0.12  0.08     0.21    0.12    0.08    0.21
-  3 2013-10-12  0.2   0.12  0.08  0.2   0.12  0.08     0.2     0.12    0.08    0.2 
-# i 158 more rows
-# i Use `print(n = ...)` to see more rows
-```
-
-...as well as a vector for the detected variables
-
-``` r
-observed_data$observed_variables
-# [1] "WC"       "H"        "DRAINAGE" "TEMP" 
-```
+Which will return a dataframe of the user-entered observed data, as well as a vector for the detected variables.
 
 To find out what depths your observed variables have, you can use the
 following command:
@@ -222,11 +169,6 @@ based on the `get_performance()` function:
 
 ``` r
 get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
-
-# # A tibble: 1 × 2                                                                                           
-#   var     NSE
-#   <chr> <dbl>
-# 1 WC_15  0.62
 ```
 
 This function is very flexible and can be passed any number of
@@ -382,9 +324,9 @@ to the end user. These are listed below.
 ``` r
 # Model performance metrics
 NSE(obs = ob_dat, mod = mod_dat)
-PBIAS(obs = mod_dat, mod = mod_dat)
-RMSE(obs = mod_dat, mod = mod_dat)
-RSR(obs = mod_dat, mod = mod_dat)
+PBIAS(obs = ob_dat, mod = mod_dat)
+RMSE(obs = ob_dat, mod = mod_dat)
+RSR(obs = ob_dat, mod = mod_dat)
 # Filters SWAP data (observed or modelled) by variable and depth
 filter_swap_data(data = mod_dat, var = "WC", depth = 15)
 # Matches dataframe structure of observed and modelled
@@ -420,6 +362,7 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   Renovate `soft_calibration_plot()` to accept any variable using the
     new system.
 -   Have all the example code in the readme work with the data from `rswap_init()`
+-   Add D-Statistic from Moriasi et al 2017. 
 
 ## Support and Contributing <a name="support"></a>
 
