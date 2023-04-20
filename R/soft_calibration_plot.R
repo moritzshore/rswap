@@ -19,6 +19,7 @@
 #' @importFrom plotly plot_ly layout add_trace
 #' @importFrom glue glue
 #' @importFrom stringr str_split
+#' @importFrom grDevices colorRampPalette
 #'
 #' @export
 #'

@@ -4,14 +4,14 @@
 \alias{set_swap_output}
 \title{Set SWAP output}
 \usage{
-set_swap_output(parameters, variables, depths, verbose = F)
+set_swap_output(project_path, parameters, autoset_output = F, verbose = F)
 }
 \arguments{
-\item{parameters}{parameter dataframe as returned by \code{parse_swap_file()}}
+\item{project_path}{path to project directory}
 
-\item{variables}{variables desired for output (string)}
+\item{parameters}{parameter dataframe}
 
-\item{depths}{depths depth at which to output them (string)}
+\item{autoset_output}{flag for matching output to observed file.}
 
 \item{verbose}{print status? (flag)}
 }

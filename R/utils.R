@@ -8,6 +8,8 @@ SWAPtools_env <- new.env(parent = emptyenv())
 #' individual function calls do not need to re-load the database for their
 #' individual environments.
 #'
+#' @importFrom crayon yellow bold
+#'
 #' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
 #' @export
@@ -21,7 +23,7 @@ load_variables_db <- function() {
     if (is.list(SWAPtools_env$swap_variables)) {
       return(TRUE)
     } else{
-      cat("loading SWAPtools variables database..\n")
+      cat(yellow(bold("loading SWAPtools variables database..\n")))
       SWAPtools_variables_path <-
         system.file("rds/swap_variables.rds", package = "SWAPtools")
       SWAPtools_variables <- SWAPtools_variables_path %>% readRDS()
@@ -44,15 +46,15 @@ load_variables_db <- function() {
 #' @export
 #'
 install_SWAPtools <- function() {
-  if ("SWAPtools" %in% installed.packages()) {
+  if ("SWAPtools" %in% utils::installed.packages()) {
     return(TRUE)
   } else{
     cat("SWAPtools is required for this functionality. Installing...\n")
 
-    install.packages(pkg = "SWAPtools",
+    utils::install.packages(pkg = "SWAPtools",
                      dependencies = TRUE,
                      repos = "https://waterwijzerlandbouw.wur.nl/repo",)
-    if ("SWAPtools" %in% installed.packages()) {
+    if ("SWAPtools" %in% utils::installed.packages()) {
       cat("SWAPtools installed succesfully\n")
       return(TRUE)
     } else{
@@ -65,7 +67,7 @@ install_SWAPtools <- function() {
 #' Get SWAP Format
 #'
 #' Gets the format of a SWAP parameter
-#' @param parameter SWAP parameter to get the format of.
+#' @param parameters SWAP parameter to get the format of.
 #
 #' @returns Returns unit of passed SWAP variable in string form.
 #'
@@ -124,6 +126,12 @@ set_swap_format <- function(parameter, value){
   #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
   format <- get_swap_format(parameter)
 
+  supported <- c("switch","string", "integer", "float")
+
+  if((format %in% supported) == FALSE){
+    warning("[rswap] Sorry, this format is not supported yet (", format, "). returning NA")
+    return(NA)
+  }
   # if FORTRAN wants a switch,
   if (format == "switch") {
     if (format %in% c(0, 1)) {

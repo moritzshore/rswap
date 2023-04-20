@@ -7,7 +7,7 @@
 get_swap_format(parameters)
 }
 \arguments{
-\item{parameter}{SWAP parameter to get the format of.}
+\item{parameters}{SWAP parameter to get the format of.}
 }
 \value{
 Returns unit of passed SWAP variable in string form.

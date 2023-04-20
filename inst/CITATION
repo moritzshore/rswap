@@ -6,7 +6,7 @@ bibentry(
                 comment = c(ORCID = '0000-0002-7586-997X')),
   title   = "rswap - an R interface for the SWAP model",
   year    = "2023",
-  note = "R package version 0.1.4",
+  note = "R package version 0.2.1",
   doi = "10.5281/zenodo.7795152",
   url     = "https://moritzshore.github.io/rswap/",
 )

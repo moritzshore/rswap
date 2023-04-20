@@ -5,17 +5,26 @@
 #' Makes a temporary sub-directory workspace for the package to run SWAP in.
 #'
 #' @param project_path path to project directory (string)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
+#' @importFrom crayon blue underline green
 #'
-#' @keywords internal
+#' @export
 #'
-build_rswap_directory <- function(project_path){
+build_rswap_directory <- function(project_path, verbose = F){
+
+  # TODO should this delete the previous one?
 
   temp_directory <- glue("{project_path}/rswap")
 
-  # list files found in project path (Note, this includes all the saved runs as\
+  if(verbose){
+    cat(blue("\U0001f477 Building rswap directory: \n"))
+    cat(green(underline(temp_directory)), "\n")
+  }
+
+  # list files found in project path (Note, this includes all the saved runs as
   # well, which we dont want, which is why we need to remove them)
   file_list <- list.files(project_path, full.names = T, recursive = T)
   ignore <- file_list %>% grepl(x=., "\\b/rswap_saved/\\b") %>% which()
@@ -42,7 +51,7 @@ build_rswap_directory <- function(project_path){
   required_files <- file_list %>% grepl(x = ., match_string) %>% which()
   required_file_list <- file_list[required_files]
 
-  # create the hidden temp directory
+  # create the temp directory
   dir.create(temp_directory, showWarnings = F)
   # and copy over the desired files
   status <- file.copy(from = required_file_list, to = temp_directory)
@@ -62,7 +71,8 @@ build_rswap_directory <- function(project_path){
     obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.csv"))
     obs_status <- file.copy(from = template_instructions, to = paste0(project_path, "/instructions_rswap_observed_data.txt"))
 
-    cat("copying template sheet 'rswap_observed_data.csv' into project directory\n ...along with 'instructions_rswap_observed_data.txt'\n")
+    cat("\u2139",
+        blue("copying template sheet"), green(underline("'rswap_observed_data.csv'")), blue("and"), green(underline("'instructions_rswap_observed_data.txt'")), blue("into project directory\n"))
     }
   # return the path to the temp directory
   return(temp_directory)
@@ -80,14 +90,15 @@ build_rswap_directory <- function(project_path){
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
+#' @importFrom crayon bold blue
 #' @importFrom dplyr %>%
 #'
-#' @keywords internal
+#' @export
 #'
 #' @returns Returns the SWAP parameter dataframe with modified path values
 #'
 update_swp_paths <- function(project_path, swap_exe,
-                             parameters, verbose) {
+                             parameters, verbose = F) {
 
     version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
@@ -97,39 +108,11 @@ update_swp_paths <- function(project_path, swap_exe,
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
-    # SWCSV needs to be present in the SWAP main file, such that the needed
-    # output can be printed. If this parameter already exists within the
-    # parameter dataframe, we can simply adjust the value to 1. If it does
-    # not exist yet, we need to add it, with the value of 1.
-    if ("SWCSV" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV", "1")
-    } else{
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV",
-              value = "1",
-              comment = glue("added by rswap v{version} @ {Sys.time()}")
-            ))
-    }
-    # The exact same thing goes for SWCSV...
-    if ("SWCSV_TZ" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV_TZ", "1")
-    } else{
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV_TZ",
-              value = "1",
-              comment = glue("added by rswap v{version} {Sys.time()}")
-            ))
-    }
-    # when more output is needed, I will need to add more and more, so this
-    # should / will be updated to do as a loop, as it is done below:
-
     # these are the parameters that need a path to be updated
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
     for (par in update_par) {
       val = glue("'{swap_main_file_path}'")
-      parameters = change_swap_par(parameters, par, val)
+      parameters = change_swap_par(parameters, par, val, verbose)
     }
 
     # Update the SWINCO path if needed. If SWINCO is set to 3, then INIFIL needs
@@ -142,10 +125,7 @@ update_swp_paths <- function(project_path, swap_exe,
         if ((infil_index %>% length()) > 0) {
           val <-  parameters$value[infil_index] %>% str_remove_all("'")
           newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap v{version} @ {Sys.time()}")
-          parameters = change_swap_par(parameters, "INIFIL", newval )
-          if(verbose){
-            cat(glue("\n...INIFIL parameter set to\n {parameters$value[infil_index]}\n"))
-          }
+          parameters = change_swap_par(parameters, "INIFIL", newval, verbose)
         }
       }
     }
@@ -171,6 +151,7 @@ update_swp_paths <- function(project_path, swap_exe,
 #' @importFrom glue glue
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_replace_all
+#' @importFrom crayon red
 #'
 #' @export
 #'
@@ -204,11 +185,12 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 
   if (verbose) {
     if (any(status == FALSE)) {
-      cat("some files were not copied!\n")
-      cat(to_copy[which(status == FALSE)], sep = "\n")
+      warning("some files were not copied!\n")
+      cat(red(to_copy[which(status == FALSE)], sep = "\n"))
     } else{
-      cat("all files succesfully copied to:\n")
-      cat(to_path, "\n")
+      cat("\u2705",
+      blue("all files succesfully saved to:\n"))
+      cat(green(underline(to_path)), "\n")
     }
   }
   #TODO generate a preview plot of the model run in the directory?
@@ -232,6 +214,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' @importFrom stringr str_remove str_replace str_split
 #' @importFrom tibble tibble
+#' @importFrom readr read_csv
 #'
 #' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
 #' as well as `.$observed_variables`, a vector of the detected observed variables.
@@ -249,8 +232,7 @@ load_observed <- function(project_path, archived = F, verbose = F){
     path <- paste0(project_path, "/rswap/rswap_observed_data.csv")
 
   }
-  # SUPPORTED FORMAT: sep=; dec=,
-  data <- read.table(file = path, header = T, sep = ";", dec = ",") %>% tibble()
+  data <- readr::read_csv(file = path, show_col_types = F)
   data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
 
@@ -266,8 +248,11 @@ load_observed <- function(project_path, archived = F, verbose = F){
   return_df <- list(data = data, observed_variables = obs_vars)
 
   if(verbose){
-    cat("observed data loaded, following variables detected:", sep = "\n")
-    cat(obs_vars, "\n", sep = " ")
+    cat("\u2705",
+        blue("Observed data with the following variables loaded:"),
+        green(bold(underline((obs_vars)))),
+        "\n")
+
   }
 
   return_df %>% return()
@@ -664,3 +649,34 @@ rswap_init <- function(swap_exe){
   cat(example_path)
   return(example_path)
 }
+
+#' Move run files
+#'
+#' Moves swap.ok and reruns.log to rswap dir
+#' @keywords internal
+#'
+#' @param work_dir work dir
+#' @param project proj name
+#' @param verbose print?
+move_run_files <- function(work_dir, project, verbose = F){
+  # Move reruns.log and swap.ok to the temp directory.
+  reruns <- paste0(work_dir, "/reruns.log")
+  if (file.exists(reruns)) {
+    file.copy(from  = reruns,
+              to = paste0(work_dir, "/", project, "/rswap/reruns.log"))
+    file.remove(reruns)
+    if (verbose) {
+      cat(blue("\u2139 Moving reruns.log to rswap directory..\n"))
+    }
+  }
+  swap_ok <- paste0(work_dir, "/swap.ok")
+  if (file.exists(swap_ok)) {
+    file.copy(from  = swap_ok,
+              to = paste0(work_dir, "/", project, "/rswap/swap.ok"))
+    file.remove(swap_ok)
+    if (verbose) {
+      cat(blue("\u2139 Moving swap.ok to rswap directory..\n"))
+    }
+  }
+}
+

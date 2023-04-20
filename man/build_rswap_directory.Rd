@@ -4,12 +4,13 @@
 \alias{build_rswap_directory}
 \title{Build rswap Directory}
 \usage{
-build_rswap_directory(project_path)
+build_rswap_directory(project_path, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string)}
+
+\item{verbose}{print status? (flag)}
 }
 \description{
 Makes a temporary sub-directory workspace for the package to run SWAP in.
 }
-\keyword{internal}
