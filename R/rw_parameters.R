@@ -28,12 +28,12 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
     swp <- swp[-comment_lines]
   }
   # remove all the comment lines which start with "!"
-  comment_lines2 = (swp %>% str_trim() %>% substr(x = ., 1, 1) == "!") %>% which()
+  comment_lines2 = (swp %>% stringr::str_trim() %>% substr(x = ., 1, 1) == "!") %>% which()
   if (comment_lines2 %>% length() > 0) {
     swp <- swp[-comment_lines2]
   }
   # remove any empty lines
-  empty_lines = (swp %>% str_trim() %>% substr(x = ., 1, 1) == "") %>% which()
+  empty_lines = (swp %>% stringr::str_trim() %>% substr(x = ., 1, 1) == "") %>% which()
   if (empty_lines %>% length() > 0) {
     swp <- swp[-empty_lines]
   }
@@ -68,175 +68,175 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
 
-    # TODO rename to parse_swap_file()
-    # finds the end of the table when passed a snipped of the swap file
-    find_eot <- function(short_swp) {
-      first_element <- short_swp %>%  str_trim() %>% str_split("\\s+") %>% map(1) %>% unlist()
-      next_par <- grepl(x = short_swp, "=") %>% which() %>% min() %>% suppressWarnings()
-      if(next_par %>% length() == 0){
-        next_par = Inf
-      }
-      next_non_value_nor_date <- (first_element %>% as.numeric() %>% is.na() == TRUE &
-                        grepl(x=first_element, "-") == FALSE) %>% which() %>% min() %>% suppressWarnings()
-      if(next_non_value_nor_date %>% length() == 0){
-        next_non_value_nor_date = Inf
-      }
-      eot <- min(c(next_non_value_nor_date, next_par))
-      # special case if at end of file:
-      if(eot %>% is.infinite()){
-        # return the index for the end of the file
-        return(length(short_swp)+1)
-      }
-      return(eot)
+  # TODO rename to parse_swap_file()
+  # finds the end of the table when passed a snipped of the swap file
+  find_eot <- function(short_swp) {
+    first_element <- short_swp %>%  stringr::str_trim() %>% stringr::str_split("\\s+") %>% purrr::map(1) %>% unlist()
+    next_par <- grepl(x = short_swp, "=") %>% which() %>% min() %>% suppressWarnings()
+    if(next_par %>% length() == 0){
+      next_par = Inf
     }
-
-    rswap_dir <- build_rswap_directory(project_path)
-    swp <- clean_swp_file(rswap_dir, swap_file = swap_file)
-
-    swp_file <- paste0(rswap_dir, "/", swap_file)
-    if(verbose){
-      cat(blue("\u2139"),
-          blue("Parsing swap file:"),"\n")
-      cat(green((underline(glue("{swp_file}")))), "\n")
+    next_non_value_nor_date <- (first_element %>% as.numeric() %>% is.na() == TRUE &
+                                  grepl(x=first_element, "-") == FALSE) %>% which() %>% min() %>% suppressWarnings()
+    if(next_non_value_nor_date %>% length() == 0){
+      next_non_value_nor_date = Inf
     }
-
-    # predefine for-loop vars
-    par_df <- data.frame()
-    tab_df <- list()
-    new_i = 0
-
-    table_path = paste0(project_path, "/rswap/tables")
-    vector_path =  paste0(project_path, "/rswap/vectors")
-    parameter_path = paste0(project_path, "/rswap/parameters")
-
-    dirs <- c(table_path, vector_path, parameter_path)
-
-    unlink(dirs, recursive = T)
-    dir_stat<-lapply(dirs, function(x) dir.create(x, showWarnings = F))
-
-    # loop through the main swap file line by line
-    # why for loop and not vectorized?
-    # because required behavior depends on what lines come before and after!
-    for (i in c(1:length(swp))) {
-      # the line to be handled
-      line = swp[i]
-      # this is important for not double-reading tables later on, so we might
-      # have to skip ahead sometimes
-      if (i < new_i) {
-        next()
-      }
-
-      # parameters  always have an equal sign in their line, so we can use this
-      # to identify them
-      is_param <- line %>% grepl(x = ., "=")
-      is_table <- (line %>% grepl(x = ., "=") == FALSE)
-      special_case <- FALSE
-
-      # the routine for if its a parameter:
-      if (is_param == TRUE) {
-
-        # extract the comment denoted by a !
-        comment = line %>% str_split("!") %>% unlist() %>% nth(2)
-
-        # split the data from the comment using "!" as an indicator
-        line_split = line %>% str_split("!") %>% unlist() %>% nth(1)
-
-        # split that line again, based off the equals sign. left of the
-        # equals sign is the parameter name, to the right is the value
-        param = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(1)
-        value = line_split %>% str_split("=") %>% unlist() %>% str_trim() %>% nth(2)
-
-        # special case is when the parameter has an equals sign, but the format
-        # of how it is written in the SWAP file resembles a table.
-        if (value == "") {
-          is_table = TRUE
-          special_case = TRUE
-        } else{
-          # create a row in the final dataframe containing these 3 things,
-          # separately
-          add_row = data.frame(param = param, value = value, comment = comment)
-          par_df <- rbind(par_df, add_row)
-        }
-      }
-
-      # routine for if its a table
-      if (is_table) {
-        # routine for if a special case was detected
-        if (special_case) {
-
-          header = line %>% str_trim()
-          width = 1
-          swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
-          swap_table <- swp[i:(i + swap_table_end-1)]
-
-          table_name = header %>% str_remove("=") %>% str_trim()
-          write.table(
-            x = swap_table,
-            file = paste0(vector_path, "/", table_name, ".csv"),
-            sep = ",",
-            row.names = F,
-            col.names = F,
-            quote = T
-          )
-
-          # skip the next rows because you already read them in
-          new_i = i + swap_table_end
-
-        }else{
-          # Routine for a Table, not special case
-          header = line  %>%  str_split("!") %>% map(1)  %>% str_trim() %>% str_split("\\s+") %>%  unlist()
-          width = header %>% length()
-
-          swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
-          swap_table <- swp[i:(i + swap_table_end-1)]
-          swap_table[1] <- header %>% paste(collapse = " ") %>% str_trim()
-          swap_table2 <- swap_table %>% str_trim() %>% str_split("\\s+")
-
-          base <- swap_table2 %>% map(1) %>% unlist()
-          for (j in c(2:width)) {
-            col <-  swap_table2 %>% map(j) %>% unlist()
-            base <- cbind(base, col)
-          }
-
-          swap_table3 <- base %>% as.data.frame()
-          colnames(swap_table3) <- header
-          swap_table3 <- swap_table3[-1, ]
-          swap_table3 <- swap_table3 %>% tibble()
-          table_name <- header %>% paste(collapse = "-")
-
-          write.table(
-            x = swap_table3,
-            file = paste0(table_path, "/", table_name, ".csv"),
-            sep = ",",
-            row.names = F,
-            col.names = T,
-            quote = T
-          )
-          # skip the next rows because you already read them in
-          new_i = i + swap_table_end
-        } # END of table not special
-      } # END of table
-    } # END of for loop
-
-    # write parameters:
-    write_swap_parameters(project_path, par_df, verbose)
-
-    if(verbose){
-      cat(blue("\U0001f4dd SWAP tables have been generated in .csv format here: \n"))
-      cat(green(underline(vector_path)), "\n")
+    eot <- min(c(next_non_value_nor_date, next_par))
+    # special case if at end of file:
+    if(eot %>% is.infinite()){
+      # return the index for the end of the file
+      return(length(short_swp)+1)
     }
-
-    if(verbose){
-      cat(blue("\U0001f4dd SWAP vectors have been generated in .csv format here: \n"))
-      cat(green(underline(table_path)), "\n")
-    }
-
-    return(list(
-      parameter_path = parameter_path,
-      table_path = table_path,
-      vector_path = vector_path
-    ))
+    return(eot)
   }
+
+  rswap_dir <- build_rswap_directory(project_path)
+  swp <- clean_swp_file(rswap_dir, swap_file = swap_file)
+
+  swp_file <- paste0(rswap_dir, "/", swap_file)
+  if(verbose){
+    cat(blue("\u2139"),
+        blue("Parsing swap file:"),"\n")
+    cat(green((underline(glue("{swp_file}")))), "\n")
+  }
+
+  # predefine for-loop vars
+  par_df <- data.frame()
+  tab_df <- list()
+  new_i = 0
+
+  table_path = paste0(project_path, "/rswap/tables")
+  vector_path =  paste0(project_path, "/rswap/vectors")
+  parameter_path = paste0(project_path, "/rswap/parameters")
+
+  dirs <- c(table_path, vector_path, parameter_path)
+
+  unlink(dirs, recursive = T)
+  dir_stat<-lapply(dirs, function(x) dir.create(x, showWarnings = F))
+
+  # loop through the main swap file line by line
+  # why for loop and not vectorized?
+  # because required behavior depends on what lines come before and after!
+  for (i in c(1:length(swp))) {
+    # the line to be handled
+    line = swp[i]
+    # this is important for not double-reading tables later on, so we might
+    # have to skip ahead sometimes
+    if (i < new_i) {
+      next()
+    }
+
+    # parameters  always have an equal sign in their line, so we can use this
+    # to identify them
+    is_param <- line %>% grepl(x = ., "=")
+    is_table <- (line %>% grepl(x = ., "=") == FALSE)
+    special_case <- FALSE
+
+    # the routine for if its a parameter:
+    if (is_param == TRUE) {
+
+      # extract the comment denoted by a !
+      comment = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(2)
+
+      # split the data from the comment using "!" as an indicator
+      line_split = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(1)
+
+      # split that line again, based off the equals sign. left of the
+      # equals sign is the parameter name, to the right is the value
+      param = line_split %>% stringr::str_split("=") %>% unlist() %>% stringr::str_trim() %>% dplyr::nth(1)
+      value = line_split %>% stringr::str_split("=") %>% unlist() %>% stringr::str_trim() %>% dplyr::nth(2)
+
+      # special case is when the parameter has an equals sign, but the format
+      # of how it is written in the SWAP file resembles a table.
+      if (value == "") {
+        is_table = TRUE
+        special_case = TRUE
+      } else{
+        # create a row in the final dataframe containing these 3 things,
+        # separately
+        add_row = data.frame(param = param, value = value, comment = comment)
+        par_df <- rbind(par_df, add_row)
+      }
+    }
+
+    # routine for if its a table
+    if (is_table) {
+      # routine for if a special case was detected
+      if (special_case) {
+
+        header = line %>% stringr::str_trim()
+        width = 1
+        swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
+        swap_table <- swp[i:(i + swap_table_end-1)]
+
+        table_name = header %>% stringr::str_remove("=") %>% stringr::str_trim()
+        utils::write.table(
+          x = swap_table,
+          file = paste0(vector_path, "/", table_name, ".csv"),
+          sep = ",",
+          row.names = F,
+          col.names = F,
+          quote = T
+        )
+
+        # skip the next rows because you already read them in
+        new_i = i + swap_table_end
+
+      }else{
+        # Routine for a Table, not special case
+        header = line  %>%  stringr::str_split("!") %>% purrr::map(1)  %>% stringr::str_trim() %>% stringr::str_split("\\s+") %>%  unlist()
+        width = header %>% length()
+
+        swap_table_end <- find_eot(short_swp = swp[(i + 1):length(swp)])
+        swap_table <- swp[i:(i + swap_table_end-1)]
+        swap_table[1] <- header %>% paste(collapse = " ") %>% stringr::str_trim()
+        swap_table2 <- swap_table %>% stringr::str_trim() %>% stringr::str_split("\\s+")
+
+        base <- swap_table2 %>% purrr::map(1) %>% unlist()
+        for (j in c(2:width)) {
+          col <-  swap_table2 %>% purrr::map(j) %>% unlist()
+          base <- cbind(base, col)
+        }
+
+        swap_table3 <- base %>% as.data.frame()
+        colnames(swap_table3) <- header
+        swap_table3 <- swap_table3[-1, ]
+        swap_table3 <- swap_table3 %>% dplyr::tibble()
+        table_name <- header %>% paste(collapse = "-")
+
+        utils::write.table(
+          x = swap_table3,
+          file = paste0(table_path, "/", table_name, ".csv"),
+          sep = ",",
+          row.names = F,
+          col.names = T,
+          quote = T
+        )
+        # skip the next rows because you already read them in
+        new_i = i + swap_table_end
+      } # END of table not special
+    } # END of table
+  } # END of for loop
+
+  # write parameters:
+  write_swap_parameters(project_path, par_df, verbose)
+
+  if(verbose){
+    cat(blue("\U0001f4dd SWAP tables have been generated in .csv format here: \n"))
+    cat(green(underline(vector_path)), "\n")
+  }
+
+  if(verbose){
+    cat(blue("\U0001f4dd SWAP vectors have been generated in .csv format here: \n"))
+    cat(green(underline(table_path)), "\n")
+  }
+
+  return(list(
+    parameter_path = parameter_path,
+    table_path = table_path,
+    vector_path = vector_path
+  ))
+}
 
 #' Write SWAP File
 #'
@@ -261,120 +261,120 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #'
 write_swap_file <- function(project_path, outfile, verbose = F) {
 
-    version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
+  version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
-    if(file.exists(paste0(project_path,"/rswap/parameters/parameters.csv"))==FALSE){
-      stop("[rswap] no swap file has been parsed by rswap yet. You must do so before writing a swap file!")
-    }
-
-    outpath <- paste0(project_path,"/",outfile)
-
-    # Write header
-    write.table(
-      x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
-      file = outpath,
-      quote = F,
-      col.names = F,
-      row.names = F,
-      append = F
-    )
-
-    if (verbose) {
-      cat("\U0001f4dd",
-          bold(blue("created SWAP main file.")), "\n")
-    }
-
-    # Append parameters
-    parameters = load_swap_parameters(project_path = project_path, verbose = verbose)
-    par_write = paste(parameters$param, "=", parameters$value)
-
-    write.table(
-      par_write,
-      file = outpath,
-      quote = F,
-      row.names = F,
-      col.names = F,
-      append = T
-    )
-
-    if (verbose) {
-      cat("\U0001f4dd",
-          blue("SWAP parameters appended to main file."), "\n")
-    }
-
-    # Append tables
-    tables<-load_swap_tables(project_path = project_path,
-                     swap_file = swap_file,
-                     verbose = verbose)
-    for (table in tables) {
-      write.table(
-        table,
-        file = outpath,
-        quote = F,
-        row.names = F,
-        col.names = T,
-        append = T,
-        sep = " "
-      ) %>% suppressWarnings()
-
-      # Theoretically don't need this, but its nice to have
-      eol_table <- data.frame("* End of table")
-      write.table(
-        eol_table,
-        file = outpath,
-        quote = F,
-        row.names = F,
-        col.names = F,
-        append = T,
-        sep = " "
-      ) %>% suppressWarnings()
-    }
-
-    if (verbose) {
-      cat("\U0001f4dd",
-          blue("SWAP tables appended to main file."), "\n")
-    }
-
-    # Write vectors
-    vectors <- load_swap_vectors(project_path = project_path,
-                                 swap_file = swap_file, verbose = verbose)
-    for (vector in vectors) {
-
-      write.table(
-        vector,
-        file = outpath,
-        quote = F,
-        row.names = F,
-        col.names = T,
-        append = T,
-        sep = " "
-      ) %>% suppressWarnings()
-
-      # Theoretically don't need this, but its nice to have
-      eol_table <- data.frame("* End of table")
-      write.table(
-        eol_table,
-        file = outpath,
-        quote = F,
-        row.names = F,
-        col.names = F,
-        append = T,
-        sep = " "
-      ) %>% suppressWarnings()
-    }
-
-    if (verbose) {
-      cat("\U0001f4d",
-          blue("SWAP vectors appended to main file."), "\n")
-    }
-
-    if (verbose) {
-      cat(glue(blue("\u2705",
-      "SWAP main file written to: \n")))
-      cat(green(underline(outpath)), "\n")
-    }
-    return(outpath)
+  if(file.exists(paste0(project_path,"/rswap/parameters/parameters.csv"))==FALSE){
+    stop("[rswap] no swap file has been parsed by rswap yet. You must do so before writing a swap file!")
   }
+
+  outpath <- paste0(project_path,"/",outfile)
+
+  # Write header
+  utils::write.table(
+    x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
+    file = outpath,
+    quote = F,
+    col.names = F,
+    row.names = F,
+    append = F
+  )
+
+  if (verbose) {
+    cat("\U0001f4dd",
+        bold(blue("created SWAP main file.")), "\n")
+  }
+
+  # Append parameters
+  parameters = load_swap_parameters(project_path = project_path, verbose = verbose)
+  par_write = paste(parameters$param, "=", parameters$value)
+
+  utils::write.table(
+    par_write,
+    file = outpath,
+    quote = F,
+    row.names = F,
+    col.names = F,
+    append = T
+  )
+
+  if (verbose) {
+    cat("\U0001f4dd",
+        blue("SWAP parameters appended to main file."), "\n")
+  }
+
+  # Append tables
+  tables<-load_swap_tables(project_path = project_path,
+                           swap_file = swap_file,
+                           verbose = verbose)
+  for (table in tables) {
+    utils::write.table(
+      table,
+      file = outpath,
+      quote = F,
+      row.names = F,
+      col.names = T,
+      append = T,
+      sep = " "
+    ) %>% suppressWarnings()
+
+    # Theoretically don't need this, but its nice to have
+    eol_table <- data.frame("* End of table")
+    utils::write.table(
+      eol_table,
+      file = outpath,
+      quote = F,
+      row.names = F,
+      col.names = F,
+      append = T,
+      sep = " "
+    ) %>% suppressWarnings()
+  }
+
+  if (verbose) {
+    cat("\U0001f4dd",
+        blue("SWAP tables appended to main file."), "\n")
+  }
+
+  # Write vectors
+  vectors <- load_swap_vectors(project_path = project_path,
+                               swap_file = swap_file, verbose = verbose)
+  for (vector in vectors) {
+
+    utils::write.table(
+      vector,
+      file = outpath,
+      quote = F,
+      row.names = F,
+      col.names = T,
+      append = T,
+      sep = " "
+    ) %>% suppressWarnings()
+
+    # Theoretically don't need this, but its nice to have
+    eol_table <- data.frame("* End of table")
+    utils::write.table(
+      eol_table,
+      file = outpath,
+      quote = F,
+      row.names = F,
+      col.names = F,
+      append = T,
+      sep = " "
+    ) %>% suppressWarnings()
+  }
+
+  if (verbose) {
+    cat("\U0001f4d",
+        blue("SWAP vectors appended to main file."), "\n")
+  }
+
+  if (verbose) {
+    cat(glue(blue("\u2705",
+                  "SWAP main file written to: \n")))
+    cat(green(underline(outpath)), "\n")
+  }
+  return(outpath)
+}
 
 #' Set SWAP output
 #'
@@ -489,7 +489,7 @@ set_swap_output <-
 
       string <- "["
       for (d in depths) {
-        if (d == last(depths)) {
+        if (d == dplyr::last(depths)) {
           string <- glue("{string}-{d}]")
         } else{
           string <- glue("{string}-{d},")
@@ -499,14 +499,14 @@ set_swap_output <-
       outstring <- "'RAIN,"
       for (var in variables) {
         if (var %in% depthwise) {
-          if (var == last(variables)) {
+          if (var == dplyr::last(variables)) {
             add_var <- glue("{var}{string}'")
 
           } else{
             add_var <- glue("{var}{string},")
           }
         } else if (var %in% nodepth) {
-          if (var == last(variables)) {
+          if (var == dplyr::last(variables)) {
             add_var <- glue("{var}'")
           } else{
             add_var <- glue("{var},")
@@ -519,7 +519,7 @@ set_swap_output <-
       parameters <- change_swap_par(parameters, "INLIST_CSV", outstring, verbose)
     }
     return(parameters)
-}
+  }
 
 #' Change SWAP Parameter
 #'
@@ -548,7 +548,7 @@ set_swap_output <-
 #'
 #' @export
 change_swap_par <- function(param, name, value, verbose = F){
-  version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
+  version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
   value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
   param$value[which(param$param == name)] = value2
 
@@ -573,6 +573,7 @@ change_swap_par <- function(param, name, value, verbose = F){
 #' @returns Returns list of tibbles named by their column names.
 #'
 #' @export
+#' @importFrom readr read_csv
 load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
   if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
@@ -585,17 +586,17 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
   table_path <- paste0(project_path,"/rswap/tables/")
 
   files <- list.files(table_path, full.names = T)
-  file_names <- list.files(table_path, full.names = F) %>% str_remove(".csv")
+  file_names <- list.files(table_path, full.names = F) %>% stringr::str_remove(".csv")
 
   # this forces the files to read in all the values as strings, so that no type
   # conversion is done. Changing the type will break the fragile FORTRAN format
   # important line of code here is the "col_types = cols(.default = "c")" which
   # forces every column to be read as char.
   custom_read <- function(x){
-    readr::read_csv(file = x, col_names = T, col_types = cols(.default = "c"), quote = '"')
+    readr::read_csv(file = x, col_names = T, col_types = readr::cols(.default = "c"), quote = '"')
   }
 
-  table_list <- files %>% map(., custom_read)
+  table_list <- files %>% purrr::map(., custom_read)
 
   names(table_list) <- file_names
 
@@ -634,6 +635,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 #'
 #' @export
 #'
+#' @importFrom readr read_csv
 load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
   # TODO: load only specific table with extra param
@@ -647,16 +649,16 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
   vector_path <- paste0(project_path, "/rswap/vectors/")
 
   files <- list.files(vector_path, full.names = T)
-  file_names <- list.files(vector_path, full.names = F) %>% str_remove(".csv")
+  file_names <- list.files(vector_path, full.names = F) %>% stringr::str_remove(".csv")
   # this forces the files to read in all the values as strings, so that no type
   # conversion is done. Changing the type will break the fragile FORTRAN format
   # important line of code here is the "col_types = cols(.default = "c")" which
   # forces every column to be read as char.
   custom_read <- function(x){
-    readr::read_csv(file = x, col_names = T, col_types = cols(.default = "c"), quote = '"')
+    readr::read_csv(file = x, col_names = T, col_types = readr::cols(.default = "c"), quote = '"')
   }
 
-  vector_list <- files %>% map(., custom_read)
+  vector_list <- files %>% purrr::map(., custom_read)
 
   names(vector_list) <- file_names
 
@@ -699,7 +701,7 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
   }
 
   param_path <- paste0(project_path, "/rswap/parameters/parameters.csv")
-  table <- read.table(param_path, header = T, sep = ",", quote = '"') %>% tibble()
+  table <- utils::read.table(param_path, header = T, sep = ",", quote = '"') %>% dplyr::tibble()
   table %>% return()
 
 
@@ -725,7 +727,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
     dir.create(file_dir)
   }
 
-  write.table(
+  utils::write.table(
     x = parameters,
     file = file_path,
     sep = ",",
@@ -737,7 +739,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
   if(verbose){
     cat("\U0001f4dd",
         blue("SWAP parameter set written to: \n"))
-        cat(green(underline(file_path)),"\n")
+    cat(green(underline(file_path)),"\n")
   }
 }
 
@@ -752,6 +754,7 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
 #' @importFrom crayon blue green underline
 #' @importFrom utils write.table
 #' @export
+#' @importFrom utils write.table
 write_swap_tables <- function(project_path, tables, verbose = F) {
 
   file_path <-  paste0(project_path, "/rswap/tables/")
@@ -803,9 +806,9 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
 
   for (vector in vectors){
 
-    vector_name <- vector %>% colnames() %>% str_remove("=") %>% str_trim()
+    vector_name <- vector %>% colnames() %>% stringr::str_remove("=") %>% stringr::str_trim()
     vector_path <- paste0(file_path, vector_name, ".csv")
-    write.table(
+    utils::write.table(
       x = vector,
       file = vector_path,
       sep = ",",
@@ -844,7 +847,7 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
 change_swap_table <- function(table, variable, row, value, verbose = F){
 
   # \\b for exact match of var name.
-  table_match <- names(table) %>% str_split("-") %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
+  table_match <- names(table) %>% stringr::str_split("-") %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
 
   if((table_match %>% length()) > 1){
     stop("[rswap] more than one table has this variable '",variable,"' this should never happen, report to maintainer!")
@@ -891,7 +894,7 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
 
   if((vector_match %>% length()) > 1){
     stop("[rswap] more than one vector has this variable '",variable,"' this should never happen, report to maintainer!")
-    }
+  }
 
   if((vector_match %>% length()) < 1){
     stop("[rswap] no vectors with '",variable,"' detected in passed vector(s) cannot change vector value!")
