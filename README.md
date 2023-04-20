@@ -1,6 +1,6 @@
 ---
 editor_options:
-  markdown: 
+  markdown:
     wrap: 72
 ---
 
@@ -70,7 +70,7 @@ overwritten over time. Remember to save your results if you would like
 to keep them (`save_run(), write_swap_file()`), and remember that
 anything in the `project_path/rswap` directory is temporary!
 
-## How to run SWAP? <a name="run"></a>
+## Running SWAP <a name="run"></a>
 
 The SWAP model can be run using the `run_swap()` function. It needs to
 know where your model setup is located (`project_path`). The `swap.exe`
@@ -88,7 +88,7 @@ run_swap(project_path)
     model matches your provided observed data
 -   `timeout` sets the max allowed runtime of SWAP
 
-## Accessing the data <a name="data"></a>
+## Accessing Data <a name="data"></a>
 
 To read the output of your executed SWAP run, you can use the following
 command:
@@ -219,7 +219,7 @@ be displayed as well.
 
 </p>
 
-## Model performance <a name="performance"></a>
+## Model Performance <a name="performance"></a>
 
 A few functions focus on assessing model performance by comparing
 modelling values to user provided observed values. This functionality is
@@ -238,7 +238,7 @@ This function is very flexible and can be passed any number of
 `variables`, `depths`, and performance indicators `stat` (currently
 supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`.
 
-## Saving model runs <a name="saving"></a>
+## Saving Runs <a name="saving"></a>
 
 While calibrating a model it can be useful to keep track of different
 model runs with different parameterization. `rswap` aids this process
@@ -252,7 +252,7 @@ This function saves your entire model set up in a directory
 (`project_directory/rswap_saved`). Once a model run has been saved, it
 can be compared to other model runs, with the following functions.
 
-## Comparing model runs <a name="compare"></a>
+## Comparing Runs <a name="compare"></a>
 
 ``` r
 comparative_plot(project_path, variable = "WC", depth = 15)
@@ -284,84 +284,80 @@ This plot is equally flexible and can be passed any `variable` and any
 amount of `depths` for any supported `stat`. the graph type can be
 switched between `default`, `sorted` and `ggplot`
 
-## Modification of parameters <a name="mod"></a>
+## Modification of Parameters <a name="mod"></a>
 
 Changing of parameters, tables, and vectors of the SWAP main file can be
 done with `rswap`. The simple way of doing this is by using the
 `modify_swap_file()` function:
 
-```{r}
-modify_swap_file(
-  project_path = project_path,
-  input_file = "swap.swp",
-  output_file = "swap.swp",
-  variable = "ORES",
-  value = "0.43",
-  row = 2,
-  fast = F,
-  verbose = T
-)
+``` r
+modify_swap_file(project_path = project_path,
+  input_file = "swap.swp", output_file = "swap_mod.swp",
+  variable = "ORES", value = "0.43", row = 2)
 ```
 
-First, the SWAP file must be parsed, this is done by the
-`parse_swp_file()` function.
+This function has many different behaviors depending on which flags are
+enabled, and which arguments are passed. For more information, check the
+**Details** in the help page of the function.
+
+**⚠️ If used incorrectly, this function can overwrite your swap file!**
+[*Check the Details page!*]{.underline}
+
+`rswap` uses a whole set of functions for the reading, altering, and
+writing of SWAP parameters. While `modify_swap_file()` covers most
+use-cases, the underlying functions can be of use as well, for more
+advanced work flows. You can read more about them in their
+documentation.
+
+#### General parameter functions:
 
 ``` r
-paths <- parse_swp_file(project_path, swap_file = "swap.swp")
+# removes any non-essential data from the input file:
+clean_swp_file(project_path, swap_file) 
+# parses the data to be R-readable:
+parse_swp_file(project_path, swap_file) 
+ # writes the SWAP main file sourced from ".csv" files stored in the rswap directory
+write_swap_file(project_path, outfile = "swap_modified.swp")
 ```
 
-Once they have been parsed, they can be loaded, with the following
-functions for parameters, tables, and vectors, respectively:
+#### Parameter specific functions:
 
 ``` r
 param <- load_swap_parameters(project_path)
-tables <- load_swap_tables(project_path)
-vectors <- load_swap_vectors(project_path)
+param <- change_swap_par(param, name = "SHAPE", value = "0.75")
+write_swap_parameters(project_path, param)
 ```
 
-⚠️ If the project has not already been parsed by `rswap`, these
-functions will automatically parse the `swap_file` argument.
-
-Now, with the parameters, tables, and vectors parsed and loaded, we can
-alter them using:
+#### Table specific functions:
 
 ``` r
-param <- change_swap_par(param, name = "SHAPE", value = "0.75")
+tables <- load_swap_tables(project_path)
 tables <- change_swap_table(tables, variable = "OSAT", row = 1, value = "0.34")
-vectors <- change_swap_vector(vectors, variable = "OUTDAT", index = 1, value = "10-Jun-2013")
+write_swap_tables(project_path, tables)
 ```
 
-These functions then return the object, with the modified value(s).
-Please note this is a `dataframe` for the parameters, **but** a `list`
-of `dataframes` for the tables and vectors. You have the option of
-passing all the `dataframes` as returned by the `load_swap_tables()`
-function, or just the one you are interested in altering, or anything
-in-between.
+#### Vector specific functions:
+
+``` r
+vectors <- load_swap_vectors()
+vectors <- change_swap_vector(vectors, variable = "OUTDAT", index = 1, value = "10-jun-2013")
+write_swap_vectors(project_path, vectors)
+```
 
 ⚠️ You have the choice of passing the value in `character` format as
 shown above, to assure `FORTRAN` compatible format, or you can use the
 `set_swap_format()` function, to convert your value to the `FORTRAN`
 compatible format.
 
-If you would like to run SWAP with the modified parameter/table/vector
-set, you first would need write the new SWAP main file:
+To run SWAP with the modifications you've made to your parameters, you
+need to make sure you `write_swap_file()` before running `run_swap()` --
+**All changes in `/rswap/` are temporary until you write your SWAP
+file!**
 
-``` r
-write_swap_file(project_path, outfile = "swap_modified.swp")
-```
+> This functionality is currently only tested for the SWAP main file.
+> Support for the other SWAP input files is coming soon ©
 
-And to run this modified SWAP main file, you would of course use
-`run_swap()` with the corresponding `project_path` and `swap_file`
-parameters.
-
-You might be thinking right about now..
-
-> Gee that is a lot of work just to change a parameter!
-
-And you are correct, which is why I am going to implement a wrapper
-function to all these steps for you at once... `soon`
-
-## SWAPtools integrations <a name="install"></a>
+## SWAPtools integration <a name="swaptools"></a>
 
 The following features are possible when using `rswap` with another
 SWAP-related R-package: `SWAPtools`
@@ -388,34 +384,30 @@ The aforementioned functions rely on more basic general functions which,
 while are designed for internal use, can possibly also be of assistance
 to the end user. These are listed below.
 
-> `NSE() # statistical performance calculation`
-
-> `PBIAS() # statistical performance calculation`
-
-> `RMSE() # statistical performance calculation`
-
-> `RSR() # statistical performance calculation`
-
-> `clean_swp_file() # returns swap main file sans comments`
-
-> `filter_swap_data() # filters SWAP data (observed or modelled) by var and depth`
-
-> `match_mod_obs() # matches dataframe structure of observed and modelled`
-
-> `melt_all_runs() # melts together all saved runs + current into`
-> [tidy](https://towardsdatascience.com/what-is-tidy-data-d58bb9ad2458)
-> `format`
+``` r
+# Model performance metrics
+NSE(obs = ob_dat, mod = mod_dat)
+PBIAS(obs = mod_dat, mod = mod_dat)
+RMSE(obs = mod_dat, mod = mod_dat)
+RSR(obs = mod_dat, mod = mod_dat)
+# Filters SWAP data (observed or modelled) by variable and depth
+filter_swap_data(data = mod_dat, var = "WC", depth = 15)
+# Matches dataframe structure of observed and modelled
+match_mod_obs(project_path, variable = "WC", depth = 15)
+# Melts together all saved runs + current into tidy format
+melt_all_runs(project_path, variable = "WC", depth = 15)
+```
 
 ## Roadmap <a name="roadmap"></a> {#roadmap}
 
 ### Major
 
--   Linux Support (0.3.0)
--   Sensitivity analysis (0.4.0)
--   Multi-core running (0.5.0)
--   Autocalibration / PEST integration (0.6.0)
--   Scenario runs (0.7.0)
--   SWAPtools plotting integration (0.8.0)
+-   Linux Support (0.4.0)
+-   Sensitivity analysis (0.5.0)
+-   Multi-core running (0.6.0)
+-   Autocalibration / PEST integration (0.7.0)
+-   Scenario runs (0.8.0)
+-   SWAPtools plotting integration (0.9.0)
 -   ...(1.0)
 
 ### Minor
@@ -427,12 +419,11 @@ to the end user. These are listed below.
     [ggbraid](https://nsgrantham.github.io/ggbraid/)
 -   Give all exported `rswap` functions a consistent naming scheme
     (`verb_swap_noun()`)
--   Wrapper function to combine load/change/write functions
 -   `plot_statistics()` sorting to follow stat property
 -   Add "exact variable matching" and stop removing "RAIN" in `io.R` -\>
     `melt_all_runs()`
--   Renovate `soft_calibration_plot()` to accept any variable using new
-    system.
+-   Renovate `soft_calibration_plot()` to accept any variable using the
+    new system.
 
 ## Support and Contributing <a name="support"></a>
 
@@ -442,8 +433,8 @@ if you have any suggestions for improvement. If would you like to
 contribute to the project, let me know! Very open towards collaborative
 improvement. Fork/Branch off as you please :)
 
-Any OPTAIN case-studies which use `rswap` are required to bake Moritz
-Shore a cake using a local recipe from the case-study country.
+*Any OPTAIN case-studies which use `rswap` are required to bake Moritz
+Shore a `cake` using a local recipe from the case-study country.*
 
 ## Acknowledgements <a name="ack"></a>
 
@@ -457,8 +448,6 @@ and innovation program under grant agreement No. 862756.
 Concepts, Parameter Estimation, and Case Studies. Ph.D. Thesis,
 Wageningen University, Wageningen, The Netherlands, 2000.
 <a name="1"></a>
-
-## 
 
 <p align="center">
 
