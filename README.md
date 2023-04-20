@@ -56,6 +56,8 @@ successfully, you know `rswap` is working properly.
 project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 
+> You can use this `project_path` to run all the following example code on this page!.
+
 **⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies
 files in your project directory (`project_path`) unless stated otherwise, instead all files are
 *copied* from `project_path` to `project_path/rswap`, modified there,
@@ -253,7 +255,7 @@ documentation.
 clean_swp_file(project_path) 
 # parses the data to be R-readable:
 parse_swp_file(project_path) 
- # writes the SWAP main file sourced from ".csv" files stored in the rswap directory
+# writes the SWAP main file sourced from ".csv" files stored in the rswap directory
 write_swap_file(project_path, outfile = "swap_modified.swp")
 ```
 
@@ -292,7 +294,7 @@ need to make sure you `write_swap_file()` before running `run_swap()` --
 file!**
 
 > This functionality is currently only tested for the SWAP main file.
-> Support for the other SWAP input files is coming soon ©
+> Support for the other SWAP input files is coming soon©
 
 ## SWAPtools integration <a name="swaptools"></a>
 
@@ -379,8 +381,8 @@ if you have any suggestions for improvement. If would you like to
 contribute to the project, let me know! Very open towards collaborative
 improvement. Fork/Branch off as you please :)
 
-*Any OPTAIN case-studies which use `rswap` are required to bake Moritz
-Shore a `cake` using a local recipe from the case-study country.*
+Any OPTAIN case-studies which use `rswap` are required to bake Moritz
+Shore a `cake` using a local recipe from the case-study country.
 
 ## Acknowledgements <a name="ack"></a>
 
