@@ -1,9 +1,3 @@
----
-editor_options:
-  markdown:
-    wrap: 72
----
-
 # rswap <img src="man/figures/logo.svg" align="right" height="300"/>
 
 rswap is an R-package designed to help interface and work with
@@ -63,7 +57,7 @@ project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 
 **⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies
-files in your project directory (`project_path`), instead all files are
+files in your project directory (`project_path`) unless stated otherwise, instead all files are
 *copied* from `project_path` to `project_path/rswap`, modified there,
 and executed. All results are stored there as well and will be
 overwritten over time. Remember to save your results if you would like
@@ -87,6 +81,7 @@ run_swap(project_path)
 -   `autoset_output` can be enabled, such that the output of the SWAP
     model matches your provided observed data
 -   `timeout` sets the max allowed runtime of SWAP
+-   `verbose` Prints everything the function does to the console with pretty colors
 
 ## Accessing Data <a name="data"></a>
 
@@ -424,6 +419,7 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
     `melt_all_runs()`
 -   Renovate `soft_calibration_plot()` to accept any variable using the
     new system.
+-   Have all the example code in the readme work with the data from `rswap_init()`
 
 ## Support and Contributing <a name="support"></a>
 
