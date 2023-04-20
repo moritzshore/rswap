@@ -17,13 +17,7 @@ load_swap_vectors(project_path, swap_file = "swap.swp", verbose = F)
 Returns a list of vectors
 }
 \description{
-This function loads all the SWAP vectors as parsed by \code{parse_swp_file()}
-}
-\details{
-Something to consider: Currently the function returns the vectors as a normal
-dataframe with the first row being "VARNAME = ". this is because this is the
-format in which the vectors are written to be understood by SWAP. One could
-return the vectors in a real vector format, but then one would have to do
-some extra steps when writing them again. I'll consider what will be best, but
-for now I'll stick to the dataframe version.
+This function loads all the SWAP vectors as parsed by \code{parse_swp_file()}. If
+the SWAP vectors have not been parsed, then this will be done first using
+\code{swap_file}
 }
