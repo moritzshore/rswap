@@ -834,6 +834,8 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
 #' @param verbose print status? (flag)
 #'
 #' @importFrom magrittr  %>%
+#' @importFrom glue glue
+#' @importFrom crayon blue bold
 #'
 #' @returns Returns the same table / list of tables passed to the function, with
 #' the desired variable modified at the given row.
@@ -854,6 +856,9 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 
   # set the value of the row/var
   table[[table_match]][[variable]][row] = value
+
+  if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value} @ row {row}")), "\n")}
+
 
   # return the modified table set.
   return(table)
