@@ -91,7 +91,7 @@ get_depths(observed_data$data)
 
 ..this can also be filtered by a specific variable by passing `variable`
 
-## Visuals <a name="visuals"></a>
+## Visuals <a name="visuals"></a> {#visuals}
 
 There are a variety of functions used to visualize your SWAP data, such as `plot_over_under()`
 
@@ -293,6 +293,7 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   Renovate `soft_calibration_plot()` to accept any variable using the new system.
 -   Add D-Statistic from Moriasi et al 2015.
 -   Load observed data into package environment, to prevent the need for contant re-loading
+
 
 ## Support and Contributing <a name="support"></a>
 
