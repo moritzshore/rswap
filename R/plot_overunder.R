@@ -119,7 +119,7 @@ ribbonize <- function(.data, .x, .y, .type) {
 #' @export
 #'
 #' @author Neal Grantham, Moritz Shore
-plot_over_under <- function(project_path, variable, depth = NULL, verbose = F) {
+rswap_plot_overunder <- function(project_path, variable, depth = NULL, verbose = F) {
 
   # grabs the model data
 

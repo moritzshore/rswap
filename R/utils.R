@@ -12,7 +12,8 @@ SWAPtools_env <- new.env(parent = emptyenv())
 #'
 #' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
-#' @export
+#'
+#' @keywords internal
 load_variables_db <- function() {
   # check if SWAPtools was installed correctly.
   ST <- install_SWAPtools()
@@ -43,7 +44,7 @@ load_variables_db <- function() {
 #' @returns returns `TRUE` if package is already installed, or if installation
 #' was successful. returns `FALSE` if installation failed.
 #'
-#' @export
+#' @keywords internal
 #'
 install_SWAPtools <- function() {
   if ("SWAPtools" %in% utils::installed.packages()) {

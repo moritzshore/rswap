@@ -22,19 +22,17 @@
 #' @returns dataframe value(s) of performance indicator(s) for given variable(s) and depth(s)
 #'
 #' @export
-get_performance <-
+get_swap_performance <-
   function(project_path, archived = FALSE,
            stat = NULL, variable = NULL,
            depth = NULL, verbose = F) {
 
-    # TODO rename to get_swap_performance()
-
     if (variable %>% is.null()) {
-      obs <- load_observed(project_path)
+      obs <- load_swap_observed(project_path)
       variable = obs$observed_variables
     }
 
-    rlist <- match_mod_obs(
+    rlist <- match_swap_data(
         project_path = project_path,
         variable = variable,
         depth = depth,

@@ -13,3 +13,4 @@ was successful. returns \code{FALSE} if installation failed.
 \description{
 Installs SWAPtools from \code{waterwijzerlandbouw.wur.nl/repo}
 }
+\keyword{internal}

@@ -3,7 +3,7 @@
 # TODO make the 3 chosen variables totally flexible!
   # -> requires more work in utils.R
 
-#' Soft Calibration Plot
+#' Plot multiple variables at once
 #'
 #' Generates a 1-4 axis plot from desired variables. Designed to help
 #' user understand how the model is working, how the variables are interacting.
@@ -23,7 +23,7 @@
 #'
 #' @export
 #'
-soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
+rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
 
   # TODO rename to plot_swap_multivar()?
 
@@ -90,9 +90,9 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
     title = var_lab[3]
   )
 
-  observed_data <- load_observed(project_path, verbose = verbose)
-  observed_data = observed_data$data
-  obs_cols = observed_data[-1] %>% colnames() %>% paste0("obs",.)
+  observed_data <- load_swap_observed(project_path, verbose = verbose)
+  observed_data <- observed_data$data
+  obs_cols <- observed_data[-1] %>% colnames() %>% paste0("obs",.)
   colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
 
   modelled_data <- read_swap_output(project_path)
@@ -101,7 +101,7 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
   results = left_join(modelled_data, observed_data, by = "DATE")
 
   # grabs the depths at which we have observed data for
-  depths = get_depths(data = results)
+  depths = get_swap_depths(data = results)
 
   # grab run name
   run_name <- project_path %>% str_split("./") %>% unlist() %>% tail(1)

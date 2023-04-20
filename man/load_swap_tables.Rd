@@ -17,7 +17,7 @@ load_swap_tables(project_path, swap_file = "swap.swp", verbose = F)
 Returns list of tibbles named by their column names.
 }
 \description{
-This function loads all the SWAP tables as parsed by \code{parse_swp_file()}If
+This function loads all the SWAP tables as parsed by \code{parse_swap_file()}If
 the SWAP vectors have not been parsed, then this will be done first using
 \code{swap_file}
 }

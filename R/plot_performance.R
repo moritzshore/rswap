@@ -1,4 +1,4 @@
-#' Plot Statistics
+#' Plot performance metrics
 #'
 #' This function calculates the statistical performance of all the saved model
 #' runs in the /rswap_saved/ folder, as well as the last performed run. It does
@@ -20,7 +20,7 @@
 #'
 #' @export
 #'
-plot_statistics <-
+rswap_plot_performance <-
   function(project_path, var, depth =  NULL, graph = "default",stat = "NSE",
            verbose = F) {
 
@@ -99,10 +99,7 @@ plot_statistics <-
     stop(stat, "not recognized")
   }
 
-  # plotting -----
-
   # interactive default plot
-
   if (graph == "default") {
     fig1 <- plot_ly()
 
