@@ -102,9 +102,9 @@ contains depth wise values of various variables.
 
 ``` r
 modelled_data$daily_output
-```r
+```
 
-```r
+``` R
 # A tibble: 17,520 x 5
    DATE       DEPTH     H    WC  TEMP
    <chr>      <dbl> <dbl> <dbl> <dbl>
