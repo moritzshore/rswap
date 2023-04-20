@@ -301,7 +301,7 @@ enabled, and which arguments are passed. For more information, check the
 **Details** in the help page of the function.
 
 **⚠️ If used incorrectly, this function can overwrite your swap file!**
-[*Check the Details page!*]{.underline}
+*Check the Details page!*
 
 `rswap` uses a whole set of functions for the reading, altering, and
 writing of SWAP parameters. While `modify_swap_file()` covers most
