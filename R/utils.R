@@ -8,6 +8,8 @@ SWAPtools_env <- new.env(parent = emptyenv())
 #' individual function calls do not need to re-load the database for their
 #' individual environments.
 #'
+#' @importFrom crayon yellow bold
+#'
 #' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
 #' @export
@@ -21,7 +23,7 @@ load_variables_db <- function() {
     if (is.list(SWAPtools_env$swap_variables)) {
       return(TRUE)
     } else{
-      cat("loading SWAPtools variables database..\n")
+      cat(yellow(bold("loading SWAPtools variables database..\n")))
       SWAPtools_variables_path <-
         system.file("rds/swap_variables.rds", package = "SWAPtools")
       SWAPtools_variables <- SWAPtools_variables_path %>% readRDS()

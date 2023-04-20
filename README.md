@@ -209,8 +209,8 @@ vectors <- change_swap_vector(vectors, variable = "OUTDAT", index = 1, value = "
 ```
 These functions then return the object, with the modified value(s). Please note this is a `dataframe` for the parameters, **but** a `list` of `dataframes` for the tables and vectors. You have the option of passing all the `dataframes` as returned by the `load_swap_tables()` function, or just the one you are interested in altering, or anything in-between.
 
-⚠️ You have the choice of passing the value in `character` format as shown above, to assure `FORTRAN` compatbile format, or you can use
-the `set_swap_format()` function, to convert your value to the `FORTRAN` compatbile format. 
+⚠️ You have the choice of passing the value in `character` format as shown above, to assure `FORTRAN` compatible format, or you can use
+the `set_swap_format()` function, to convert your value to the `FORTRAN` compatible format. 
 
 
 If you would like to run SWAP with the modified parameter/table/vector set, you first would need write the new SWAP main file:
@@ -227,7 +227,7 @@ And you are correct, which is why I am going to implement a wrapper function to 
 
 ## SWAPtools integrations <a name="install"></a>
 
-The foillowing features are possible when using `rswap` with another SWAP-related R-package: `SWAPtools`
+The following features are possible when using `rswap` with another SWAP-related R-package: `SWAPtools`
 
 `get_swap_format()` returns the format of the given parameter, whereas `set_swap_format()` forces the value of the given parameter into the FORTRAN-required format. These functions rely on data from package `SWAPtools`. (Over time, `change_swap_par()` will use these automatically to protect you from incorrect formats)
 
@@ -282,7 +282,6 @@ The aforementioned functions rely on more basic general functions which, while a
 - Wrapper function to combine load/change/write functions
 - `plot_statistics()` sorting to follow stat property
 - Add "exact variable matching" and stop removing "RAIN" in `io.R` -> `melt_all_runs()`
-- Move output modifying code to `set_swap_output()`, and expand on it.
 - Renovate `soft_calibration_plot()` to accept any variable using new system.
 
 ## Support and Contributing  <a name="support"></a>

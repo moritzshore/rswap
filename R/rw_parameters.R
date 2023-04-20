@@ -280,7 +280,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     )
 
     if (verbose) {
-      cat("\U0001f4dd�",
+      cat("\U0001f4dd",
           bold(blue("created SWAP main file.")), "\n")
     }
 
@@ -298,7 +298,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
     )
 
     if (verbose) {
-      cat("\U0001f4dd�",
+      cat("\U0001f4dd",
           blue("SWAP parameters appended to main file."), "\n")
     }
 
@@ -777,7 +777,7 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
   if(verbose){
     cat("\U0001f4dd",
         blue("SWAP table set written to: \n"),
-        green(underline(table_path)),"\n")
+        green(underline(file_path)),"\n")
   }
 }
 
@@ -818,7 +818,7 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
   if(verbose){
     cat("\U0001f4dd",
         blue("SWAP table set written to: \n"),
-        green(underline(vector_path)),"\n")
+        green(underline(file_path)),"\n")
   }
 }
 
@@ -857,7 +857,7 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
   # set the value of the row/var
   table[[table_match]][[variable]][row] = value
 
-  if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value} @ row {row}")), "\n")}
+  if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value}")) ,blue(glue("@ row {row}")), "\n")}
 
 
   # return the modified table set.
@@ -880,6 +880,8 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 #' @returns the same vector or vector list as passed, but with the modified value
 #'
 #' @importFrom tibble  %>%
+#' @importFrom glue glue
+#' @importFrom crayon blue bold
 #'
 #' @export
 #'
@@ -898,8 +900,13 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
   # always column one because its actually a vector! .. this really should be fixed sometime
   vector[[vector_match]][[1]][index] = value
 
-  return(vector)
+  if (verbose) {
+    cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value}")) , blue(glue("@ index {index}")), "\n")
+  }
 
+  return(vector)
 }
+
+
 
 
