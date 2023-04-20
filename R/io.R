@@ -214,6 +214,7 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' @importFrom stringr str_remove str_replace str_split
 #' @importFrom tibble tibble
+#' @importFrom readr read_csv
 #'
 #' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
 #' as well as `.$observed_variables`, a vector of the detected observed variables.
@@ -231,8 +232,7 @@ load_observed <- function(project_path, archived = F, verbose = F){
     path <- paste0(project_path, "/rswap/rswap_observed_data.csv")
 
   }
-  # SUPPORTED FORMAT: sep=; dec=,
-  data <- read.table(file = path, header = T, sep = ";", dec = ",") %>% tibble()
+  data <- readr::read_csv(file = path, show_col_types = F)
   data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
 
