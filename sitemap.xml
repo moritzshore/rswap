@@ -19,6 +19,15 @@
     <loc>/reference/change_swap_par.html</loc>
   </url>
   <url>
+    <loc>/reference/change_swap_table.html</loc>
+  </url>
+  <url>
+    <loc>/reference/change_swap_vector.html</loc>
+  </url>
+  <url>
+    <loc>/reference/check_swap_message.html</loc>
+  </url>
+  <url>
     <loc>/reference/clean_swp_file.html</loc>
   </url>
   <url>
@@ -46,6 +55,15 @@
     <loc>/reference/load_observed.html</loc>
   </url>
   <url>
+    <loc>/reference/load_swap_parameters.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_swap_tables.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_swap_vectors.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_variables_db.html</loc>
   </url>
   <url>
@@ -53,6 +71,12 @@
   </url>
   <url>
     <loc>/reference/melt_all_runs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/modify_swap_file.html</loc>
+  </url>
+  <url>
+    <loc>/reference/move_run_files.html</loc>
   </url>
   <url>
     <loc>/reference/NSE.html</loc>
@@ -104,5 +128,14 @@
   </url>
   <url>
     <loc>/reference/write_swap_file.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_swap_parameters.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_swap_tables.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_swap_vectors.html</loc>
   </url>
 </urlset>
