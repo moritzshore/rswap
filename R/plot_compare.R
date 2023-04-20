@@ -1,4 +1,4 @@
-#' Comparative Plot
+#' Compare model runs
 #'
 #' This graph highlights the differences between saved model runs for a given
 #' variable at a certain depth.
@@ -21,7 +21,7 @@
 #' @importFrom plotly plot_ly add_trace layout
 #' @importFrom stringr str_split
 #' @importFrom utils tail
-comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F) {
+rswap_plot_compare <- function(project_path, variable, depth =  NULL, verbose = F) {
   # TODO: rename to compare_swap_runs
   # Custom color palette
   color_palette <- grDevices::colorRampPalette(c("red", "blue", "green"))
@@ -31,7 +31,7 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
 
   # combine the past runs, the current run
   master_df <-
-    melt_all_runs(
+    melt_swap_runs(
       project_path = project_path,
       variable = variable,
       depth = depth,

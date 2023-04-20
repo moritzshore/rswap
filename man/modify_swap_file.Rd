@@ -41,7 +41,7 @@ Returns the path to written output file
 \description{
 This function generates a modified SWAP file, changing the \code{value} of the
 passed \code{variable}. Standard behavior is to pass an \code{input_file} and an
-\code{output_file}. The input file will be parsed by \code{parse_swp_file()}, the value
+\code{output_file}. The input file will be parsed by \code{parse_swap_file()}, the value
 will be changed, and then a \code{output_file} will be written to \code{project_path}.
 However, the function has a variety of different modes, see \strong{Details}
 }

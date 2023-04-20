@@ -17,6 +17,6 @@ load_swap_parameters(project_path, swap_file = "swap.swp", verbose = F)
 Tibble of parameter set
 }
 \description{
-Loads the SWAP parameters as parsed by \code{parse_swp_file()} and returns them as
+Loads the SWAP parameters as parsed by \code{parse_swap_file()} and returns them as
 a tibble
 }

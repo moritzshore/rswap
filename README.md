@@ -270,7 +270,7 @@ RSR(obs = data$obs$WC_15, mod = data$mod$WC_15)
 melt_all_runs(project_path, variable = "WC", depth = 15)
 ```
 
-## Roadmap <a name="roadmap"></a> {#roadmap}
+## Roadmap <a name="roadmap"></a>
 
 ### Major
 
@@ -291,7 +291,9 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   `plot_statistics()` sorting to follow stat property
 -   Add "exact variable matching" and stop removing "RAIN" in `io.R` -\> `melt_all_runs()`
 -   Renovate `soft_calibration_plot()` to accept any variable using the new system.
--   Add D-Statistic from Moriasi et al 2017.
+-   Add D-Statistic from Moriasi et al 2015.
+-   Load observed data into package environment, to prevent the need for contant re-loading
+
 
 ## Support and Contributing <a name="support"></a>
 

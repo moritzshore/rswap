@@ -17,7 +17,7 @@ load_swap_vectors(project_path, swap_file = "swap.swp", verbose = F)
 Returns a list of vectors
 }
 \description{
-This function loads all the SWAP vectors as parsed by \code{parse_swp_file()}. If
+This function loads all the SWAP vectors as parsed by \code{parse_swap_file()}. If
 the SWAP vectors have not been parsed, then this will be done first using
 \code{swap_file}
 }

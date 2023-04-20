@@ -15,3 +15,4 @@ which gives package wide access to the SWAPtools databases, and means
 individual function calls do not need to re-load the database for their
 individual environments.
 }
+\keyword{internal}

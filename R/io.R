@@ -97,7 +97,7 @@ build_rswap_directory <- function(project_path, verbose = F){
 #'
 #' @returns Returns the SWAP parameter dataframe with modified path values
 #'
-update_swp_paths <- function(project_path, swap_exe,
+update_swap_paths <- function(project_path, swap_exe,
                              parameters, verbose = F) {
 
     version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
@@ -112,7 +112,7 @@ update_swp_paths <- function(project_path, swap_exe,
     update_par <- c("PATHWORK","PATHATM", "PATHCROP", "PATHDRAIN")
     for (par in update_par) {
       val = glue("'{swap_main_file_path}'")
-      parameters = change_swap_par(parameters, par, val, verbose)
+      parameters = change_swap_parameter(parameters, par, val, verbose)
     }
 
     # Update the SWINCO path if needed. If SWINCO is set to 3, then INIFIL needs
@@ -155,7 +155,7 @@ update_swp_paths <- function(project_path, swap_exe,
 #'
 #' @export
 #'
-save_run <- function(project_path, run_name = NULL, verbose = F){
+save_swap_run <- function(project_path, run_name = NULL, verbose = F){
   # TODO change the name of this function to save_swap_run()
 
   # if the run name is not passed, then assign a run name based on the current
@@ -222,10 +222,9 @@ save_run <- function(project_path, run_name = NULL, verbose = F){
 #' @export
 #'
 #'
-load_observed <- function(project_path, archived = F, verbose = F){
+load_swap_observed <- function(project_path, archived = F, verbose = F){
 
   #TODO switch to CSV
-  #TODO rename to load_swap_observed
   if(archived){
     path <- paste0(project_path, "/rswap_observed_data.csv")
   }else{
@@ -409,9 +408,8 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
 #' @returns Returns a numeric vector of depths
 #'
 #' @export
-get_depths <- function(data, variable = NULL) {
+get_swap_depths <- function(data, variable = NULL) {
 
-  # TODO: rename to get_swap_depths
   splitted <- colnames(data) %>% str_remove("obs") %>%
     str_split("_") %>% unlist() %>% toupper()
 
@@ -458,7 +456,7 @@ get_depths <- function(data, variable = NULL) {
 #'
 #' @export
 #'
-match_mod_obs <- function(project_path, variable, depth = NULL,
+match_swap_data <- function(project_path, variable, depth = NULL,
                           verbose = F, archived = F) {
 
     # TODO rename: match_swap_data
@@ -471,7 +469,7 @@ match_mod_obs <- function(project_path, variable, depth = NULL,
     project_path<-project_path %>% str_remove("/rswap/")
   }
 
-  observed_data <- load_observed(project_path = project_path, verbose = verbose, archived = archived)
+  observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived)
   modelled_data <- read_swap_output(project_path = project_path, archived = archived)
 
   observed_data_filtered <-filter_swap_data(data = observed_data$data,
@@ -531,7 +529,7 @@ match_mod_obs <- function(project_path, variable, depth = NULL,
 #'
 #' @export
 #'
-melt_all_runs <-
+melt_swap_runs <-
   function(project_path,
            variable,
            depth = NULL,
@@ -632,8 +630,8 @@ rswap_init <- function(swap_exe){
     cat("\nERROR CODE:", status, "\n")
   }
 
-  data <- load_observed(example_path, verbose = T)
-  mod <- rswap::read_swap_output(example_path)
+  data <- load_swap_observed(example_path, verbose = T)
+  mod <- read_swap_output(example_path)
 
   if(mod[[1]] %>% is.data.frame()){
     cat("\nloading SWAP output... success!\n")
@@ -642,11 +640,11 @@ rswap_init <- function(swap_exe){
   }
 
   variable <- data$observed_variables[1:3]
-  depth <- get_depths(data = data$data)[1]
-  soft_calibration_plot(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
+  depth <- get_swap_depths(data = data$data)[1]
+  rswap_plot_multi(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
-  cat("\nrswap initilization complete, you can find the project folder here:\n")
-  cat(example_path)
+  cat("\nrswap initilization complete, you can find the project folder here:","\n")
+  cat(example_path, "\n")
   return(example_path)
 }
 

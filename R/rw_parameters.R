@@ -17,7 +17,7 @@
 #' @returns Returns a cleaned up SWAP file in string vector form.
 #'
 #' @export
-clean_swp_file <- function(project_path, swap_file = "swap.swp") {
+clean_swap_file <- function(project_path, swap_file = "swap.swp") {
   # TODO: find out for which SWAP input files this works, other than main
   # path and read
   path <- paste0(project_path, "/", swap_file)
@@ -65,8 +65,7 @@ clean_swp_file <- function(project_path, swap_file = "swap.swp") {
 #'
 #' @export
 #'
-parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
-
+parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
   # TODO rename to parse_swap_file()
   # finds the end of the table when passed a snipped of the swap file
@@ -91,7 +90,7 @@ parse_swp_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   }
 
   rswap_dir <- build_rswap_directory(project_path)
-  swp <- clean_swp_file(rswap_dir, swap_file = swap_file)
+  swp <- clean_swap_file(rswap_dir, swap_file = swap_file)
 
   swp_file <- paste0(rswap_dir, "/", swap_file)
   if(verbose){
@@ -404,9 +403,9 @@ set_swap_output <-
 
     # change console output based on verbose flag
     if (verbose) {
-      parameters <- change_swap_par(parameters, "SWSCRE", 2, verbose)
+      parameters <- change_swap_parameter(parameters, "SWSCRE", 2, verbose)
     } else{
-      parameters <- change_swap_par(parameters, "SWSCRE", 0, verbose)
+      parameters <- change_swap_parameter(parameters, "SWSCRE", 0, verbose)
 
     }
 
@@ -436,7 +435,7 @@ set_swap_output <-
     # parameter dataframe, we can simply adjust the value to 1. If it does
     # not exist yet, we need to add it, with the value of 1.
     if ("SWCSV" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV", "1", verbose)
+      parameters = change_swap_parameter(parameters, "SWCSV", "1", verbose)
     } else{
       if(verbose){
         cat("\u2795",
@@ -451,7 +450,7 @@ set_swap_output <-
     }
     # The exact same thing goes for SWCSV...
     if ("SWCSV_TZ" %in% parameters$param) {
-      parameters = change_swap_par(parameters, "SWCSV_TZ", "1", verbose)
+      parameters = change_swap_parameter(parameters, "SWCSV_TZ", "1", verbose)
     } else{
       if(verbose){
         cat("\u2795",
@@ -473,9 +472,9 @@ set_swap_output <-
       if(verbose){cat(blue("\u23fa Autosetting output to match observed file!"),"\n")}
 
       # load variables and depths
-      obs <- load_observed(project_path, archived = F, verbose)
+      obs <- load_swap_observed(project_path, archived = F, verbose)
       variables <- obs$observed_variables %>% toupper()
-      depths <- get_depths(data = obs$data) %>% sort()
+      depths <- get_swap_depths(data = obs$data) %>% sort()
       cat("\u2705",
           blue("Follwing depths detected"),
           green(bold(underline(depths))), "\n")
@@ -516,7 +515,7 @@ set_swap_output <-
         }
         outstring <- glue("{outstring}{add_var}")
       }
-      parameters <- change_swap_par(parameters, "INLIST_CSV", outstring, verbose)
+      parameters <- change_swap_parameter(parameters, "INLIST_CSV", outstring, verbose)
     }
     return(parameters)
   }
@@ -547,7 +546,7 @@ set_swap_output <-
 #' @importFrom crayon bold blue
 #'
 #' @export
-change_swap_par <- function(param, name, value, verbose = F){
+change_swap_parameter <- function(param, name, value, verbose = F){
   version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
   value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
   param$value[which(param$param == name)] = value2
@@ -559,7 +558,7 @@ change_swap_par <- function(param, name, value, verbose = F){
 
 #' Load SWAP tables
 #'
-#' This function loads all the SWAP tables as parsed by `parse_swp_file()`If
+#' This function loads all the SWAP tables as parsed by `parse_swap_file()`If
 #' the SWAP vectors have not been parsed, then this will be done first using
 #' `swap_file`
 #'
@@ -581,7 +580,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
   if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
     warning("[rswap] project has not been parsed yet. Doing so now with '",
             swap_file, "'")
-    p <- parse_swp_file(project_path, swap_file, verbose = T)
+    p <- parse_swap_file(project_path, swap_file, verbose = T)
   }
 
 
@@ -614,7 +613,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
 #' Load SWAP Vectors
 #'
-#' This function loads all the SWAP vectors as parsed by `parse_swp_file()`. If
+#' This function loads all the SWAP vectors as parsed by `parse_swap_file()`. If
 #' the SWAP vectors have not been parsed, then this will be done first using
 #' `swap_file`
 #'
@@ -641,7 +640,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
   if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
     warning("[rswap] project has not been parsed yet. Doing so now with '",
             swap_file, "'")
-    p <- parse_swp_file(project_path, swap_file, verbose = verbsose)
+    p <- parse_swap_file(project_path, swap_file, verbose = verbsose)
   }
 
   vector_path <- paste0(project_path, "/rswap/vectors/")
@@ -672,7 +671,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 
 #' Load SWAP parameters
 #'
-#' Loads the SWAP parameters as parsed by `parse_swp_file()` and returns them as
+#' Loads the SWAP parameters as parsed by `parse_swap_file()` and returns them as
 #' a tibble
 #'
 #' @param project_path path to project directory (string
@@ -689,7 +688,7 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
   if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
     warning("[rswap] project has not been parsed yet. Doing so now with '",
             swap_file, "'")
-    p <- parse_swp_file(project_path, swap_file, verbose = verbose)
+    p <- parse_swap_file(project_path, swap_file, verbose = verbose)
   }
 
   if (verbose) {
@@ -912,7 +911,7 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
 #'
 #' This function generates a modified SWAP file, changing the `value` of the
 #' passed `variable`. Standard behavior is to pass an `input_file` and an
-#' `output_file`. The input file will be parsed by `parse_swp_file()`, the value
+#' `output_file`. The input file will be parsed by `parse_swap_file()`, the value
 #' will be changed, and then a `output_file` will be written to `project_path`.
 #' However, the function has a variety of different modes, see **Details**
 #'
@@ -992,7 +991,7 @@ modify_swap_file <- function(project_path,
     if(is.null(input_file)){
       stop("If you want to use fast=FALSE you need to pass an input file!")
     }
-    parse_swp_file(project_path = project_path, swap_file = input_file, verbose = verbose)
+    parse_swap_file(project_path = project_path, swap_file = input_file, verbose = verbose)
   }
 
   # determine location of variable (is it a vector, param, or table?)
@@ -1034,7 +1033,7 @@ modify_swap_file <- function(project_path,
     pars <- load_swap_parameters(project_path, verbose = verbose)
     par_vars <- pars$param
     if(variable %in% par_vars){
-      change_swap_par(param = pars,name = variable, value = value, verbose = verbose)
+      change_swap_parameter(param = pars,name = variable, value = value, verbose = verbose)
     }else{
       stop("variable ", variable, " not found")
     }
