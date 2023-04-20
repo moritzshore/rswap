@@ -559,7 +559,9 @@ change_swap_par <- function(param, name, value, verbose = F){
 
 #' Load SWAP tables
 #'
-#' This function loads all the SWAP tables as parsed by `parse_swp_file()`
+#' This function loads all the SWAP tables as parsed by `parse_swp_file()`If
+#' the SWAP vectors have not been parsed, then this will be done first using
+#' `swap_file`
 #'
 #' @param project_path Path to project directory (string)
 #' @param swap_file name of the swap file to parse (string)
@@ -612,14 +614,10 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
 #' Load SWAP Vectors
 #'
-#' This function loads all the SWAP vectors as parsed by `parse_swp_file()`
+#' This function loads all the SWAP vectors as parsed by `parse_swp_file()`. If
+#' the SWAP vectors have not been parsed, then this will be done first using
+#' `swap_file`
 #'
-#' Something to consider: Currently the function returns the vectors as a normal
-#' dataframe with the first row being "VARNAME = ". this is because this is the
-#' format in which the vectors are written to be understood by SWAP. One could
-#' return the vectors in a real vector format, but then one would have to do
-#' some extra steps when writing them again. I'll consider what will be best, but
-#' for now I'll stick to the dataframe version.
 #'
 #' @param project_path path to project_directory (string)
 #' @param swap_file name of the swap file to parse (string)
@@ -910,6 +908,147 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
   return(vector)
 }
 
+#' Modify SWAP file
+#'
+#' This function generates a modified SWAP file, changing the `value` of the
+#' passed `variable`. Standard behavior is to pass an `input_file` and an
+#' `output_file`. The input file will be parsed by `parse_swp_file()`, the value
+#' will be changed, and then a `output_file` will be written to `project_path`.
+#' However, the function has a variety of different modes, see **Details**
+#'
+#' This function has a variety of modes. If you would like to run the function
+#' quickly, you can enable `fast` which does **NOT** parse the `input_file`.
+#' This only works if you have already parsed the desired data, and it is
+#' present in your `rswap` directory.
+#'
+#' Another way to speed up this function is to disable `write`. this simply does
+#' not write your `output_file`
+#'
+#' **Caution:** Not passing an `output_file` with `write=TRUE` will cause your
+#' `input_file` to be overwritten!
+#'
+#' Note: If you are changing a variable located in a SWAP vector or table, you
+#' need to pass the `row` argument (which is an index for vectors, and a normal
+#' row for tables)
+#'
+#' @param project_path path to project directory `string`
+#' @param input_file SWAP file name to modify (required if fast=FALSE) `string`
+#' @param output_file SWAP file name write (required if write=TRUE) `string`
+#' @param variable SWAP variable to change `string`
+#' @param value value to assign `string`
+#' @param row (optional) only pass if vector (as index) or table. `integer`
+#' @param fast (optional) If rswap has already parsed the swap file `flag`
+#' @param write (optional) Flag to enable or disable writing of output file `flag`
+#' @param verbose (optional) print status? `flag`
+#'
+#' @returns Returns the path to written output file
+#' @export
+#'
+#' @importFrom readr read_csv cols write_csv
+#' @importFrom stringi stri_extract_all_regex
+#' @importFrom stringr str_remove str_split
+#' @importFrom dplyr last %>%
+#' @importFrom crayon blue bold
+#'
+modify_swap_file <- function(project_path,
+                             input_file = NULL,
+                             output_file = NULL,
+                             variable,
+                             value,
+                             row = NULL,
+                             fast = F,
+                             write = T,
+                             verbose = F) {
 
+  # check the file type, if we are reading or writing here
+  if (write & (input_file %>% is.null())) {
+    if(output_file %>% is.null()){
+      warning("You need to pass either an input or output file if you have write=TRUE!")
+    }
+
+    file_ext <- output_file %>% stringr::str_split("\\.") %>% unlist() %>% dplyr::last()
+    if (file_ext != "swp") {
+      warning("writing has only been implemented for the main swap file '*.swp', so this probably wont work!.. but it might, who knows!")
+    }
+  }
+
+  if(write & ((output_file %>% is.null()))){
+    warning("Overwriting input file!")
+  }
+
+  if(!fast){
+    if(is.null(input_file)){
+      stop("If you want to use fast=FALSE you need to pass an input file!")
+    }
+
+    file_ext <- input_file %>% stringr::str_split("\\.") %>% unlist() %>% dplyr::last()
+    if (file_ext != "swp") {
+      warning("reading has only been implemented for the main swap file '*.swp', so this probably wont work!.. but it might, who knows!")
+    }
+  }
+
+  # parse the swap file is it has not been already (as determined by the fast flag)
+  if(!fast){
+    if(is.null(input_file)){
+      stop("If you want to use fast=FALSE you need to pass an input file!")
+    }
+    parse_swp_file(project_path = project_path, swap_file = input_file, verbose = verbose)
+  }
+
+  # determine location of variable (is it a vector, param, or table?)
+  vec_path <- paste0(project_path, "/rswap/vectors")
+  vec_vars <- list.files(vec_path) %>% stringr::str_remove(".csv")
+
+  tab_path <- paste0(project_path, "/rswap/tables")
+  tab_vars_pre <- list.files(tab_path) %>% stringr::str_remove(".csv")
+  tab_vars <- tab_vars_pre %>% stringr::str_split("-") %>% unlist()
+
+  if(variable %in% vec_vars){
+    if(row %>% is.null()){
+      stop("This variable is stored in a vector, therefore you must pass the  'row' arugment as an index!")
+    }
+    # don't pass swap_file because it should have been parsed already!
+    vec_file <- paste0(vec_path, "/", variable, ".csv")
+    vec_df <- readr::read_csv(vec_file, col_types = readr::cols(.default = "c"))
+    vec_df[[1]][[row]] = value
+    if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value}")), blue(glue("@ index {row}")), "\n")}
+
+    readr::write_csv(x = vec_df, file = vec_file, quote = "all")
+  }else if(variable %in% tab_vars){
+
+    if(row %>% is.null()){
+      stop("This variable is stored in a table, therefore you must pass the  'row' arugment!")
+    }
+    # don't pass swap_file because it should have been parsed already!
+
+    find_table <- (stringi::stri_extract_all_regex(str = tab_vars_pre, pattern = variable, simplify = T ) %>% is.na() == FALSE) %>% which()
+    single_table_path <- paste0(project_path, "/rswap/tables/",tab_vars_pre[find_table], ".csv")
+
+    tab_df <- readr::read_csv(single_table_path, col_types = readr::cols(.default = "c"))
+
+    col_index <- (colnames(tab_df) == variable) %>% which()
+    tab_df[[col_index]][[row]] = value
+    if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value}")), blue(glue("@ row {row}")), "\n")}
+    readr::write_csv(x = tab_df, file = single_table_path, quote = "all")
+  }else{
+    pars <- load_swap_parameters(project_path, verbose = verbose)
+    par_vars <- pars$param
+    if(variable %in% par_vars){
+      change_swap_par(param = pars,name = variable, value = value, verbose = verbose)
+    }else{
+      stop("variable ", variable, " not found")
+    }
+  }
+  if(write){
+    if(output_file %>% is.null()){
+      path <- write_swap_file(project_path = project_path, outfile = input_file, verbose = verbose)
+    }else{
+      path <- write_swap_file(project_path = project_path, outfile = output_file, verbose = verbose)
+    }
+  }else{
+    path <- NULL
+  }
+  return(path)
+}
 
 
