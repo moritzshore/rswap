@@ -83,7 +83,9 @@ run_swap <- function(project_path,
                                  verbose = verbose)
 
   # load in the parameters to be altered
-  parameters <- load_swap_parameters(project_path, swap_file, verbose)
+  parameters <- load_swap_parameters(project_path = project_path,
+                         swap_file = swap_file,
+                         verbose = verbose)
 
   # changes the paths in the swap main file to reflect the temporary location
   parameters <- update_swp_paths(project_path = project_path,
@@ -98,7 +100,9 @@ run_swap <- function(project_path,
                                verbose = verbose)
 
   # write the modified parameter set
-  write_swap_parameters(project_path, parameters = parameters, verbose = verbose)
+  write_swap_parameters(project_path = project_path,
+                        parameters = parameters,
+                        verbose = verbose)
 
   # location for where the swap file is to be written
   outpath <- paste0("rswap/",swap_file)
@@ -106,7 +110,7 @@ run_swap <- function(project_path,
   # Write swap file
   write_swap_file(project_path = project_path,
                   outfile = outpath,
-                  verbose = T)
+                  verbose = verbose)
 
   # run the model
 
@@ -159,8 +163,6 @@ run_swap <- function(project_path,
                   "\n")))
   }
 
-
-
   # return status of run
   return(msg$status)
 }
@@ -184,5 +186,4 @@ check_swap_message <- function(msg, verbose = F){
       warning(glue("SWAP model timed out, with timeout {timeout}"))
     }
   }
-
 }
