@@ -292,8 +292,7 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   Add "exact variable matching" and stop removing "RAIN" in `io.R` -\> `melt_all_runs()`
 -   Renovate `soft_calibration_plot()` to accept any variable using the new system.
 -   Add D-Statistic from Moriasi et al 2015.
--   Load observed data into package environment, to prevent the need for constant re-loading
--   Add `verbose` to `read_swap_output()` and rename to `load_swap_output()`
+-   Load observed data into package environment, to prevent the need for contant re-loading
 
 ## Support and Contributing <a name="support"></a>
 
