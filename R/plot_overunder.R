@@ -15,8 +15,11 @@
 #'
 #' @export
 #'
-#' @example man/examples/ex_rswap_plot_variable.R
-#'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#' # Plot example path, with variable "WC" and all available depths
+#' rswap_plot_variable(example_path, variable = "WC")
 #'
 #' @importFrom ggplot2 ggplot geom_line aes facet_wrap ylab ggtitle
 #' @importFrom graphics plot
