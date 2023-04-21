@@ -27,3 +27,10 @@ file and start modifying parameters.
 If this function does not successfully complete, then there is an underlying
 issue you need to fix before continuing to use rswap.
 }
+\examples{
+# This function cannot execute example code as it relies on the externally
+# provided 'swap.exe'
+
+# rswap_init("C:/path/to/swap.exe")
+
+}

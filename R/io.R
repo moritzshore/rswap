@@ -13,6 +13,13 @@
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' # This example code will not be executed as it needs to write files!
+#' # build_rswap_directory(example_path, verbose = T)
+
 build_rswap_directory <- function(project_path, verbose = F){
 
   # TODO should this delete the previous one?
@@ -93,10 +100,9 @@ build_rswap_directory <- function(project_path, verbose = F){
 #' @importFrom crayon bold blue
 #' @importFrom dplyr %>%
 #'
-#' @export
+#' @keywords internal
 #'
 #' @returns Returns the SWAP parameter dataframe with modified path values
-#'
 update_swap_paths <- function(project_path, swap_exe,
                              parameters, verbose = F) {
 
@@ -155,6 +161,12 @@ update_swap_paths <- function(project_path, swap_exe,
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' # this will throw a warning if "example_run" already exists (which it does)
+#' save_swap_run(example_path, run_name = "example_run", verbose = T)
 save_swap_run <- function(project_path, run_name = NULL, verbose = F){
   # TODO change the name of this function to save_swap_run()
 
@@ -222,9 +234,13 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #' @export
 #'
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' load_swap_observed(example_path, archived = F, verbose = T)
 load_swap_observed <- function(project_path, archived = F, verbose = F){
 
-  #TODO switch to CSV
   if(archived){
     path <- paste0(project_path, "/rswap_observed_data.csv")
   }else{
@@ -276,8 +292,13 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' read_swap_output(example_path, archived = F)
 read_swap_output <-  function(project_path, archived = F){
-
+  #TODO add verbose
   #TODO rewrite to return ALL SWAP output.
 
   if(archived){
@@ -338,8 +359,17 @@ read_swap_output <-  function(project_path, archived = F){
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' # load some SWAP data (either observed, or modeled using read_swap_output())
+#' data <- load_swap_observed(project_path = example_path, verbose = T)
+#'
+#' filter_swap_data(data$data, var = "WC", depth = "15")
+#'
 filter_swap_data <- function(data, var = NULL, depth = NULL){
-
+  #TODO add verbose?
   if(var %>% is.null() == FALSE){
     var <- var %>% toupper()
   }
@@ -407,6 +437,16 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
 #' @returns Returns a numeric vector of depths
 #'
 #' @export
+#'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' # load some SWAP data (either observed, or modeled using read_swap_output())
+#' data <- load_swap_observed(project_path = example_path, verbose = T)
+#'
+#' get_swap_depths(data$data, variable = "TEMP")
+#'
 get_swap_depths <- function(data, variable = NULL) {
 
   splitted <- colnames(data) %>% str_remove("obs") %>%
@@ -455,6 +495,11 @@ get_swap_depths <- function(data, variable = NULL) {
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' match_swap_data(example_path, "WC", depth = 15, verbose = T, archived = F)
 match_swap_data <- function(project_path, variable, depth = NULL,
                           verbose = F, archived = F) {
 
@@ -528,6 +573,11 @@ match_swap_data <- function(project_path, variable, depth = NULL,
 #'
 #' @export
 #'
+#' @examples
+#' # path to sample results
+#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' melt_swap_runs(example_path, "WC", depth = 15, verbose = T)
 melt_swap_runs <-
   function(project_path,
            variable,
@@ -571,7 +621,7 @@ melt_swap_runs <-
     present_run_df <- filter_swap_data(present_run_df$custom_depth, var = variable, depth = depth)
     present_run_df$tag = "present"
     present_run_df$run = "current run"
-    observed_data <- load_observed(project_path, verbose = verbose)
+    observed_data <- load_swap_observed(project_path, verbose = verbose)
     observed_data <- filter_swap_data(observed_data$data, var = variable, depth = depth)
     observed_data$tag = "observed"
     observed_data$run = "observed"
@@ -604,6 +654,12 @@ melt_swap_runs <-
 #' @importFrom stringr str_split str_remove
 #' @importFrom dplyr %>%
 #' @export
+#'
+#' @examples
+#' # This function cannot execute example code as it relies on the externally
+#' # provided 'swap.exe'
+#'
+#' # rswap_init("C:/path/to/swap.exe")
 #'
 rswap_init <- function(swap_exe){
 

@@ -28,3 +28,9 @@ your project directory, and must bear the namer \code{swap_observed_data.csv}.
 
 Please note, the file type will eventually be switched to .csv.
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+load_swap_observed(example_path, archived = F, verbose = T)
+}

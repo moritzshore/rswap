@@ -33,3 +33,9 @@ in the same format, such that it is easy to pass them to performance indicators.
 \details{
 This function is available since it might be of use to the end user.
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+match_swap_data(example_path, "WC", depth = 15, verbose = T, archived = F)
+}
