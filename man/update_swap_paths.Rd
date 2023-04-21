@@ -22,3 +22,4 @@ Returns the SWAP parameter dataframe with modified path values
 As \code{rswap} creates a new directory for the model file, the paths in the those
 files need to be update to still be correct. This function does just that.
 }
+\keyword{internal}

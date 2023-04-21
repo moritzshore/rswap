@@ -24,3 +24,10 @@ Once a run has been saved, it can be compared to other saved runs, and/or the
 next run you perform. This can be done with functions such as
 \code{comparative_plot()} or \code{plot_statistics()}
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+# this will throw a warning if "example_run" already exists (which it does)
+save_swap_run(example_path, run_name = "example_run", verbose = T)
+}

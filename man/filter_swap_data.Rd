@@ -21,3 +21,13 @@ This is an internal function which filters dataframes of SWAP data by depth
 and variable. It might be useful for end users as well, which is why its
 accessible.
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+# load some SWAP data (either observed, or modeled using read_swap_output())
+data <- load_swap_observed(project_path = example_path, verbose = T)
+
+filter_swap_data(data$data, var = "WC", depth = "15")
+
+}

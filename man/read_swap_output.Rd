@@ -23,3 +23,9 @@ in the "/rswap_saved" folder if \code{archived} is set to \code{TRUE}.
 Currently, the function only returns the data needed by the rest of the
 package, but this will be expanded over time to return all SWAP output
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+read_swap_output(example_path, archived = F)
+}

@@ -18,3 +18,13 @@ Returns a numeric vector of depths
 Extracts the numeric depth values found in the observed data, as loaded by
 \code{load_observed()}. Can be filtered by \code{variable}.
 }
+\examples{
+# path to sample results
+example_path <- "./inst/extdata/rswap_example_output"
+
+# load some SWAP data (either observed, or modeled using read_swap_output())
+data <- load_swap_observed(project_path = example_path, verbose = T)
+
+get_swap_depths(data$data, variable = "TEMP")
+
+}
