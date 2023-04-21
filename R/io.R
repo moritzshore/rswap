@@ -65,8 +65,8 @@ build_rswap_directory <- function(project_path, verbose = F){
 
   # if the template does not yet exist in the project directory, copy it in there
   if("rswap_observed_data.csv" %in% list.files(project_path) == FALSE){
-    template_observed = system.file("extdata/rswap_observed_data.csv", package="rswap")
-    template_instructions = system.file("extdata/instructions_rswap_observed_data.txt", package="rswap")
+    template_observed = system.file("extdata/rswap_example_input/rswap_observed_data.csv", package="rswap")
+    template_instructions = system.file("extdata/rswap_example_input/instructions_rswap_observed_data.txt", package="rswap")
 
     obs_status <- file.copy(from = template_observed, to = paste0(project_path, "/rswap_observed_data.csv"))
     obs_status <- file.copy(from = template_instructions, to = paste0(project_path, "/instructions_rswap_observed_data.txt"))
@@ -232,7 +232,6 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 
   }
   data <- readr::read_csv(file = path, show_col_types = F)
-  data$DATE <- data$DATE %>% as.Date() # force date format
   columns <- colnames(data)
 
   date_col <- columns %>% grepl(x = ., "DATE") %>% which()
@@ -546,6 +545,7 @@ melt_swap_runs <-
     }
 
     result_files <- paste0(past_run_paths, "/result_output.csv")
+    # TODO remove . x2
     past_run_df <- result_files %>% map_df(., ~ vroom(.x, id = "path", show_col_types = F, delim = ",", comment = "*"))
     new_col_names <- past_run_df %>% colnames() %>% str_remove_all("]") %>% str_remove_all("\\[") %>% str_replace_all("-", "_")
     new_col_names <- new_col_names %>% str_replace_all("DATETIME", "DATE")
@@ -608,7 +608,7 @@ melt_swap_runs <-
 rswap_init <- function(swap_exe){
 
   pkg_path <- system.file(package = "rswap")
-  extdata <- paste0(pkg_path, '/extdata')
+  extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
 
   exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
   wd <- swap_exe %>% str_remove(exe_name)
