@@ -2,22 +2,22 @@
 % Please edit documentation in R/legacy_support.R
 \name{plot_over_under}
 \alias{plot_over_under}
-\title{this function has been renamed to: 'rswap_plot_overunder()}
+\title{this function has been renamed to: 'rswap_plot_variable()}
 \usage{
 plot_over_under(project_path, variable, depth = NULL, verbose = F)
 }
 \arguments{
-\item{project_path}{this function has been renamed to: rswap_plot_overunder()}
+\item{project_path}{this function has been renamed to: rswap_plot_variable()}
 
-\item{variable}{this function has been renamed to: rswap_plot_overunder()}
+\item{variable}{this function has been renamed to: rswap_plot_variable()}
 
-\item{depth}{this function has been renamed to: rswap_plot_overunder()}
+\item{depth}{this function has been renamed to: rswap_plot_variable()}
 
-\item{verbose}{this function has been renamed to: rswap_plot_overunder()}
+\item{verbose}{this function has been renamed to: rswap_plot_variable()}
 }
 \value{
-this function has been renamed to: rswap_plot_overunder()
+this function has been renamed to: rswap_plot_variable()
 }
 \description{
-this function has been renamed to: 'rswap_plot_overunder()
+this function has been renamed to: 'rswap_plot_variable()
 }

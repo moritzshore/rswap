@@ -242,21 +242,21 @@ soft_calibration_plot <- function(project_path, vars, show = NULL, verbose = F){
   return(call)
 }
 
-#' this function has been renamed to: 'rswap_plot_overunder()
+#' this function has been renamed to: 'rswap_plot_variable()
 #'
-#' @param project_path this function has been renamed to: rswap_plot_overunder()
-#' @param variable this function has been renamed to: rswap_plot_overunder()
-#' @param depth this function has been renamed to: rswap_plot_overunder()
-#' @param verbose this function has been renamed to: rswap_plot_overunder()
+#' @param project_path this function has been renamed to: rswap_plot_variable()
+#' @param variable this function has been renamed to: rswap_plot_variable()
+#' @param depth this function has been renamed to: rswap_plot_variable()
+#' @param verbose this function has been renamed to: rswap_plot_variable()
 #'
-#' @return this function has been renamed to: rswap_plot_overunder()
+#' @return this function has been renamed to: rswap_plot_variable()
 #' @export
 #'
 plot_over_under <- function(project_path, variable, depth = NULL, verbose = F) {
   warning(
-    "this function has been renamed to: 'rswap_plot_overunder()'. Please update your call, legacy support will be ending soon."
+    "this function has been renamed to: 'rswap_plot_variable()'. Please update your call, legacy support will be ending soon."
   )
-  call <- rswap_plot_overunder(project_path, variable, depth, verbose)
+  call <- rswap_plot_variable(project_path, variable, depth, verbose)
   return(call)
 }
 
