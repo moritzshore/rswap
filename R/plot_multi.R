@@ -70,7 +70,7 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
     overlaying = "y",
     side = "right",
     anchor = "free",
-    position = .87,
+    position = 0.87,
     title = var_lab[1]
   )
 
@@ -79,7 +79,7 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
     side = "right",
     title = var_lab[2],
     anchor = "free",
-    position = .95
+    position = 0.95
   )
 
   y4 <- list(
@@ -92,14 +92,15 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
 
   observed_data <- load_swap_observed(project_path, verbose = verbose)
   observed_data <- observed_data$data
-  obs_cols <- observed_data[-1] %>% colnames() %>% paste0("obs",.)
+  obs_cols_names <- observed_data[-1] %>% colnames()
+  obs_cols <- paste0("obs",obs_cols_names)
   colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
 
   modelled_data <- read_swap_output(project_path)
   modelled_data <- modelled_data$custom_depth
 
   results = left_join(modelled_data, observed_data, by = "DATE")
-
+  colnames_result <- colnames(results)
   # grabs the depths at which we have observed data for
   depths = get_swap_depths(data = results)
 
@@ -110,7 +111,7 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   fig <- plot_ly(data = results)
 
   # width of the graph
-  graph_domain = c(.079, .87)
+  graph_domain = c(0.079, 0.87)
 
   # Rain ----
   # rain gets added to the base plot first.
@@ -120,7 +121,7 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   #     -- on second thought, this might not be necessary..
 
   # find the RAIN column index
-  obs_index = colnames(results) %>% grepl(x = ., paste0("\\bRAIN\\b")) %>% which()
+  obs_index <- grepl(x = colnames_result, paste0("\\bRAIN\\b")) %>% which()
 
   # add the first trace to the graph
   fig <-
@@ -132,9 +133,9 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
       visible = if("RAIN" %in% show){""}else{"legendonly"},
       marker = list(
         color = "steelblue4",
-        opacity = .6,
+        opacity = 0.6,
         line = list(color = 'black',
-                    width = .5)
+                    width = 0.5)
       )
     )
 
@@ -158,8 +159,9 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
 
     # finds the column index of the modeled and observed WC. \\b is a flag for
     # exact match
-    mod_index = colnames(results) %>% grepl(x = ., paste0("\\bWC_",depth,"\\b")) %>% which()
-    obs_index = colnames(results) %>% grepl(x = ., paste0("\\bobsWC_",depth,"\\b")) %>% which()
+
+    mod_index =  grepl(x = colnames_result, paste0("\\bWC_",depth,"\\b")) %>% which()
+    obs_index =  grepl(x = colnames_result, paste0("\\bobsWC_",depth,"\\b")) %>% which()
 
     # If a column has been found for the modeled WC, then add the trace.
     # line = list() is required because we need use custom colors
@@ -202,9 +204,9 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
 
     if ("TEMP" %in% vars) {
       temp_palette <- colorRampPalette(c("darkolivegreen", "forestgreen", "green1"))
-      temp_color = temp_palette(length(depths))[which(depth == depths)]
-      mod_index = colnames(results) %>% grepl(x = ., paste0("\\bTEMP_", depth, "\\b")) %>% which()
-      obs_index = colnames(results) %>% grepl(x = ., paste0("\\bobsTEMP_", depth, "\\b")) %>% which()
+      temp_color <- temp_palette(length(depths))[which(depth == depths)]
+      mod_index <- grepl(x = colnames_result, paste0("\\bTEMP_", depth, "\\b")) %>% which()
+      obs_index <- grepl(x = colnames_result, paste0("\\bobsTEMP_", depth, "\\b")) %>% which()
 
   if(length(mod_index)>0){
     fig <-
@@ -241,8 +243,8 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   if("H" %in% vars){
     h_palette <- colorRampPalette(c("deeppink4","deeppink2","magenta" ))
     h_color = h_palette(length(depths))[which(depth == depths)]
-    mod_index = colnames(results) %>% grepl(x = ., paste0("\\bH_",depth,"\\b")) %>% which()
-    obs_index = colnames(results) %>% grepl(x = ., paste0("\\bobsH_",depth,"\\b")) %>% which()
+    mod_index =  grepl(x = colnames_result, paste0("\\bH_",depth,"\\b")) %>% which()
+    obs_index =  grepl(x = colnames_result, paste0("\\bobsH_",depth,"\\b")) %>% which()
 
     if(length(mod_index)>0){
       fig <-
@@ -280,8 +282,8 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
  # the non-depth dependent variables get added after the loop.
   # Drainage ----
   if("DRAINAGE" %in% vars){
-  mod_index = colnames(results) %>% grepl(x = ., paste0("\\bDRAINAGE\\b")) %>% which()
-  obs_index = colnames(results) %>% grepl(x = ., paste0("\\bobsDRAINAGE\\b")) %>% which()
+  mod_index =  grepl(x = colnames_result, paste0("\\bDRAINAGE\\b")) %>% which()
+  obs_index =  grepl(x = colnames_result, paste0("\\bobsDRAINAGE\\b")) %>% which()
 
   if(length(mod_index)>0){
     fig <-
