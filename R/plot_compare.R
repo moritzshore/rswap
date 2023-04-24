@@ -40,7 +40,8 @@ rswap_plot_compare <- function(project_path, variable, depth =  NULL, verbose = 
 
   # find out how many total runs there are, and then create a color palette
   # with that amount of colors.
-  custom_colors = master_df$run %>% unique() %>% length() %>% color_palette(.)
+  colors_needed <- master_df$run %>% unique() %>% length()
+  custom_colors <- color_palette(colors_needed)
 
   # create a base plot with the custom color palette
   plotly_plot <- plotly::plot_ly(colors = custom_colors)
@@ -48,7 +49,7 @@ rswap_plot_compare <- function(project_path, variable, depth =  NULL, verbose = 
   # add observed trace
   plotly_plot <-
     plotly_plot %>% plotly::add_trace(
-      data = master_df %>% dplyr::filter(tag == "observed"),
+      data = master_df %>% dplyr::filter(.data$tag == "observed"),
       x = ~ DATE,
       y = ~ value,
       name = "observed",
@@ -65,7 +66,7 @@ rswap_plot_compare <- function(project_path, variable, depth =  NULL, verbose = 
   # add the most recent run
   plotly_plot <-
     plotly_plot %>% plotly::add_trace(
-      data = master_df %>% dplyr::filter(tag == "present"),
+      data = master_df %>% dplyr::filter(.data$tag == "present"),
       x = ~ DATE,
       y = ~ value,
       name = "Current Run",
@@ -78,7 +79,7 @@ rswap_plot_compare <- function(project_path, variable, depth =  NULL, verbose = 
   # add all the previous runs
   plotly_plot <-
     plotly_plot %>% plotly::add_trace(
-      data = master_df %>% dplyr::filter(tag == "past"),
+      data = master_df %>% dplyr::filter(.data$tag == "past"),
       x = ~ DATE,
       y = ~ value,
       name = ~ run,

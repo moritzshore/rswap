@@ -8,17 +8,21 @@
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% .data
 #' @importFrom crayon blue underline green
 #'
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 #'
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
+
 #' # This example code will not be executed as it needs to write files!
-#' # build_rswap_directory(example_path, verbose = T)
+#' # build_rswap_directory(example_path, verbose = TRUE)
 
 build_rswap_directory <- function(project_path, verbose = F){
 
@@ -34,7 +38,7 @@ build_rswap_directory <- function(project_path, verbose = F){
   # list files found in project path (Note, this includes all the saved runs as
   # well, which we dont want, which is why we need to remove them)
   file_list <- list.files(project_path, full.names = T, recursive = T)
-  ignore <- file_list %>% grepl(x=., "\\b/rswap_saved/\\b") %>% which()
+  ignore <-  grepl(x = file_list, "\\b/rswap_saved/\\b") %>% which()
   # only remove files if they actually need to be, because if you do this
   # with an empty vector, it will delete ALL the files
   if(length(ignore)>0){
@@ -55,7 +59,7 @@ build_rswap_directory <- function(project_path, verbose = F){
       "*.irg",
       "*.ini")
   match_string <- paste(file_types, collapse = "|")
-  required_files <- file_list %>% grepl(x = ., match_string) %>% which()
+  required_files <- grepl(x = file_list, match_string) %>% which()
   required_file_list <- file_list[required_files]
 
   # create the temp directory
@@ -103,13 +107,14 @@ build_rswap_directory <- function(project_path, verbose = F){
 #' @keywords internal
 #'
 #' @returns Returns the SWAP parameter dataframe with modified path values
+#' @importFrom utils packageVersion
 update_swap_paths <- function(project_path, swap_exe,
                              parameters, verbose = F) {
 
-    version <- packageVersion("rswap") %>% as.character() %>% enc2utf8()
+    version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
     # parse the various paths
-    rswap_dir <- project_path %>% paste0(.,"/rswap/")
+    rswap_dir <- paste0(project_path, "/rswap/")
     swap_exe_name <- swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
@@ -162,11 +167,15 @@ update_swap_paths <- function(project_path, swap_exe,
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+#'
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
 #' # this will throw a warning if "example_run" already exists (which it does)
-#' save_swap_run(example_path, run_name = "example_run", verbose = T)
+#' save_swap_run(example_path, run_name = "example_run", verbose = TRUE)
 save_swap_run <- function(project_path, run_name = NULL, verbose = F){
   # TODO change the name of this function to save_swap_run()
 
@@ -216,7 +225,7 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' It is critical that the template observed file is filled out correctly.
 #' Please see the file itself for more information. It should be located in
-#' your project directory, and must bear the namer `swap_observed_data.csv`.
+#' your project directory, and must bear the name `swap_observed_data.csv`.
 #'
 #' Please note, the file type will eventually be switched to .csv.
 #'
@@ -235,10 +244,15 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 #'
-#' load_swap_observed(example_path, archived = F, verbose = T)
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
+#'
+#' load_swap_observed(example_path, verbose = TRUE)
+#' @importFrom readr read_csv
 load_swap_observed <- function(project_path, archived = F, verbose = F){
 
   if(archived){
@@ -250,7 +264,7 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
   data <- readr::read_csv(file = path, show_col_types = F)
   columns <- colnames(data)
 
-  date_col <- columns %>% grepl(x = ., "DATE") %>% which()
+  date_col <- grepl(x = columns, "DATE") %>% which()
   obs_cols <- columns[-date_col]
 
   col_sep <- obs_cols %>% str_split("_") %>% unlist()
@@ -293,10 +307,15 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 #'
-#' read_swap_output(example_path, archived = F)
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
+#'
+#' read_swap_output(example_path)
+#' @importFrom utils read.table
 read_swap_output <-  function(project_path, archived = F){
   #TODO add verbose
   #TODO rewrite to return ALL SWAP output.
@@ -313,7 +332,7 @@ read_swap_output <-  function(project_path, archived = F){
     path_tz <- glue("{project_path}/rswap/result_output_tz.csv")
   }
 
-  result_output <- read.table(
+  result_output <- utils::read.table(
     path,
     comment.char = "*",
     sep = ",",
@@ -327,7 +346,7 @@ read_swap_output <-  function(project_path, archived = F){
   new_cols <- result_output %>% colnames() %>% str_replace("\\..", "_") %>% str_remove("\\.")
   colnames(result_output) <- new_cols
 
-  result_daily <- read.table(
+  result_daily <- utils::read.table(
     path_tz,
     comment.char = "*",
     sep = ",",
@@ -348,7 +367,7 @@ read_swap_output <-  function(project_path, archived = F){
 #' accessible.
 #'
 #' @param data as given by `load_observed()$data` or `read_swap_output()$custom_depth` (dataframe)
-#' @param var name(s) of the variables you would like to select, leave blank for all. (string)
+#' @param variable name(s) of the variables you would like to select, leave blank for all. (string)
 #' @param depth value(s) of the depths you would like to select, leave blank for all. (numeric)
 #'
 #' @returns Returns a dataframe with a `DATE` column, followed by the desired data.
@@ -360,26 +379,31 @@ read_swap_output <-  function(project_path, archived = F){
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#'
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+#'
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
 #' # load some SWAP data (either observed, or modeled using read_swap_output())
-#' data <- load_swap_observed(project_path = example_path, verbose = T)
+#' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
 #' filter_swap_data(data$data, var = "WC", depth = "15")
 #'
-filter_swap_data <- function(data, var = NULL, depth = NULL){
+filter_swap_data <- function(data, variable = NULL, depth = NULL){
   #TODO add verbose?
-  if(var %>% is.null() == FALSE){
-    var <- var %>% toupper()
+  if(variable %>% is.null() == FALSE){
+    variable <- variable %>% toupper()
   }
 
   colz <- data %>% colnames() %>% toupper()
 
   # need to find the desired var columns, if a var was passed
-  if (var %>% is.null() == FALSE) {
+  if (variable %>% is.null() == FALSE) {
     # using this function because grepl() cannot handle more than one pattern.
-    find <- stri_extract_all_regex(str = colz, pattern = paste(var, collapse = "|")) %>%
+    find <- stri_extract_all_regex(str = colz, pattern = paste(variable, collapse = "|")) %>%
       unlist() %>% is.na()
     relevant_var_cols <- (find == FALSE) %>% which()
   } else{
@@ -402,27 +426,27 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
   # switchboard, determining priority of union of depth and var
 
   # if both were left blank, then return all, but only unique
-  if(depth %>% is.null() & var %>% is.null()){
+  if(depth %>% is.null() & variable %>% is.null()){
     union <- c(relevant_depth_cols, relevant_var_cols) %>% unique()
   }
 
   # if depth was given, but variable was not, return all the depth cols
-  if(depth %>% is.null() == FALSE & var %>% is.null()){
+  if(depth %>% is.null() == FALSE & variable %>% is.null()){
     union <- relevant_depth_cols
   }
 
   # if var was given but not depth, return all the var cols
-  if(depth %>% is.null() & var %>% is.null() == FALSE){
+  if(depth %>% is.null() & variable %>% is.null() == FALSE){
     union <- relevant_var_cols
   }
 
   # if both depth and var were given, then return their intersection
-  if(depth %>% is.null() == FALSE & var %>% is.null() == FALSE){
+  if(depth %>% is.null() == FALSE & variable %>% is.null() == FALSE){
     union <- intersect(relevant_var_cols, relevant_depth_cols)
   }
 
   # build the filtered DF and return it.
-  perf_mod <- data %>% select(DATE, all_of(union))
+  perf_mod <- data %>% select("DATE", all_of(union))
   perf_mod %>% return()
 }
 
@@ -439,11 +463,15 @@ filter_swap_data <- function(data, var = NULL, depth = NULL){
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+#'
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
 #' # load some SWAP data (either observed, or modeled using read_swap_output())
-#' data <- load_swap_observed(project_path = example_path, verbose = T)
+#' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
 #' get_swap_depths(data$data, variable = "TEMP")
 #'
@@ -496,10 +524,14 @@ get_swap_depths <- function(data, variable = NULL) {
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 #'
-#' match_swap_data(example_path, "WC", depth = 15, verbose = T, archived = F)
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
+#'
+#' match_swap_data(example_path, "WC", depth = 15, verbose = TRUE)
 match_swap_data <- function(project_path, variable, depth = NULL,
                           verbose = F, archived = F) {
 
@@ -517,10 +549,10 @@ match_swap_data <- function(project_path, variable, depth = NULL,
   modelled_data <- read_swap_output(project_path = project_path, archived = archived)
 
   observed_data_filtered <-filter_swap_data(data = observed_data$data,
-                                            var = variable, depth = depth)
+                                            variable = variable, depth = depth)
 
   modelled_data_filtered <-filter_swap_data(data = modelled_data$custom_depth,
-                                            var = variable, depth = depth)
+                                            variable = variable, depth = depth)
 
   # sort them to be in consistent order
   obs_new_order = observed_data_filtered %>% colnames() %>% sort()
@@ -574,17 +606,21 @@ match_swap_data <- function(project_path, variable, depth = NULL,
 #' @export
 #'
 #' @examples
-#' # path to sample results
-#' example_path <- "./inst/extdata/rswap_example_output"
+#' # path to sample results (only for package internal example, you don't need
+#' # this function)
+#' example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 #'
-#' melt_swap_runs(example_path, "WC", depth = 15, verbose = T)
+#' # in your own projects, you would use something like this:
+#' # example_path <- "C:/path/to/swap_folder/example_project"
+#'
+#' melt_swap_runs(example_path, "WC", depth = 15, verbose = TRUE)
 melt_swap_runs <-
   function(project_path,
            variable,
            depth = NULL,
            verbose = F) {
 
-    observed_file_path <- glue("{project_path}/rswap_observed_data.csv")
+    observed_file_path <- glue::glue("{project_path}/rswap_observed_data.csv")
     file_path <-  paste0(project_path, "/rswap_saved/")
     past_run_names <- list.files(path = file_path)
     past_run_paths <- list.files(path = file_path, full.names = T)
@@ -595,20 +631,30 @@ melt_swap_runs <-
     }
 
     result_files <- paste0(past_run_paths, "/result_output.csv")
-    # TODO remove . x2
-    past_run_df <- result_files %>% map_df(., ~ vroom(.x, id = "path", show_col_types = F, delim = ",", comment = "*"))
-    new_col_names <- past_run_df %>% colnames() %>% str_remove_all("]") %>% str_remove_all("\\[") %>% str_replace_all("-", "_")
-    new_col_names <- new_col_names %>% str_replace_all("DATETIME", "DATE")
-    new_col_names <- new_col_names %>% str_replace_all("path", "RUN")
+
+    past_run_df <-
+      purrr::map_df(
+        .x = result_files,
+        .f = ~ vroom::vroom(
+          file = result_files,
+          delim = ",",
+          comment = "*",
+          id = "path",
+          show_col_types = F
+        )
+      )
+    new_col_names <- past_run_df %>% colnames() %>% stringr::str_remove_all("]") %>% stringr::str_remove_all("\\[") %>% stringr::str_replace_all("-", "_")
+    new_col_names <- new_col_names %>% stringr::str_replace_all("DATETIME", "DATE")
+    new_col_names <- new_col_names %>% stringr::str_replace_all("path", "RUN")
     colnames(past_run_df) <- new_col_names
-    run_names <- past_run_df$RUN %>% str_remove(project_path) %>% str_remove("/rswap_saved/") %>% str_remove("/result_output.csv")
-    past_run_df <- past_run_df %>% select(-RUN)
+    run_names <- past_run_df$RUN %>% stringr::str_remove(project_path) %>% stringr::str_remove("/rswap_saved/") %>% stringr::str_remove("/result_output.csv")
+    past_run_df <- past_run_df %>% dplyr::select(-"RUN")
 
     # We remove RAIN, because it overlaps with "DRAINAGE" but this needs to be
     # fixed properly.. somewhere I need to add the '\bVARNAME\b" flags to fix this
     # TODO!
-    past_run_df <- past_run_df %>% select(-RAIN)
-    past_run_df <- filter_swap_data(past_run_df, var = variable, depth = depth)
+    past_run_df <- past_run_df %>% select(-"RAIN")
+    past_run_df <- filter_swap_data(past_run_df, variable = variable, depth = depth)
 
     if(length(past_run_df) == 1){
       stop("something went wrong... no data was selected in:\n",
@@ -618,11 +664,11 @@ melt_swap_runs <-
     past_run_df$tag <- "past"
     past_run_df$run <- run_names
     present_run_df <- read_swap_output(project_path)
-    present_run_df <- filter_swap_data(present_run_df$custom_depth, var = variable, depth = depth)
+    present_run_df <- filter_swap_data(present_run_df$custom_depth, variable = variable, depth = depth)
     present_run_df$tag = "present"
     present_run_df$run = "current run"
     observed_data <- load_swap_observed(project_path, verbose = verbose)
-    observed_data <- filter_swap_data(observed_data$data, var = variable, depth = depth)
+    observed_data <- filter_swap_data(observed_data$data, variable = variable, depth = depth)
     observed_data$tag = "observed"
     observed_data$run = "observed"
     full_df <- rbind(past_run_df, present_run_df, observed_data)
