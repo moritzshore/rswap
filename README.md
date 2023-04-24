@@ -251,7 +251,7 @@ The aforementioned functions rely on more basic general functions which, while a
 ``` r
 # Load data
 ob_dat <- load_observed(project_path)
-mod_dat <- read_swap_output(project_path)
+mod_dat <- load_swap_output(project_path)
 
 # Filters SWAP data (observed or modelled) by variable and depth
 mod_filt <- filter_swap_data(data = mod_dat$custom_depth, var = "WC", depth = 15)
@@ -293,9 +293,9 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   Renovate `soft_calibration_plot()` to accept any variable using the new system.
 -   Add D-Statistic from Moriasi et al 2015.
 -   Load observed data into package environment, to prevent the need for constant re-loading
--   Add `verbose` to `read_swap_output()` and rename to `load_swap_output()`
+-   Add `verbose` to `load_swap_output()`
 -   Add support for reading saved runs with differing output.
--   `load_swap_data()` to return just the dataframe, add a dedicated function for var names
+-   `load_swap_observed()` to return just the dataframe, add a dedicated function for var names
 
 ## Support and Contributing <a name="support"></a>
 
