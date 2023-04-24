@@ -1,6 +1,33 @@
 # creates a package wide enviroment to store SWAPtools data in. (hopefully)
 SWAPtools_env <- new.env(parent = emptyenv())
 
+#' Install SWAPtools
+#'
+#' Installs SWAPtools from `waterwijzerlandbouw.wur.nl/repo`
+#'
+#' @returns returns `TRUE` if package is already installed, or if installation
+#' was successful. returns `FALSE` if installation failed.
+#'
+#' @keywords internal
+#'
+install_SWAPtools <- function() {
+  if ("SWAPtools" %in% utils::installed.packages()) {
+    return(TRUE)
+  } else{
+    cat("SWAPtools is required for this functionality. Installing...\n")
+
+    utils::install.packages(pkg = "SWAPtools",
+                            dependencies = TRUE,
+                            repos = "https://waterwijzerlandbouw.wur.nl/repo",)
+    if ("SWAPtools" %in% utils::installed.packages()) {
+      cat("SWAPtools installed succesfully\n")
+      return(TRUE)
+    } else{
+      stop("SWAPtools install unsuccessful! \nYou can try installing the package manually from the SWAP website.")
+      return(FALSE)
+    }
+  }
+}
 
 #' Loads the SWAPtools variables database
 #'
@@ -9,7 +36,6 @@ SWAPtools_env <- new.env(parent = emptyenv())
 #' individual environments.
 #'
 #' @importFrom crayon yellow bold
-#' @importFrom SWAPtools get_value_SWAP
 #'
 #' @returns returns `TRUE` if database has been loaded (for now just SWAPtools_variables.rds)
 #' and `FALSE` if it has not been loaded.
@@ -19,7 +45,8 @@ SWAPtools_env <- new.env(parent = emptyenv())
 load_variables_db <- function() {
   # check if SWAPtools was installed correctly.
   if ("SWAPtools" %in% utils::installed.packages() == FALSE) {
-    stop("SWAPtools not installed")
+    status <- install_SWAPtools()
+    if(status==FALSE){stop("SWAPtools not installed")}
   }
 
   if (exists("SWAPtools_env")) {
@@ -92,6 +119,10 @@ get_swap_format <- function(parameters) {
 set_swap_format <- function(parameter, value){
 
   # check if the database was loaded successfully
+  ST <- install_SWAPtools()
+  if (ST == FALSE) {
+    stop("SWAPtools is required for this functionality!")
+  }
   status <- load_variables_db()
   if (status == FALSE) {
     stop("SWAPtools variable database could not be loaded!")

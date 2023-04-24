@@ -29,7 +29,6 @@ Imports:
     readr,
     stringi,
     stringr,
-    SWAPtools,
     tibble,
     tidyr,
     utils,
