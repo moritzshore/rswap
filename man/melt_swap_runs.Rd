@@ -29,8 +29,12 @@ This is once again an internal function that is made available due to it
 possibly being useful for the end user.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 
-melt_swap_runs(example_path, "WC", depth = 15, verbose = T)
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
+
+melt_swap_runs(example_path, "WC", depth = 15, verbose = TRUE)
 }

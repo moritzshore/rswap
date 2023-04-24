@@ -34,8 +34,12 @@ in the same format, such that it is easy to pass them to performance indicators.
 This function is available since it might be of use to the end user.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 
-match_swap_data(example_path, "WC", depth = 15, verbose = T, archived = F)
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
+
+match_swap_data(example_path, "WC", depth = 15, verbose = TRUE)
 }

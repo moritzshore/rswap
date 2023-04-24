@@ -24,13 +24,17 @@ in your project directory either by \code{build_rswap_directory()} or \code{rswa
 \details{
 It is critical that the template observed file is filled out correctly.
 Please see the file itself for more information. It should be located in
-your project directory, and must bear the namer \code{swap_observed_data.csv}.
+your project directory, and must bear the name \code{swap_observed_data.csv}.
 
 Please note, the file type will eventually be switched to .csv.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 
-load_swap_observed(example_path, archived = F, verbose = T)
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
+
+load_swap_observed(example_path, verbose = TRUE)
 }

@@ -28,14 +28,14 @@ This function plots a single SWAP \code{variable} at any given \code{depth}. If 
 are provided, all available depths are used. This plot can also be
 interactive if \code{interactive = TRUE}
 }
-\details{
-The non-interactive version of this plot uses \code{ggbraid}, which the function
-will attempt to install from github if it is not already installed.
-}
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
-# Plot example path, with variable "WC" and all available depths
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
+
 rswap_plot_variable(example_path, variable = "WC")
 
 }

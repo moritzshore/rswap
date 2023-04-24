@@ -24,8 +24,12 @@ Currently, the function only returns the data needed by the rest of the
 package, but this will be expanded over time to return all SWAP output
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 
-read_swap_output(example_path, archived = F)
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
+
+read_swap_output(example_path)
 }
