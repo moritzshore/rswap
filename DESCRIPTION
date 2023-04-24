@@ -29,12 +29,11 @@ Imports:
     readr,
     stringi,
     stringr,
-    SWAPtools,
     tibble,
     tidyr,
     utils,
     vroom
-Remotes: github::nsgrantham/ggbraid, url::https://waterwijzerlandbouw.wur.nl/repo/SWAPtools
+Remotes: github::nsgrantham/ggbraid
 Suggests: 
     devtools,
     rmarkdown,
