@@ -7,7 +7,7 @@
 filter_swap_data(data, variable = NULL, depth = NULL)
 }
 \arguments{
-\item{data}{as given by \code{load_observed()$data} or \code{read_swap_output()$custom_depth} (dataframe)}
+\item{data}{as given by \code{load_observed()$data} or \code{load_swap_output()$custom_depth} (dataframe)}
 
 \item{variable}{name(s) of the variables you would like to select, leave blank for all. (string)}
 
@@ -30,7 +30,7 @@ example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 # in your own projects, you would use something like this:
 # example_path <- "C:/path/to/swap_folder/example_project"
 
-# load some SWAP data (either observed, or modeled using read_swap_output())
+# load some SWAP data (either observed, or modeled using load_swap_output())
 data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 
 filter_swap_data(data$data, var = "WC", depth = "15")

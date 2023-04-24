@@ -314,9 +314,9 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 #' # in your own projects, you would use something like this:
 #' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
-#' read_swap_output(example_path)
+#' load_swap_output(example_path)
 #' @importFrom utils read.table
-read_swap_output <-  function(project_path, archived = F){
+load_swap_output <-  function(project_path, archived = F){
   #TODO add verbose
   #TODO rewrite to return ALL SWAP output.
 
@@ -366,7 +366,7 @@ read_swap_output <-  function(project_path, archived = F){
 #' and variable. It might be useful for end users as well, which is why its
 #' accessible.
 #'
-#' @param data as given by `load_observed()$data` or `read_swap_output()$custom_depth` (dataframe)
+#' @param data as given by `load_observed()$data` or `load_swap_output()$custom_depth` (dataframe)
 #' @param variable name(s) of the variables you would like to select, leave blank for all. (string)
 #' @param depth value(s) of the depths you would like to select, leave blank for all. (numeric)
 #'
@@ -387,7 +387,7 @@ read_swap_output <-  function(project_path, archived = F){
 #' # in your own projects, you would use something like this:
 #' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
-#' # load some SWAP data (either observed, or modeled using read_swap_output())
+#' # load some SWAP data (either observed, or modeled using load_swap_output())
 #' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
 #' filter_swap_data(data$data, var = "WC", depth = "15")
@@ -470,7 +470,7 @@ filter_swap_data <- function(data, variable = NULL, depth = NULL){
 #' # in your own projects, you would use something like this:
 #' # example_path <- "C:/path/to/swap_folder/example_project"
 #'
-#' # load some SWAP data (either observed, or modeled using read_swap_output())
+#' # load some SWAP data (either observed, or modeled using load_swap_output())
 #' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
 #' get_swap_depths(data$data, variable = "TEMP")
@@ -546,7 +546,7 @@ match_swap_data <- function(project_path, variable, depth = NULL,
   }
 
   observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived)
-  modelled_data <- read_swap_output(project_path = project_path, archived = archived)
+  modelled_data <- load_swap_output(project_path = project_path, archived = archived)
 
   observed_data_filtered <-filter_swap_data(data = observed_data$data,
                                             variable = variable, depth = depth)
@@ -663,7 +663,7 @@ melt_swap_runs <-
 
     past_run_df$tag <- "past"
     past_run_df$run <- run_names
-    present_run_df <- read_swap_output(project_path)
+    present_run_df <- load_swap_output(project_path)
     present_run_df <- filter_swap_data(present_run_df$custom_depth, variable = variable, depth = depth)
     present_run_df$tag = "present"
     present_run_df$run = "current run"
@@ -733,7 +733,7 @@ rswap_init <- function(swap_exe){
   }
 
   data <- load_swap_observed(example_path, verbose = T)
-  mod <- read_swap_output(example_path)
+  mod <- load_swap_output(example_path)
 
   if(mod[[1]] %>% is.data.frame()){
     cat("\nloading SWAP output... success!\n")
