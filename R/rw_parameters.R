@@ -23,17 +23,19 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
   path <- paste0(project_path, "/", swap_file)
   swp <- readLines(path)
   # remove all the comment lines starting with *,
-  comment_lines = (swp %>% substr(x = ., 1, 1) == "*") %>% which()
+  comment_lines = (substr(x = swp, 1, 1) == "*") %>% which()
   if (comment_lines %>% length() > 0) {
     swp <- swp[-comment_lines]
   }
   # remove all the comment lines which start with "!"
-  comment_lines2 = (swp %>% stringr::str_trim() %>% substr(x = ., 1, 1) == "!") %>% which()
+  c_lines <- swp %>% stringr::str_trim()
+  comment_lines2 = (substr(x = c_lines, 1, 1) == "!") %>% which()
   if (comment_lines2 %>% length() > 0) {
     swp <- swp[-comment_lines2]
   }
   # remove any empty lines
-  empty_lines = (swp %>% stringr::str_trim() %>% substr(x = ., 1, 1) == "") %>% which()
+  c_lines <- swp %>% stringr::str_trim()
+  empty_lines = (substr(x = c_lines, 1, 1) == "") %>% which()
   if (empty_lines %>% length() > 0) {
     swp <- swp[-empty_lines]
   }
@@ -127,8 +129,8 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
     # parameters  always have an equal sign in their line, so we can use this
     # to identify them
-    is_param <- line %>% grepl(x = ., "=")
-    is_table <- (line %>% grepl(x = ., "=") == FALSE)
+    is_param <- grepl(x = line, "=")
+    is_table <- (grepl(x = line, "=") == FALSE)
     special_case <- FALSE
 
     # the routine for if its a parameter:
@@ -302,9 +304,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   # Append tables
-  tables<-load_swap_tables(project_path = project_path,
-                           swap_file = swap_file,
-                           verbose = verbose)
+  tables<-load_swap_tables(project_path = project_path, verbose = verbose)
   for (table in tables) {
     utils::write.table(
       table,
@@ -335,8 +335,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   # Write vectors
-  vectors <- load_swap_vectors(project_path = project_path,
-                               swap_file = swap_file, verbose = verbose)
+  vectors <- load_swap_vectors(project_path = project_path, verbose = verbose)
   for (vector in vectors) {
 
     utils::write.table(
@@ -577,15 +576,12 @@ change_swap_parameter <- function(param, name, value, verbose = F){
 #' @importFrom readr read_csv
 load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
-  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
-    warning("[rswap] project has not been parsed yet. Doing so now with '",
-            swap_file, "'")
+  if (dir.exists(paste0(project_path, "/rswap/")) == FALSE) {
+    warning("[rswap] project has not been parsed yet. Doing so now with '", swap_file, "'")
     p <- parse_swap_file(project_path, swap_file, verbose = T)
   }
 
-
-  table_path <- paste0(project_path,"/rswap/tables/")
-
+  table_path <- paste0(project_path, "/rswap/tables/")
   files <- list.files(table_path, full.names = T)
   file_names <- list.files(table_path, full.names = F) %>% stringr::str_remove(".csv")
 
@@ -597,14 +593,12 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
     readr::read_csv(file = x, col_names = T, col_types = readr::cols(.default = "c"), quote = '"')
   }
 
-  table_list <- files %>% purrr::map(., custom_read)
+  table_list <- purrr::map(files, custom_read)
 
   names(table_list) <- file_names
 
   if (verbose) {
-    cat("\U0001f4d6",
-        blue("SWAP table set loaded."),
-        "\n")
+    cat("\U0001f4d6", blue("SWAP table set loaded."), "\n")
   }
 
   table_list %>% return()
@@ -640,7 +634,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
   if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
     warning("[rswap] project has not been parsed yet. Doing so now with '",
             swap_file, "'")
-    p <- parse_swap_file(project_path, swap_file, verbose = verbsose)
+    p <- parse_swap_file(project_path, swap_file, verbose = verbose)
   }
 
   vector_path <- paste0(project_path, "/rswap/vectors/")
@@ -655,7 +649,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
     readr::read_csv(file = x, col_names = T, col_types = readr::cols(.default = "c"), quote = '"')
   }
 
-  vector_list <- files %>% purrr::map(., custom_read)
+  vector_list <- purrr::map(files, custom_read)
 
   names(vector_list) <- file_names
 
@@ -844,7 +838,8 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
 change_swap_table <- function(table, variable, row, value, verbose = F){
 
   # \\b for exact match of var name.
-  table_match <- names(table) %>% stringr::str_split("-") %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
+  table_names <- names(table) %>% stringr::str_split("-")
+  table_match <- grepl(x = table_names, paste0("\\b", variable, "\\b")) %>% which()
 
   if((table_match %>% length()) > 1){
     stop("[rswap] more than one table has this variable '",variable,"' this should never happen, report to maintainer!")
@@ -887,7 +882,8 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 #'
 change_swap_vector <- function(vector, index, value, variable = NULL, verbose = F){
 
-  vector_match <- names(vector) %>% grepl(x = ., paste0("\\b",variable,"\\b")) %>% which()
+  vector_names <- names(vector)
+  vector_match <-grepl(x = vector_names, paste0("\\b", variable, "\\b")) %>% which()
 
   if((vector_match %>% length()) > 1){
     stop("[rswap] more than one vector has this variable '",variable,"' this should never happen, report to maintainer!")

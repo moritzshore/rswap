@@ -36,23 +36,23 @@ melt_swap_data <- function(project_path, variable = NULL, depth = NULL, verbose 
   mod_melt <- matched$mod %>% tidyr::pivot_longer(cols = colnames(matched$obs)[-1])
   obs_melt <- matched$obs %>% tidyr::pivot_longer(cols = colnames(matched$obs)[-1])
 
-  var <- obs_melt %>% dplyr::select(name) %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(1) %>% unlist()
-  depth <- obs_melt %>% dplyr::select(name) %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(2) %>% unlist() %>% as.numeric()
+  var <- obs_melt %>% dplyr::select("name") %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(1) %>% unlist()
+  depth <- obs_melt %>% dplyr::select("name") %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(2) %>% unlist() %>% as.numeric()
 
   obs_melt$var <- var
   obs_melt$depth <- depth
-  obs_melt <- obs_melt %>% dplyr::select(-name)
+  obs_melt <- obs_melt %>% dplyr::select(-"name")
   obs_melt$type = "obs"
 
   # repeat above code for mod
   mod_melt <- matched$mod %>% tidyr::pivot_longer(cols = colnames(matched$obs)[-1])
 
-  var <- mod_melt %>% dplyr::select(name) %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(1) %>% unlist()
-  depth <- mod_melt %>% dplyr::select(name) %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(2) %>% unlist() %>% as.numeric()
+  var <- mod_melt %>% dplyr::select("name") %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(1) %>% unlist()
+  depth <- mod_melt %>% dplyr::select("name") %>% dplyr::pull() %>% stringr::str_split("_") %>% purrr::map(2) %>% unlist() %>% as.numeric()
 
   mod_melt$var <- var
   mod_melt$depth <- depth
-  mod_melt <- mod_melt %>% dplyr::select(-name)
+  mod_melt <- mod_melt %>% dplyr::select(-"name")
   mod_melt$type = "mod"
 
   full_melt <- rbind(obs_melt, mod_melt)

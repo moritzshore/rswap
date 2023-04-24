@@ -12,11 +12,13 @@ Description: R-based interface for calibrating the SWAP model (among other
 License: GPL (>= 3)
 URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
+Language: English
 Depends: 
     R (>= 4.0)
 Imports: 
     crayon,
     dplyr,
+    ggbraid,
     ggplot2,
     ggpubr,
     glue,
@@ -27,9 +29,12 @@ Imports:
     readr,
     stringi,
     stringr,
+    SWAPtools,
     tibble,
     tidyr,
+    utils,
     vroom
+Remotes: github::nsgrantham/ggbraid, url::https://waterwijzerlandbouw.wur.nl/repo/SWAPtools
 Suggests: 
     devtools,
     rmarkdown,

@@ -15,9 +15,12 @@ build_rswap_directory(project_path, verbose = F)
 Makes a temporary sub-directory workspace for the package to run SWAP in.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
 # This example code will not be executed as it needs to write files!
-# build_rswap_directory(example_path, verbose = T)
+# build_rswap_directory(example_path, verbose = TRUE)
 }

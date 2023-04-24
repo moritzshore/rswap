@@ -19,11 +19,15 @@ Extracts the numeric depth values found in the observed data, as loaded by
 \code{load_observed()}. Can be filtered by \code{variable}.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
 
 # load some SWAP data (either observed, or modeled using read_swap_output())
-data <- load_swap_observed(project_path = example_path, verbose = T)
+data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 
 get_swap_depths(data$data, variable = "TEMP")
 

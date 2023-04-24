@@ -6,7 +6,7 @@
 #' performance indicator `stat` (Currently supported are "NSE", "RMSE", "PBIAS", "RSR")
 #'
 #' @param project_path path to project directory (string)
-#' @param var variable to show (string)
+#' @param variable variable to show (string)
 #' @param depth depth(s) to show. Leave blank for all (numeric/vector)
 #' @param graph either "default" "sorted" or "ggplot" leave blank for default (string)
 #' @param stat statistical indicator function ("NSE", "RMSE", "PBIAS", "RSR") (string)
@@ -17,11 +17,13 @@
 #' @importFrom stringr str_split
 #' @importFrom glue glue
 #' @importFrom plotly plot_ly add_trace layout hide_colorbar
+#' @importFrom grDevices colorRampPalette
+#' @importFrom utils tail
 #'
 #' @export
 #'
 rswap_plot_performance <-
-  function(project_path, var, depth =  NULL, graph = "default",stat = "NSE",
+  function(project_path, variable, depth =  NULL, graph = "default",stat = "NSE",
            verbose = F) {
 
   graph = graph %>% tolower()
@@ -32,12 +34,12 @@ rswap_plot_performance <-
     }
 
   # extract the run name from the data package
-  current_run <- project_path %>% str_split("./") %>% unlist() %>% tail(1)
-  save_path <- glue("{project_path}/rswap_saved/")
-  obs_dat <- load_observed(project_path)
+  current_run <- project_path %>% stringr::str_split("./") %>% unlist() %>% utils::tail(1)
+  save_path <- glue::glue("{project_path}/rswap_saved/")
+  obs_dat <- load_swap_observed(project_path)
 
   if(depth %>% is.null()){
-   depth <- get_depths(data = obs_dat$data, variable = var)
+   depth <- get_swap_depths(data = obs_dat$data, variable = variable)
   }
 
   # get a path list of all the previous runs
@@ -51,20 +53,20 @@ rswap_plot_performance <-
   for (file in files) {
 
     # extract the run name from the data package
-    run_name <- file %>% str_split("./") %>% unlist() %>% tail(1)
+    run_name <- file %>% stringr::str_split("./") %>% unlist() %>% utils::tail(1)
 
     if(length(stat)>1){stop("rswap ERROR: please pass only one stat value")}
 
-      performance = get_performance(
+      performance = get_swap_performance(
         project_path = file,
         archived = TRUE,
         stat = stat,
-        variable = var,
+        variable = variable,
         depth = depth,
         verbose = verbose
       )
 
-      mean_perf <- performance[2] %>% pull() %>% mean() %>% round(4)
+      mean_perf <- performance[2] %>% dplyr::pull() %>% mean() %>% round(4)
 
       performance$run = run_name
       performance$mean = mean_perf
@@ -72,21 +74,21 @@ rswap_plot_performance <-
       stat_df <- rbind(stat_df, performance)
   }
 
-  last_run <- get_performance(
+  last_run <- get_swap_performance(
     project_path = project_path,
     stat = stat,
-    variable = var,
+    variable = variable,
     depth = depth,
     verbose = verbose
   )
 
   last_run$run = "last_run"
-  last_run$mean = last_run %>% select(all_of(stat)) %>% pull() %>% mean()
+  last_run$mean = last_run %>% dplyr::select(dplyr::all_of(stat)) %>% dplyr::pull() %>% mean()
 
   stat_df <- rbind(stat_df, last_run)
 
   # color palette
-  palette <- colorRampPalette(c("dodgerblue4","dodgerblue2","deepskyblue"))
+  palette <- grDevices::colorRampPalette(c("dodgerblue4","dodgerblue2","deepskyblue"))
 
   # sort the runs by user stat
   if(stat == "NSE"){
@@ -101,27 +103,27 @@ rswap_plot_performance <-
 
   # interactive default plot
   if (graph == "default") {
-    fig1 <- plot_ly()
+    fig1 <- plotly::plot_ly()
 
     # dont need columns if not depthwise
     if(depth %>% is.null() == FALSE){
-      num_colors = stat_df$var %>% unique() %>% length()
+      num_colors = stat_df$variable %>% unique() %>% length()
       # columns of NSE value per depth
       fig1 <-
-        fig1 %>% add_trace(
+        fig1 %>% plotly::add_trace(
           data = stat_df,
-          color = ~ var,
+          color = ~ variable,
           colors = palette(num_colors),
           x = ~ run,
-          y = ~ stat_df[2] %>% pull(),
-          name = ~ var,
+          y = ~ stat_df[2] %>% dplyr::pull(),
+          name = ~ variable,
           type = 'bar'
         )
     }
 
     # mean of columns as a line
     fig1 <-
-      fig1 %>% add_trace(
+      fig1 %>% plotly::add_trace(
         data = stat_df,
         x = ~ run,
         y = ~  stat_df$mean,
@@ -130,8 +132,8 @@ rswap_plot_performance <-
         type = "scatter"
       )
     # layout settings
-    fig1 %>% layout(
-      title = paste("Statistics for", var),
+    fig1 %>% plotly::layout(
+      title = paste("Statistics for", variable),
       plot_bgcolor = '#e5ecf6',
       autosize = T,
       xaxis = list(categoryorder = "array",
@@ -144,7 +146,7 @@ rswap_plot_performance <-
       )
     ) %>%
       # remove the colorbar legend
-      hide_colorbar() %>%
+      plotly::hide_colorbar() %>%
       # print out the finsihed plot
       print()
   }
@@ -155,23 +157,23 @@ rswap_plot_performance <-
     stat_df_ordered <- stat_df[order(stat_df$mean, decreasing = F),]
 
     # plot
-    fig2 <- plot_ly()
+    fig2 <- plotly::plot_ly()
     # individual columns for each depth
     if(depth %>% is.null() == FALSE){
       fig2 <-
-        fig2 %>% add_trace(
+        fig2 %>% plotly::add_trace(
           data = stat_df_ordered,
           x = ~ run,
           y = ~ stat_df_ordered[[2]],
-          name = ~ var,
-          color = ~ var,
-          colors = palette(length(get_depths(obs_dat$data, var))),
+          name = ~ variable,
+          color = ~ variable,
+          colors =palette(length(get_swap_depths(obs_dat$data, variable))),
           type = 'bar'
         )
     }
     # mean line
     fig2 <-
-      fig2 %>% add_trace(
+      fig2 %>% plotly::add_trace(
         data = stat_df_ordered,
         x = ~ run,
         y = ~ mean,
@@ -181,9 +183,9 @@ rswap_plot_performance <-
       )
 
 
-    # cutoms layout and print
-    fig2 %>% layout(
-      title = paste("Statistics for", var, "sorted by best mean", stat),
+    # Custom layout and print
+    fig2 %>% plotly::layout(
+      title = paste("Statistics for", variable, "sorted by best mean", stat),
       autosize = T,
       xaxis = list(categoryorder = "array",
                    categoryarray = stat_df_ordered$run %>% unique()),
@@ -195,7 +197,7 @@ rswap_plot_performance <-
       ),
       plot_bgcolor = '#e5ecf6'
     ) %>%
-      hide_colorbar() %>%
+      plotly::hide_colorbar() %>%
       print()
   }
 
@@ -218,7 +220,7 @@ rswap_plot_performance <-
     }
 
     # find the value of the last path
-    last_run_value <- stat_df %>% filter(run == "last_run") %>%  select(all_of(stat)) %>% pull() %>% mean()
+    last_run_value <- stat_df %>% dplyr::filter(run == "last_run") %>%  dplyr::select(dplyr::all_of(stat)) %>% dplyr::pull() %>% mean()
     # color red if best path
     ifbest <- ifelse(unique(stat_df$run) == best_run_name, "red", "black")
     # format bold if last path
@@ -227,29 +229,28 @@ rswap_plot_performance <-
       # theme changes (x axis formatting and subtitle)
       # this is where the warning "Vectorized input to `element_text()` is not officially supported."
       # comes into play, but no fix can be found.
-      plot<-ggplot(stat_df)+
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, colour = ifbest, face = iflast),
-            plot.subtitle = element_text(color = "red"))+
+      plot<-ggplot2::ggplot(stat_df)+
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1, colour = ifbest, face = iflast),
+            plot.subtitle = ggplot2::element_text(color = "red"))+
 
       # scale color manual
-      scale_color_manual(values = c("red"))+
+      ggplot2::scale_color_manual(values = c("red"))+
       # scale fill according to our palette
-      scale_fill_manual(values=palette(length(get_depths(obs_dat$data, var))))+
+      ggplot2::scale_fill_manual(values=grDevices::palette(length(get_swap_depths(obs_dat$data, variable))))+
       # y lab
-      ylab(stat)+xlab("run")+
-      ggtitle(paste0("Last run had a(n) ", stat, " of ",round(last_run_value,2)),
+      ggplot2::ylab(stat)+ggplot2::xlab("run")+
+      ggplot2::ggtitle(paste0("Last run had a(n) ", stat, " of ",round(last_run_value,2)),
               paste0( "The best run was \"", best_run_name,"\", with a(n) " ,stat, " of ", round(best_value,2)))
 
 
     if(depth %>% is.null() == FALSE){
       # dodge columns for the depths
-      plot <- plot+geom_col(aes(x=factor(run, level = run %>% unique()), y = stat_df[2] %>% pull(), fill = var), position = "dodge")
+      plot <- plot+ggplot2::geom_col(ggplot2::aes(x=factor(run, levels = run %>% unique()), y = stat_df[2] %>% dplyr::pull(), fill = variable), position = "dodge")
     }
 
     # mean line
-    plot = plot+geom_line(aes(x=factor(run, level = run %>% unique()), y =mean, color = "mean"), group = 1, linewidth = 1)+
-      # points on mean line
-      geom_point(aes(x = run, y = mean, color = "mean"), size = 2)
+    plot = plot+ggplot2::geom_line(ggplot2::aes(x=factor(run, levels = run %>% unique()), y =mean, color = "mean"), group = 1, linewidth = 1)+
+      ggplot2::geom_point(ggplot2::aes(x = run, y = mean, color = "mean"), size = 2)
 
     # Warning message:
     #   Vectorized input to `element_text()` is not officially supported.

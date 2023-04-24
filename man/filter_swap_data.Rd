@@ -4,12 +4,12 @@
 \alias{filter_swap_data}
 \title{Filter SWAP Data}
 \usage{
-filter_swap_data(data, var = NULL, depth = NULL)
+filter_swap_data(data, variable = NULL, depth = NULL)
 }
 \arguments{
 \item{data}{as given by \code{load_observed()$data} or \code{read_swap_output()$custom_depth} (dataframe)}
 
-\item{var}{name(s) of the variables you would like to select, leave blank for all. (string)}
+\item{variable}{name(s) of the variables you would like to select, leave blank for all. (string)}
 
 \item{depth}{value(s) of the depths you would like to select, leave blank for all. (numeric)}
 }
@@ -22,11 +22,16 @@ and variable. It might be useful for end users as well, which is why its
 accessible.
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
 
 # load some SWAP data (either observed, or modeled using read_swap_output())
-data <- load_swap_observed(project_path = example_path, verbose = T)
+data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 
 filter_swap_data(data$data, var = "WC", depth = "15")
 

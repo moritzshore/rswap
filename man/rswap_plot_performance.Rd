@@ -6,7 +6,7 @@
 \usage{
 rswap_plot_performance(
   project_path,
-  var,
+  variable,
   depth = NULL,
   graph = "default",
   stat = "NSE",
@@ -16,7 +16,7 @@ rswap_plot_performance(
 \arguments{
 \item{project_path}{path to project directory (string)}
 
-\item{var}{variable to show (string)}
+\item{variable}{variable to show (string)}
 
 \item{depth}{depth(s) to show. Leave blank for all (numeric/vector)}
 

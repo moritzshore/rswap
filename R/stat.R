@@ -63,13 +63,13 @@ get_swap_performance <-
       rmse_val = RMSE(obs = joined_df$obs, mod = joined_df$mod)
       rsr_val = RSR(obs = joined_df$obs, mod = joined_df$mod)
 
-      row = data.frame(var = name, NSE = nse_val, PBIAS = pbias_val, RMSE = rmse_val, RSR = rsr_val)
+      row = data.frame(variable = name, NSE = nse_val, PBIAS = pbias_val, RMSE = rmse_val, RSR = rsr_val)
       return_df = rbind(return_df, row)
     }
 
     # filter by stat if given
     if(stat %>% is.null()==FALSE){
-      return_df<-return_df %>% select(var, all_of(stat))
+      return_df<-return_df %>% select("variable", all_of(stat))
     }
 
     return(return_df %>% tibble())
@@ -88,9 +88,12 @@ get_swap_performance <-
 #'
 NSE <- function(obs, mod) {
   #TODO: change this function to accept a named vector, or dataframe.
-  return((1 - (sum((obs - mod) ^ 2, na.rm = T
+  val <- (1 - (sum((obs - mod) ^ 2, na.rm = T
   ) / sum((obs - mean(obs, na.rm = T)) ^ 2, na.rm = T
-  ))) %>% round(x = ., digits = 2))
+  )))
+
+  round(x = val, digits = 2) %>% return()
+
 }
 
 #' PBIAS
@@ -106,7 +109,11 @@ NSE <- function(obs, mod) {
 
 PBIAS <-function(obs, mod) {
   #TODO: change this function to accept a named vector, or dataframe.
-  return(((sum(obs - mod, na.rm = T) * 100) / sum(obs, na.rm = T)) %>% round(x = ., digits = 2))
+  val <- (sum(obs - mod, na.rm = T) * 100) / sum(obs, na.rm = T)
+
+  round(x = val, digits = 2) %>% return()
+
+
 }
 
 #' RMSE
@@ -121,7 +128,9 @@ PBIAS <-function(obs, mod) {
 #' @export
 RMSE <- function(obs, mod) {
   #TODO: change this function to accept a named vector, or dataframe.
-  return(sqrt(sum((obs - mod) ^ 2, na.rm = T) / length(obs)) %>% round(x = ., digits = 2))
+  val <- sqrt(sum((obs - mod) ^ 2, na.rm = T) / length(obs))
+
+  round(x = val, digits = 2) %>% return()
 }
 
 #' RSR
@@ -138,5 +147,6 @@ RMSE <- function(obs, mod) {
 #' @export
 RSR <- function(obs, mod) {
   # TODO: change this function to accept a named vector, or dataframe.
-  return(RMSE(obs, mod) / sd(obs, na.rm = T) %>% round(x = ., digits = 2))
+  val <- (RMSE(obs, mod) / sd(obs, na.rm = T))
+  round(x = val, digits = 2) %>% return()
 }

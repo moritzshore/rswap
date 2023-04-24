@@ -45,7 +45,9 @@ run_swap <- function(project_path,
   seperated <- project_path %>% str_split("/") %>% unlist()
   project <- seperated %>% utils::tail(1)
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
-  swap_exe <- work_dir %>% paste(collapse = "/") %>% paste0(.,"/swap.exe")
+
+  swap_exe_path <- work_dir %>% paste(collapse = "/")
+  swap_exe <- paste0(swap_exe_path,"/swap.exe")
   swap_file_path <- glue("{project}/rswap/{swap_file}")
 
   # Print run info
@@ -78,7 +80,7 @@ run_swap <- function(project_path,
   rswap_directory <- build_rswap_directory(project_path, verbose)
 
   # reads in the swap parameters and tables
-  parse_result <- parse_swp_file(project_path = project_path,
+  parse_result <- parse_swap_file(project_path = project_path,
                                  swap_file = swap_file,
                                  verbose = verbose)
 
@@ -88,7 +90,7 @@ run_swap <- function(project_path,
                          verbose = verbose)
 
   # changes the paths in the swap main file to reflect the temporary location
-  parameters <- update_swp_paths(project_path = project_path,
+  parameters <- update_swap_paths(project_path = project_path,
                                  swap_exe = swap_exe,
                                  parameters = parameters,
                                  verbose = verbose)

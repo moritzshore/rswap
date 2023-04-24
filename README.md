@@ -294,6 +294,8 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 -   Add D-Statistic from Moriasi et al 2015.
 -   Load observed data into package environment, to prevent the need for constant re-loading
 -   Add `verbose` to `read_swap_output()` and rename to `load_swap_output()`
+-   Add support for reading saved runs with differing output.
+-   `load_swap_data()` to return just the dataframe, add a dedicated function for var names
 
 ## Support and Contributing <a name="support"></a>
 

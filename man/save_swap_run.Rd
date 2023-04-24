@@ -25,9 +25,13 @@ next run you perform. This can be done with functions such as
 \code{comparative_plot()} or \code{plot_statistics()}
 }
 \examples{
-# path to sample results
-example_path <- "./inst/extdata/rswap_example_output"
+# path to sample results (only for package internal example, you don't need
+# this function)
+example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
+
+# in your own projects, you would use something like this:
+# example_path <- "C:/path/to/swap_folder/example_project"
 
 # this will throw a warning if "example_run" already exists (which it does)
-save_swap_run(example_path, run_name = "example_run", verbose = T)
+save_swap_run(example_path, run_name = "example_run", verbose = TRUE)
 }
