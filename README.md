@@ -40,9 +40,9 @@ A useful place to start would be the `rswap_init()` function. This function crea
 project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 
-> You can use this `project_path` to run all the following example code on this page!.
+> **Hint:** You can use this `project_path` to run all the following example code on this page!
 
-**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`) unless stated otherwise, instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run(), write_swap_file()`), and remember that anything in the `project_path/rswap` directory is temporary!
+**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`) unless stated otherwise. Instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run(), write_swap_file()`), and remember that anything in the `project_path/rswap` directory is temporary!
 
 ## Running SWAP <a name="run"></a>
 
