@@ -278,9 +278,19 @@ comparative_plot <- function(project_path, variable, depth =  NULL, verbose = F)
   return(call)
 }
 
-
-
-
+#' this function has been renamed to: 'load_swap_output()'
+#'
+#' @param project_path this function has been renamed to: 'load_swap_output()'
+#' @param archived this function has been renamed to: 'load_swap_output()'
+#'
+#' @return this function has been renamed to: 'load_swap_output()'
+#' @export
+#'
+read_swap_output <-  function(project_path, archived = F) {
+  warning("this function has been renamed to: 'load_swap_output()'. Please update your call, legacy support will be ending soon.")
+  call <- load_swap_output(project_path, archived)
+  return(call)
+}
 
 
 

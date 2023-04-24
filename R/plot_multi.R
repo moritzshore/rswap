@@ -96,7 +96,7 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   obs_cols <- paste0("obs",obs_cols_names)
   colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols
 
-  modelled_data <- read_swap_output(project_path)
+  modelled_data <- load_swap_output(project_path)
   modelled_data <- modelled_data$custom_depth
 
   results = left_join(modelled_data, observed_data, by = "DATE")
