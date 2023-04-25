@@ -4,12 +4,14 @@
 \alias{load_swap_output}
 \title{Reads SWAP Model Output}
 \usage{
-load_swap_output(project_path, archived = F)
+load_swap_output(project_path, archived = F, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string)}
 
 \item{archived}{needs to be set to true when reading from the rswap_saved archive (flag)}
+
+\item{verbose}{print status? (flag)}
 }
 \value{
 Returns a list of dataframes. \code{.$daily_output} and \code{.$custom_depth}

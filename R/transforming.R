@@ -23,12 +23,14 @@
 #' @importFrom tidyr pivot_longer
 melt_swap_data <- function(project_path, variable = NULL, depth = NULL, verbose = F) {
 
+  obser_dat <- load_swap_observed(project_path, archived = F, verbose = verbose)
+
   if(variable %>% is.null()){
-    variable <- load_swap_observed(project_path, archived = F, verbose = verbose)[[2]]
+    variable <- get_swap_variables(swap_data = obser_dat, verbose = verbose)
   }
 
   if(depth %>% is.null()){
-    depths <- get_swap_depths(data = load_swap_observed(project_path, archived = F, verbose = verbose)[[1]])
+    depths <- get_swap_depths(data = obser_dat, variable = variable)
   }
 
   matched <- match_swap_data(project_path, variable, depth, verbose, archived = F)

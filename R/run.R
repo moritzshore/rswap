@@ -118,9 +118,9 @@ run_swap <- function(project_path,
 
   if(verbose){
     cat(blue(bold(">> Running")), yellow(bold("swap.exe")), blue(bold("in working directory: ")))
-    cat(green(underline(work_dir)),"\n")
+    cat(underline(work_dir),"\n")
     cat(blue(bold(">> Executing the following file: ")))
-    cat(green(underline(swap_file_path)),"\n")
+    cat(underline(swap_file_path),"\n")
     cat(blue(bold(glue(">> With max runtime of:"))), underline(glue("{timeout} seconds")),"\n")
   }
 

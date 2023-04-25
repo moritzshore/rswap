@@ -91,7 +91,6 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   )
 
   observed_data <- load_swap_observed(project_path, verbose = verbose)
-  observed_data <- observed_data$data
   obs_cols_names <- observed_data[-1] %>% colnames()
   obs_cols <- paste0("obs",obs_cols_names)
   colnames(observed_data)[2:length(colnames(observed_data))] <- obs_cols

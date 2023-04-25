@@ -362,7 +362,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   if (verbose) {
-    cat("\U0001f4d",
+    cat("\U0001f4dd",
         blue("SWAP vectors appended to main file."), "\n")
   }
 
@@ -472,10 +472,10 @@ set_swap_output <-
 
       # load variables and depths
       obs <- load_swap_observed(project_path, archived = F, verbose)
-      variables <- obs$observed_variables %>% toupper()
-      depths <- get_swap_depths(data = obs$data) %>% sort()
-      cat("\u2705",
-          blue("Follwing depths detected"),
+      variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
+      depths <- get_swap_depths(data = obs) %>% sort()
+      cat("\u2139",
+          blue("Following depths detected in SWAP output:"),
           green(bold(underline(depths))), "\n")
 
       # CREATING INLIST_CSV
