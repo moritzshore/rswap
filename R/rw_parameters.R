@@ -474,7 +474,7 @@ set_swap_output <-
       obs <- load_swap_observed(project_path, archived = F, verbose)
       variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
       depths <- get_swap_depths(data = obs) %>% sort()
-      cat("ℹ",
+      cat("\u2139",
           blue("Following depths detected in SWAP output:"),
           green(bold(underline(depths))), "\n")
 

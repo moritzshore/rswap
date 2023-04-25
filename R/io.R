@@ -263,7 +263,7 @@ load_swap_observed <- function(project_path,
     if (is.data.frame(rswap_env$observed_data) & force == FALSE) {
 
       if (verbose) {
-        cat("ℹ", crayon::blue("Observed data already loaded, not reloading. (use force=TRUE to force reload)"), "\n")
+        cat("\u2139", crayon::blue("Observed data already loaded, not reloading. (use force=TRUE to force reload)"), "\n")
       }
 
       return(rswap_env$observed_data)
@@ -317,7 +317,7 @@ get_swap_variables <- function(swap_data, verbose = F){
   col_sep <- obs_cols %>% stringr::str_split("_") %>% unlist()
   num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
   obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
-  if(verbose){cat("ℹ",
+  if(verbose){cat("\u2139",
                   blue("Following variables detected in SWAP data:"),
                   green(bold(underline(obs_vars))), "\n")}
   return(obs_vars)
