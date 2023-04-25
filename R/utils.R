@@ -1,6 +1,3 @@
-# creates a package wide enviroment to store SWAPtools data in. (hopefully)
-SWAPtools_env <- new.env(parent = emptyenv())
-
 #' Install SWAPtools
 #'
 #' Installs SWAPtools from `waterwijzerlandbouw.wur.nl/repo`
