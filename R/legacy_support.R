@@ -205,7 +205,6 @@ get_performance <-
 #' @param project_path renamed to: "rswap_plot_performance()"
 #' @param var renamed to: "rswap_plot_performance()"
 #' @param depth renamed to: "rswap_plot_performance()"
-#' @param graph renamed to: "rswap_plot_performance()"
 #' @param stat renamed to: "rswap_plot_performance()"
 #' @param verbose renamed to: "rswap_plot_performance()"
 #'
@@ -213,13 +212,12 @@ get_performance <-
 #' @export
 #'
 plot_statistics <-
-  function(project_path, var, depth =  NULL, graph = "default",stat = "NSE",
-           verbose = F) {
+  function(project_path, var, stat = "NSE", depth =  NULL, verbose = F) {
 
     warning(
       "this function has been renamed to: 'rswap_plot_performance()'. Please update your call, legacy support will be ending soon."
     )
-    call <- rswap_plot_performance(project_path, var, depth, graph, stat, verbose)
+    call <- rswap_plot_performance(project_path, var, stat, depth, verbose)
     return(call)
   }
 

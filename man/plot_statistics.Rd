@@ -4,25 +4,16 @@
 \alias{plot_statistics}
 \title{renamed to: "rswap_plot_performance()"}
 \usage{
-plot_statistics(
-  project_path,
-  var,
-  depth = NULL,
-  graph = "default",
-  stat = "NSE",
-  verbose = F
-)
+plot_statistics(project_path, var, stat = "NSE", depth = NULL, verbose = F)
 }
 \arguments{
 \item{project_path}{renamed to: "rswap_plot_performance()"}
 
 \item{var}{renamed to: "rswap_plot_performance()"}
 
-\item{depth}{renamed to: "rswap_plot_performance()"}
-
-\item{graph}{renamed to: "rswap_plot_performance()"}
-
 \item{stat}{renamed to: "rswap_plot_performance()"}
+
+\item{depth}{renamed to: "rswap_plot_performance()"}
 
 \item{verbose}{renamed to: "rswap_plot_performance()"}
 }
