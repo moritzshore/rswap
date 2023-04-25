@@ -286,13 +286,9 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 
 -   Parsing support for all SWAP files, not just the main file.
 -   Add support for multiple variables at differing depths for `autoset_output`
--   Update `plot_over_under()` to use [ggbraid](https://nsgrantham.github.io/ggbraid/)
--   Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
--   `plot_statistics()` sorting to follow stat property
--   Add "exact variable matching" and stop removing "RAIN" in `io.R` -\> `melt_all_runs()`
+-   Add "exact variable matching" and stop removing "RAIN" in `io.R` `melt_all_runs()`
 -   Renovate `soft_calibration_plot()` to accept any variable using the new system.
--   Add D-Statistic from Moriasi et al 2015.
--   Load observed data into package environment, to prevent the need for constant re-loading
+-   Load  data into package environment, to prevent the need for constant re-loading. add force=T option to reload
 -   Add `verbose` to `load_swap_output()`
 -   Add support for reading saved runs with differing output.
 -   `load_swap_observed()` to return just the dataframe, add a dedicated function for var names
