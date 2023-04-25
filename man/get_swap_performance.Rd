@@ -6,8 +6,8 @@
 \usage{
 get_swap_performance(
   project_path,
+  stat,
   archived = FALSE,
-  stat = NULL,
   variable = NULL,
   depth = NULL,
   verbose = F
@@ -16,24 +16,36 @@ get_swap_performance(
 \arguments{
 \item{project_path}{path to project directory (string)}
 
-\item{archived}{set to \code{TRUE} if project is saved in "rswap_saved/" (flag)}
+\item{stat}{statistical performance indicator from package \code{hydroGOF}
+(string)}
 
-\item{stat}{statistical performance indicator (ie. "NSE") (string)}
+\item{archived}{set to \code{TRUE} if project is saved in "rswap_saved/" (flag)}
 
 \item{variable}{variable name. leave blank for all. (string)}
 
-\item{depth}{depth of variable if it is depth-wise. leave blank for all (numeric)}
+\item{depth}{depth of variable if it is depth-wise. leave blank for all
+(numeric)}
 
 \item{verbose}{print status? (flag)}
 }
 \value{
-dataframe value(s) of performance indicator(s) for given variable(s) and depth(s)
+dataframe value(s) of performance indicator(s) for given variable(s)
+and depth(s)
 }
 \description{
-Returns the performance for the chosen variable(s) and performance indicator(s).
-Supported performance indicators are: NSE, PBIAS, RMSE, RSR.
+Returns the performance for the chosen variable(s) and performance
+indicator(s). performance indicators are sourced form package
+\href{https://cran.r-project.org/web/packages/hydroGOF/hydroGOF.pdf}{hydroGOF}
 Supported variables are those provided in the observed data file.
 }
 \details{
-Please note, passing multiple variables at differing depths will not work! (yet)
+The performance indicator will be the result of a function passed as a string
+in the \code{stat} parameter as called from the \code{hydroGOF} package.
+
+The following are supported for \code{stat}:
+
+\emph{br2 cp d KGE mae md me mNSE mse nrmse NSE pbias rd rmse rNSE rPearson rSD rsr ssq VE}
+
+Please note, passing multiple variables at differing depths will not work!
+(yet)
 }
