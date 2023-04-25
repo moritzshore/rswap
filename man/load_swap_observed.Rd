@@ -4,7 +4,7 @@
 \alias{load_swap_observed}
 \title{Load Observed Data}
 \usage{
-load_swap_observed(project_path, archived = F, verbose = F)
+load_swap_observed(project_path, force = F, archived = F, verbose = F)
 }
 \arguments{
 \item{project_path}{Path to project directory (string)}
