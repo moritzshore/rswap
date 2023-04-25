@@ -40,7 +40,7 @@ rswap_plot_performance <-
   obs_dat <- load_swap_observed(project_path)
 
   if(depth %>% is.null()){
-   depth <- get_swap_depths(data = obs_dat$data, variable = variable)
+   depth <- get_swap_depths(data = obs_dat, variable = variable)
   }
 
   # get a path list of all the previous runs

@@ -29,6 +29,6 @@ example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 # load some SWAP data (either observed, or modeled using load_swap_output())
 data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 
-get_swap_depths(data$data, variable = "TEMP")
+get_swap_depths(data, variable = "TEMP")
 
 }

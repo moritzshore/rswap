@@ -71,7 +71,7 @@ get_swap_performance <-
     # if no variable is passed, ALL variables are used
     if (variable %>% is.null()) {
       obs <- load_swap_observed(project_path)
-      variable = obs$observed_variables
+      variable = get_swap_variables(swap_data = obs, verbose = verbose)
     }
 
     # filters and matched the desired vars and depths
