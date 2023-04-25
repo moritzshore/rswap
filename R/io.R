@@ -227,18 +227,17 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #' Please see the file itself for more information. It should be located in
 #' your project directory, and must bear the name `swap_observed_data.csv`.
 #'
-#' Please note, the file type will eventually be switched to .csv.
 #'
 #' @param project_path Path to project directory (string)
 #' @param archived set to true if project path in saved in 'rswap_saved' (flag)
 #' @param verbose print status? (flag)
+#' @param force Force reload of observed data? (flag)
 #'
 #' @importFrom stringr str_remove str_replace str_split
 #' @importFrom tibble tibble
 #' @importFrom readr read_csv
 #'
-#' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
-#' as well as `.$observed_variables`, a vector of the detected observed variables.
+#' @returns returns a dataframe of your observed data
 #'
 #' @export
 #'
@@ -334,7 +333,7 @@ get_swap_variables <- function(swap_data, verbose = F){
 #'
 #' @param project_path path to project directory (string)
 #' @param archived needs to be set to true when reading from the rswap_saved archive (flag)
-#' @verbose print status? (flag)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
 #' @importFrom stringr str_replace str_remove

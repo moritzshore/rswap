@@ -9,13 +9,14 @@ load_swap_observed(project_path, force = F, archived = F, verbose = F)
 \arguments{
 \item{project_path}{Path to project directory (string)}
 
+\item{force}{Force reload of observed data? (flag)}
+
 \item{archived}{set to true if project path in saved in 'rswap_saved' (flag)}
 
 \item{verbose}{print status? (flag)}
 }
 \value{
-Returns a list consiting of \code{.$data}, a dataframe of the observed values,
-as well as \code{.$observed_variables}, a vector of the detected observed variables.
+returns a dataframe of your observed data
 }
 \description{
 This function loads your observed data from the template file that was placed
@@ -25,8 +26,6 @@ in your project directory either by \code{build_rswap_directory()} or \code{rswa
 It is critical that the template observed file is filled out correctly.
 Please see the file itself for more information. It should be located in
 your project directory, and must bear the name \code{swap_observed_data.csv}.
-
-Please note, the file type will eventually be switched to .csv.
 }
 \examples{
 # path to sample results (only for package internal example, you don't need
