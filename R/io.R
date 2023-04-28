@@ -758,6 +758,12 @@ rswap_init <- function(swap_exe){
   pkg_path <- system.file(package = "rswap")
   extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
 
+  # bug fix: swap.swp wont get copied. something with filename. fixing it by
+  # using a fake file name and renaming it here
+  old_name<-system.file(package = "rswap", "extdata/rswap_example_input/swap.swwp")
+  new_name <- old_name %>% str_replace("swap.swwp", "swap.swp")
+  file.rename(old_name, new_name)
+
   exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
   wd <- swap_exe %>% str_remove(exe_name)
 
