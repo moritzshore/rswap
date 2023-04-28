@@ -297,6 +297,7 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 #'
 #' @param project_path path to project directory (string)
 #' @param archived needs to be set to true when reading from the rswap_saved archive (flag)
+#' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
 #' @importFrom stringr str_replace str_remove
@@ -316,8 +317,9 @@ load_swap_observed <- function(project_path, archived = F, verbose = F){
 #'
 #' load_swap_output(example_path)
 #' @importFrom utils read.table
-load_swap_output <-  function(project_path, archived = F){
-  #TODO add verbose
+#' @importFrom crayon blue
+load_swap_output <-  function(project_path, archived = F, verbose = F){
+  #TODO load into rswap environment and add a force option
   #TODO rewrite to return ALL SWAP output.
 
   if(archived){
@@ -356,6 +358,8 @@ load_swap_output <-  function(project_path, archived = F){
 
   # TODO rename these to be more clear?
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
+
+  if(verbose){cat(crayon::blue("\u2139", "loaded SWAP model output"))}
 
   r_frame %>% return()
   }
