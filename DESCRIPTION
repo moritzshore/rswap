@@ -28,6 +28,7 @@ Imports:
     processx,
     purrr,
     readr,
+    remotes,
     stringi,
     stringr,
     tibble,
