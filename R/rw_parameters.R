@@ -69,7 +69,6 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
 #'
 parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 
-  # TODO rename to parse_swap_file()
   # finds the end of the table when passed a snipped of the swap file
   find_eot <- function(short_swp) {
     first_element <- short_swp %>%  stringr::str_trim() %>% stringr::str_split("\\s+") %>% purrr::map(1) %>% unlist()
@@ -91,6 +90,8 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     return(eot)
   }
 
+
+  # TODO only build if needed or force true
   rswap_dir <- build_rswap_directory(project_path)
   swp <- clean_swap_file(rswap_dir, swap_file = swap_file)
 
@@ -471,7 +472,7 @@ set_swap_output <-
       if(verbose){cat(blue("\u23fa Autosetting output to match observed file!"),"\n")}
 
       # load variables and depths
-      obs <- load_swap_observed(project_path, archived = F, verbose)
+      obs <- load_swap_observed(project_path, archived = F, verbose = verbose)
       variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
       depths <- get_swap_depths(data = obs) %>% sort()
       cat("\u2139",
