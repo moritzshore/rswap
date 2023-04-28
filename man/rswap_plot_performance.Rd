@@ -7,10 +7,9 @@
 rswap_plot_performance(
   project_path,
   variable,
+  stat,
   depth = NULL,
-  graph = "default",
-  stat = "NSE",
-  verbose = F
+  verbose = FALSE
 )
 }
 \arguments{
@@ -18,17 +17,27 @@ rswap_plot_performance(
 
 \item{variable}{variable to show (string)}
 
+\item{stat}{a statistical indicator function from package \code{hydroGOF} (string)}
+
 \item{depth}{depth(s) to show. Leave blank for all (numeric/vector)}
-
-\item{graph}{either "default" "sorted" or "ggplot" leave blank for default (string)}
-
-\item{stat}{statistical indicator function ("NSE", "RMSE", "PBIAS", "RSR") (string)}
 
 \item{verbose}{print status? (flag)}
 }
 \description{
 This function calculates the statistical performance of all the saved model
 runs in the /rswap_saved/ folder, as well as the last performed run. It does
-this per \code{variable} and for any/all given \code{depths}, for the passed statistical
-performance indicator \code{stat} (Currently supported are "NSE", "RMSE", "PBIAS", "RSR")
+this per \code{variable} and for any/all given \code{depths}, for the passed
+statistical performance indicator \code{stat} from package
+\href{https://cran.r-project.org/web/packages/hydroGOF/hydroGOF.pdf}{hydroGOF}
+}
+\details{
+The performance indicator will be the result of a function passed as a string
+in the \code{stat} parameter as called from the \code{hydroGOF} package.
+
+The following are supported for \code{stat}:
+
+\emph{br2 cp d KGE mae md me mNSE mse nrmse NSE pbias rd rmse rNSE rPearson rSD rsr ssq VE}
+
+Please note, passing multiple variables at differing depths will not work!
+(yet)
 }

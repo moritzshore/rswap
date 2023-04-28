@@ -4,7 +4,7 @@
 \alias{check_swap_message}
 \title{checks SWAP error message}
 \usage{
-check_swap_message(msg, verbose = F)
+check_swap_message(status, verbose = F)
 }
 \arguments{
 \item{msg}{file from processx}

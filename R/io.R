@@ -5,6 +5,7 @@
 #' Makes a temporary sub-directory workspace for the package to run SWAP in.
 #'
 #' @param project_path path to project directory (string)
+#' @param force overwrite any existing directory? (flag)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
@@ -24,11 +25,19 @@
 #' # This example code will not be executed as it needs to write files!
 #' # build_rswap_directory(example_path, verbose = TRUE)
 
-build_rswap_directory <- function(project_path, verbose = F){
-
-  # TODO should this delete the previous one?
+build_rswap_directory <- function(project_path, force = F, verbose = F){
 
   temp_directory <- glue("{project_path}/rswap")
+
+  if(dir.exists(temp_directory)){
+      if(force == FALSE){
+        if(verbose){cat("\u2139", blue("rswap directory already exists, not rebuilding (use force=TRUE to override)"))}
+        return(paste0(project_path, "/rswap"))
+      }else{
+        if(verbose){cat("\u2139", blue("rswap directory already exists: overwriting \U0001f9f9 due to force=TRUE "))}
+        unlink(temp_directory)
+      }
+  }
 
   if(verbose){
     cat(blue("\U0001f477 Building rswap directory: \n"))
@@ -227,18 +236,17 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #' Please see the file itself for more information. It should be located in
 #' your project directory, and must bear the name `swap_observed_data.csv`.
 #'
-#' Please note, the file type will eventually be switched to .csv.
 #'
 #' @param project_path Path to project directory (string)
 #' @param archived set to true if project path in saved in 'rswap_saved' (flag)
 #' @param verbose print status? (flag)
+#' @param force Force reload of observed data? (flag)
 #'
 #' @importFrom stringr str_remove str_replace str_split
 #' @importFrom tibble tibble
 #' @importFrom readr read_csv
 #'
-#' @returns Returns a list consiting of `.$data`, a dataframe of the observed values,
-#' as well as `.$observed_variables`, a vector of the detected observed variables.
+#' @returns returns a dataframe of your observed data
 #'
 #' @export
 #'
@@ -253,37 +261,74 @@ save_swap_run <- function(project_path, run_name = NULL, verbose = F){
 #'
 #' load_swap_observed(example_path, verbose = TRUE)
 #' @importFrom readr read_csv
-load_swap_observed <- function(project_path, archived = F, verbose = F){
+#' @importFrom crayon blue italic bold yellow
+load_swap_observed <- function(project_path,
+                               force = F, archived = F, verbose = F) {
+    # if the data has already been loaded (and should not be reloaded with force)
+    # then we just return the data that is already in the rswap environment. if
+    # however it has not been loaded yet, or should be reloaded with FORCE=T, then
+    # we need to read the data using read_csv.
+    if (is.data.frame(rswap_env$observed_data) & force == FALSE) {
 
-  if(archived){
-    path <- paste0(project_path, "/rswap_observed_data.csv")
-  }else{
-    path <- paste0(project_path, "/rswap/rswap_observed_data.csv")
+      if (verbose) {
+        cat("\u2139", crayon::blue("Observed data already loaded, not reloading. (use force=TRUE to force reload)"), "\n")
+      }
 
+      return(rswap_env$observed_data)
+    } else{
+
+      if (is.data.frame(rswap_env$observed_data) & verbose) {
+        cat(italic(bold(
+          yellow("reloding observed data (force=TRUE)")
+        )), "\n")
+      }
+
+       # switch, depending on if the project has been archived
+      if (archived) {
+        path <- paste0(project_path, "/rswap_observed_data.csv")
+      } else{
+        path <- paste0(project_path, "/rswap/rswap_observed_data.csv")
+      }
+
+
+      data <- readr::read_csv(file = path, show_col_types = F)
+      rswap_env$observed_data <- data
+
+      if (verbose) {
+        cat("\u2705", crayon::blue("Observed data loaded"), "\n")
+      }
+
+      return(rswap_env$observed_data)
+      }
   }
-  data <- readr::read_csv(file = path, show_col_types = F)
-  columns <- colnames(data)
 
+#' Get SWAP variables
+#'
+#' Gets the SWAP variable names from a SWAP dataframe as used by a variety of
+#' rswap functions.
+#'
+#' @seealso
+#' `get_swap_depths()`
+#' `load_swap_observed()`
+#' `load_swap_output()`
+#'
+#' @param swap_data dataframe as returned by other rswap functions.
+#' @param verbose print status? (flag)
+#' @importFrom crayon green underline bold
+#'
+#' @returns Returns a character vector of detected variables
+#' @export
+get_swap_variables <- function(swap_data, verbose = F){
+  columns <- colnames(swap_data)
   date_col <- grepl(x = columns, "DATE") %>% which()
   obs_cols <- columns[-date_col]
-
-  col_sep <- obs_cols %>% str_split("_") %>% unlist()
+  col_sep <- obs_cols %>% stringr::str_split("_") %>% unlist()
   num_index <- col_sep %>% as.numeric() %>% is.na() %>% which() %>% suppressWarnings()
-
-  # parse the observed varibles names
   obs_vars <- col_sep[num_index] %>% unique() %>% toupper()
-
-  return_df <- list(data = data, observed_variables = obs_vars)
-
-  if(verbose){
-    cat("\u2705",
-        blue("Observed data with the following variables loaded:"),
-        green(bold(underline((obs_vars)))),
-        "\n")
-
-  }
-
-  return_df %>% return()
+  if(verbose){cat("\u2139",
+                  blue("Following variables detected in SWAP data:"),
+                  green(bold(underline(obs_vars))), "\n")}
+  return(obs_vars)
 }
 
 #' Reads SWAP Model Output
@@ -394,7 +439,7 @@ load_swap_output <-  function(project_path, archived = F, verbose = F){
 #' # load some SWAP data (either observed, or modeled using load_swap_output())
 #' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
-#' filter_swap_data(data$data, var = "WC", depth = "15")
+#' filter_swap_data(data, var = "WC", depth = "15")
 #'
 filter_swap_data <- function(data, variable = NULL, depth = NULL){
   #TODO add verbose?
@@ -477,7 +522,7 @@ filter_swap_data <- function(data, variable = NULL, depth = NULL){
 #' # load some SWAP data (either observed, or modeled using load_swap_output())
 #' data <- load_swap_observed(project_path = example_path, verbose = TRUE)
 #'
-#' get_swap_depths(data$data, variable = "TEMP")
+#' get_swap_depths(data, variable = "TEMP")
 #'
 get_swap_depths <- function(data, variable = NULL) {
 
@@ -552,7 +597,7 @@ match_swap_data <- function(project_path, variable, depth = NULL,
   observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived)
   modelled_data <- load_swap_output(project_path = project_path, archived = archived)
 
-  observed_data_filtered <-filter_swap_data(data = observed_data$data,
+  observed_data_filtered <-filter_swap_data(data = observed_data,
                                             variable = variable, depth = depth)
 
   modelled_data_filtered <-filter_swap_data(data = modelled_data$custom_depth,
@@ -672,7 +717,7 @@ melt_swap_runs <-
     present_run_df$tag = "present"
     present_run_df$run = "current run"
     observed_data <- load_swap_observed(project_path, verbose = verbose)
-    observed_data <- filter_swap_data(observed_data$data, variable = variable, depth = depth)
+    observed_data <- filter_swap_data(observed_data, variable = variable, depth = depth)
     observed_data$tag = "observed"
     observed_data$run = "observed"
     full_df <- rbind(past_run_df, present_run_df, observed_data)
@@ -716,6 +761,12 @@ rswap_init <- function(swap_exe){
   pkg_path <- system.file(package = "rswap")
   extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
 
+  # bug fix: swap.swp wont get copied. something with filename. fixing it by
+  # using a fake file name and renaming it here
+  old_name<-system.file(package = "rswap", "extdata/rswap_example_input/swap.swwp")
+  new_name <- old_name %>% str_replace("swap.swwp", "swap.swp")
+  file.rename(old_name, new_name)
+
   exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
   wd <- swap_exe %>% str_remove(exe_name)
 
@@ -745,8 +796,8 @@ rswap_init <- function(swap_exe){
     stop("something went wrong loading the modelled data")
   }
 
-  variable <- data$observed_variables[1:3]
-  depth <- get_swap_depths(data = data$data)[1]
+  variable <- get_swap_variables(data)[1:3]
+  depth <- get_swap_depths(data = data)[1]
   rswap_plot_multi(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
   cat("\nrswap initilization complete, you can find the project folder here:","\n")
