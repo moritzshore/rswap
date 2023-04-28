@@ -20,7 +20,7 @@
 <script src="pkgdown.js"></script><meta property="og:title" content="an R interface for the SWAP model">
 <meta property="og:description" content="R-based interface for calibrating the SWAP model (among other
     things).">
-<meta property="og:image" content="/logo.svg">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -72,7 +72,7 @@
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="rswap-">rswap <img src="reference/figures/logo.svg" align="right" width="25%" height="25%"><a class="anchor" aria-label="anchor" href="#rswap-"></a>
+<div class="page-header"><h1 id="rswap-">rswap <img src="reference/figures/logo.png" align="right" height="138"><a class="anchor" aria-label="anchor" href="#rswap-"></a>
 </h1></div>
 <p>rswap is an R-package designed to help interface and work with <a href="https://www.swap.alterra.nl/" class="external-link">SWAP4</a> <a href="#id_1">[1]</a>. It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. <strong>DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..</strong></p>
 <p><img src="https://img.shields.io/github/r-package/v/moritzshore/rswap" alt="GitHub R package version"><img src="https://img.shields.io/github/issues/moritzshore/rswap" alt="GitHub issues"><img src="https://img.shields.io/github/license/moritzshore/rswap" alt="GitHub"><a href="https://doi.org/10.5281/zenodo.7795153" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg" alt="DOI"></a></p>
@@ -113,9 +113,9 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">project_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/rswap_init.html">rswap_init</a></span><span class="op">(</span>swapexe <span class="op">=</span> <span class="st">"C:/path/to/swap.exe"</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
-<p>You can use this <code>project_path</code> to run all the following example code on this page!.</p>
+<p><strong>Hint:</strong> You can use this <code>project_path</code> to run all the following example code on this page!</p>
 </blockquote>
-<p><strong>⚠️IMPORTANT⚠️</strong> Its important to know that <code>rswap</code> never modifies files in your project directory (<code>project_path</code>) unless stated otherwise, instead all files are <em>copied</em> from <code>project_path</code> to <code>project_path/rswap</code>, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (<code>save_run(), write_swap_file()</code>), and remember that anything in the <code>project_path/rswap</code> directory is temporary!</p>
+<p><strong>⚠️IMPORTANT⚠️</strong> Its important to know that <code>rswap</code> never modifies files in your project directory (<code>project_path</code>) unless stated otherwise. Instead all files are <em>copied</em> from <code>project_path</code> to <code>project_path/rswap</code>, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (<code>save_run(), write_swap_file()</code>), and remember that anything in the <code>project_path/rswap</code> directory is temporary!</p>
 </div>
 <div class="section level2">
 <h2 id="running-swap-">Running SWAP <a name="run"></a>
@@ -129,9 +129,11 @@
 <li>
 <code>swap_file</code> can be set to a custom name for your SWAP main file (*.swp)</li>
 <li>
-<code>autoset_output</code> can be enabled, such that the output of the SWAP model matches your provided observed data</li>
+<code>autoset_output</code> can be enabled (recomended), such that the output of the SWAP model matches your provided observed data</li>
 <li>
 <code>timeout</code> sets the max allowed runtime of SWAP</li>
+<li>
+<code>force</code> forces a rebuild of the the rswap project from the source files (WIP)</li>
 <li>
 <code>verbose</code> Prints everything the function does to the console with pretty colors</li>
 </ul>
@@ -145,8 +147,8 @@
 </h3>
 <p>To read the output of your executed SWAP run, you can use the following command:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">modelled_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_swap_output.html">read_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="reference/read_swap_output.html">read_swap_output()</a></code> returns two dataframes, <code>daily_output</code> which contains depth wise values of various variables. The other is <code>custom_depth</code> which contains custom variables at custom depths either explicitly altered by the user, or automatically parsed by the <code>autoset_output</code> flag of <code><a href="reference/run_swap.html">run_swap()</a></code>. This dataframe is used widely throughout the package. (more/all results will be added over time)</p>
+<code class="sourceCode R"><span><span class="va">modelled_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_swap_output.html">load_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/load_swap_output.html">load_swap_output()</a></code> returns two dataframes, <code>daily_output</code> which contains depth wise values of various variables. The other is <code>custom_depth</code> which contains custom variables at custom depths either explicitly altered by the user, or automatically parsed by the <code>autoset_output</code> flag of <code><a href="reference/run_swap.html">run_swap()</a></code>. This dataframe is used widely throughout the package. (more/all results will be added over time)</p>
 </div>
 <div class="section level3">
 <h3 id="observed-data">Observed Data<a class="anchor" aria-label="anchor" href="#observed-data"></a>
@@ -154,33 +156,32 @@
 <p>As <code>rswap</code> heavily revolves around calibration, observed data is of high importance. When running <code><a href="reference/build_rswap_directory.html">build_rswap_directory()</a></code> a template observed file will be copied into the <code>project_directory</code> (if not already existing). It is up to the user to fill this file with the appropriate data and column names. Documentation for how to do this is in a companion text file.</p>
 <p>To load your observed file, you can use the following command:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">observed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_observed.html">load_observed</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre></div>
-<p>Which will return a dataframe of the user-entered observed data, as well as a vector for the detected variables.</p>
-<p>To find out what depths your observed variables have, you can use the following command:</p>
+<code class="sourceCode R"><span><span class="va">observed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_swap_observed.html">load_swap_observed</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span></code></pre></div>
+<p>Which will return a dataframe of the user-entered observed data</p>
+<p>To find out what observed variables you have, as well as their depths, you can use:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/get_depths.html">get_depths</a></span><span class="op">(</span><span class="va">observed_data</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/get_swap_variables.html">get_swap_variables</a></span><span class="op">(</span><span class="va">observed_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/get_swap_depths.html">get_swap_depths</a></span><span class="op">(</span><span class="va">observed_data</span><span class="op">)</span></span></code></pre></div>
 <p>..this can also be filtered by a specific variable by passing <code>variable</code></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="visuals">Visuals <a name="visuals"></a>
-<a class="anchor" aria-label="anchor" href="#visuals"></a>
+<h2 id="visuals-">Visuals <a name="visuals"></a>
+<a class="anchor" aria-label="anchor" href="#visuals-"></a>
 </h2>
-<p>There are a variety of functions used to visualize your SWAP data, such as <code><a href="reference/plot_over_under.html">plot_over_under()</a></code></p>
+<p>There are a variety of functions used to visualize your SWAP data, such as <code><a href="reference/rswap_plot_variable.html">rswap_plot_variable()</a></code></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_over_under.html">plot_over_under</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">40</span>, <span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><code>plot_over_und()</code> can be passed a <code>variable</code>, as well as a vector <code>depth</code>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/rswap_plot_variable.html">rswap_plot_variable</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">40</span>, <span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/rswap_plot_variable.html">rswap_plot_variable()</a></code> can be passed a <code>variable</code>, as well as a vector <code>depth</code>.</p>
 <p align="center">
 </p>
 <p><img src="reference/figures/overunder.png" width="60%" height="60%"></p>
 
-<blockquote>
-<p>(this plot heavily relies on code from <a href="https://www.nsgrantham.com/fill-between-two-lines-ggplot2/" class="external-link">Neal Grantham</a>)</p>
-</blockquote>
-<p>For a more detailed look at multiple variables at once, you can use the <code><a href="reference/soft_calibration_plot.html">soft_calibration_plot()</a></code></p>
+<p>For a more detailed look at multiple variables at once, you can use the <code><a href="reference/rswap_plot_multi.html">rswap_plot_multi()</a></code></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/soft_calibration_plot.html">soft_calibration_plot</a></span><span class="op">(</span><span class="va">project_path</span>, vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"WC"</span>, <span class="st">"DRAINAGE"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/rswap_plot_multi.html">rswap_plot_multi</a></span><span class="op">(</span><span class="va">project_path</span>, vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"WC"</span>, <span class="st">"DRAINAGE"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, it will be displayed as well.</p>
 <p align="center">
 </p>
 <p><img src="reference/figures/softcalplot.png" width="60%" height="60%"></p>
@@ -190,10 +191,10 @@
 <h2 id="model-performance-">Model Performance <a name="performance"></a>
 <a class="anchor" aria-label="anchor" href="#model-performance-"></a>
 </h2>
-<p>A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the <code><a href="reference/get_performance.html">get_performance()</a></code> function:</p>
+<p>A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the <code><a href="reference/get_swap_performance.html">get_swap_performance()</a></code> function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/get_performance.html">get_performance</a></span><span class="op">(</span><span class="va">project_path</span>, stat <span class="op">=</span> <span class="st">"NSE"</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
-<p>This function is very flexible and can be passed any number of <code>variables</code>, <code>depths</code>, and performance indicators <code>stat</code> (currently supported are <code>NSE</code>, <code>PBIAS</code>, <code>RSR</code>, and <code>RMSE</code>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/get_swap_performance.html">get_swap_performance</a></span><span class="op">(</span><span class="va">project_path</span>, stat <span class="op">=</span> <span class="st">"d"</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<p>This function is very flexible and can be passed any number of <code>variables</code>, <code>depths</code>, and performance indicators <code>stat</code> (currently supported are select functions from package <code>hydroGOF</code>)</p>
 </div>
 <div class="section level2">
 <h2 id="saving-runs-">Saving Runs <a name="saving"></a>
@@ -201,7 +202,7 @@
 </h2>
 <p>While calibrating a model it can be useful to keep track of different model runs with different parameterization. <code>rswap</code> aids this process with a variety of functions, such as</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/save_run.html">save_run</a></span><span class="op">(</span><span class="va">project_path</span>, run_name <span class="op">=</span> <span class="st">"COFRED = 0.35"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/save_swap_run.html">save_swap_run</a></span><span class="op">(</span><span class="va">project_path</span>, run_name <span class="op">=</span> <span class="st">"COFRED = 0.35"</span><span class="op">)</span></span></code></pre></div>
 <p>This function saves your entire model set up in a directory (<code>project_directory/rswap_saved</code>). Once a model run has been saved, it can be compared to other model runs, with the following functions.</p>
 </div>
 <div class="section level2">
@@ -209,20 +210,20 @@
 <a class="anchor" aria-label="anchor" href="#comparing-runs-"></a>
 </h2>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/comparative_plot.html">comparative_plot</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/rswap_plot_compare.html">rswap_plot_compare</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 </p>
 <p><img src="reference/figures/compareplot.png" width="60%" height="60%"></p>
 
 <p>Once again, this function is quite flexible, and can be passed any available <code>variable</code> or <code>depth</code></p>
-<p>You can compare the performance of your various model runs by using the <code><a href="reference/plot_statistics.html">plot_statistics()</a></code> function.</p>
+<p>You can compare the performance of your various model runs by using the <code><a href="reference/rswap_plot_performance.html">rswap_plot_performance()</a></code> function.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_statistics.html">plot_statistics</a></span><span class="op">(</span><span class="va">project_path</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">40</span>,<span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/rswap_plot_performance.html">rswap_plot_performance</a></span><span class="op">(</span><span class="va">project_path</span>, stat <span class="op">=</span> <span class="st">"d"</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">40</span>,<span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 </p>
 <p><img src="reference/figures/stat_plot1.png" width="60%" height="60%"></p>
 
-<p>This plot is equally flexible and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>. the graph type can be switched between <code>default</code>, <code>sorted</code> and <code>ggplot</code></p>
+<p>This plot is equally flexible and can be passed any <code>variable</code> and any amount of <code>depths</code> for any supported <code>stat</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="modification-of-parameters-">Modification of Parameters <a name="mod"></a>
@@ -241,9 +242,9 @@
 </h4>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># removes any non-essential data from the input file:</span></span>
-<span><span class="fu"><a href="reference/clean_swp_file.html">clean_swp_file</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="reference/clean_swap_file.html">clean_swap_file</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span> </span>
 <span><span class="co"># parses the data to be R-readable:</span></span>
-<span><span class="fu"><a href="reference/parse_swp_file.html">parse_swp_file</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="reference/parse_swap_file.html">parse_swap_file</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span> </span>
 <span><span class="co"># writes the SWAP main file sourced from ".csv" files stored in the rswap directory</span></span>
 <span><span class="fu"><a href="reference/write_swap_file.html">write_swap_file</a></span><span class="op">(</span><span class="va">project_path</span>, outfile <span class="op">=</span> <span class="st">"swap_modified.swp"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -252,7 +253,7 @@
 </h4>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_swap_parameters.html">load_swap_parameters</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span>
-<span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/change_swap_par.html">change_swap_par</a></span><span class="op">(</span><span class="va">param</span>, name <span class="op">=</span> <span class="st">"SHAPE"</span>, value <span class="op">=</span> <span class="st">"0.75"</span><span class="op">)</span></span>
+<span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/change_swap_parameter.html">change_swap_parameter</a></span><span class="op">(</span><span class="va">param</span>, name <span class="op">=</span> <span class="st">"SHAPE"</span>, value <span class="op">=</span> <span class="st">"0.75"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/write_swap_parameters.html">write_swap_parameters</a></span><span class="op">(</span><span class="va">project_path</span>, <span class="va">param</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -298,28 +299,22 @@
 <p>The aforementioned functions rely on more basic general functions which, while are designed for internal use, can possibly also be of assistance to the end user. These are listed below.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data</span></span>
-<span><span class="va">ob_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_observed.html">load_observed</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span>
-<span><span class="va">mod_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_swap_output.html">read_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span>
+<span><span class="va">ob_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_swap_observed.html">load_swap_observed</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span>
+<span><span class="va">mod_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_swap_output.html">load_swap_output</a></span><span class="op">(</span><span class="va">project_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filters SWAP data (observed or modelled) by variable and depth</span></span>
 <span><span class="va">mod_filt</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_swap_data.html">filter_swap_data</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mod_dat</span><span class="op">$</span><span class="va">custom_depth</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="va">ob_filt</span> <span class="op">&lt;-</span>  <span class="fu"><a href="reference/filter_swap_data.html">filter_swap_data</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mod_dat</span><span class="op">$</span><span class="va">custom_depth</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filters and Matches dataframe structure of observed and modelled</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_mod_obs.html">match_mod_obs</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Model performance metrics</span></span>
-<span><span class="fu"><a href="reference/NSE.html">NSE</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">obs</span><span class="op">$</span><span class="va">WC_15</span>, mod <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">mod</span><span class="op">$</span><span class="va">WC_15</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/PBIAS.html">PBIAS</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">obs</span><span class="op">$</span><span class="va">WC_15</span>, mod <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">mod</span><span class="op">$</span><span class="va">WC_15</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/RMSE.html">RMSE</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">obs</span><span class="op">$</span><span class="va">WC_15</span>, mod <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">mod</span><span class="op">$</span><span class="va">WC_15</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/RSR.html">RSR</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">obs</span><span class="op">$</span><span class="va">WC_15</span>, mod <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">mod</span><span class="op">$</span><span class="va">WC_15</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_swap_data.html">match_swap_data</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Melts together all saved runs + current into tidy format</span></span>
-<span><span class="fu"><a href="reference/melt_all_runs.html">melt_all_runs</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/melt_swap_runs.html">melt_swap_runs</a></span><span class="op">(</span><span class="va">project_path</span>, variable <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="roadmap">Roadmap <a name="roadmap"></a>
-<a class="anchor" aria-label="anchor" href="#roadmap"></a>
+<h2 id="roadmap-">Roadmap <a name="roadmap"></a>
+<a class="anchor" aria-label="anchor" href="#roadmap-"></a>
 </h2>
 <div class="section level3">
 <h3 id="major">Major<a class="anchor" aria-label="anchor" href="#major"></a>
@@ -341,15 +336,11 @@
 <li>Parsing support for all SWAP files, not just the main file.</li>
 <li>Add support for multiple variables at differing depths for <code>autoset_output</code>
 </li>
-<li>Update <code><a href="reference/plot_over_under.html">plot_over_under()</a></code> to use <a href="https://nsgrantham.github.io/ggbraid/" class="external-link">ggbraid</a>
+<li>Add support for reading saved runs with differing output.</li>
+<li>Add “exact variable matching” and stop removing “RAIN” in <code>io.R</code> <code><a href="reference/melt_all_runs.html">melt_all_runs()</a></code>
 </li>
-<li>Give all exported <code>rswap</code> functions a consistent naming scheme (<code>verb_swap_noun()</code>)</li>
-<li>
-<code><a href="reference/plot_statistics.html">plot_statistics()</a></code> sorting to follow stat property</li>
-<li>Add “exact variable matching” and stop removing “RAIN” in <code>io.R</code> -&gt; <code><a href="reference/melt_all_runs.html">melt_all_runs()</a></code>
-</li>
-<li>Renovate <code><a href="reference/soft_calibration_plot.html">soft_calibration_plot()</a></code> to accept any variable using the new system.</li>
-<li>Add D-Statistic from Moriasi et al 2017.</li>
+<li>Renovate <code><a href="reference/rswap_plot_multi.html">rswap_plot_multi()</a></code> to accept any variable using the new system.</li>
+<li>Load data into package environment, to prevent the need for constant re-loading. add force=T option to reload</li>
 </ul>
 </div>
 </div>
@@ -386,6 +377,7 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/moritzshore/rswap/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/moritzshore/rswap/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/moritzshore/rswap/issues" class="external-link">Suggestions and feedback</a></li>
 </ul>
 </div>
 

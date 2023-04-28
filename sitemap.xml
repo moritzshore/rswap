@@ -19,6 +19,9 @@
     <loc>/reference/change_swap_par.html</loc>
   </url>
   <url>
+    <loc>/reference/change_swap_parameter.html</loc>
+  </url>
+  <url>
     <loc>/reference/change_swap_table.html</loc>
   </url>
   <url>
@@ -26,6 +29,9 @@
   </url>
   <url>
     <loc>/reference/check_swap_message.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_swap_file.html</loc>
   </url>
   <url>
     <loc>/reference/clean_swp_file.html</loc>
@@ -43,7 +49,16 @@
     <loc>/reference/get_performance.html</loc>
   </url>
   <url>
+    <loc>/reference/get_swap_depths.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_swap_format.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_swap_performance.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_swap_variables.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
@@ -53,6 +68,12 @@
   </url>
   <url>
     <loc>/reference/load_observed.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_swap_observed.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_swap_output.html</loc>
   </url>
   <url>
     <loc>/reference/load_swap_parameters.html</loc>
@@ -70,7 +91,16 @@
     <loc>/reference/match_mod_obs.html</loc>
   </url>
   <url>
+    <loc>/reference/match_swap_data.html</loc>
+  </url>
+  <url>
     <loc>/reference/melt_all_runs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/melt_swap_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/melt_swap_runs.html</loc>
   </url>
   <url>
     <loc>/reference/modify_swap_file.html</loc>
@@ -79,13 +109,10 @@
     <loc>/reference/move_run_files.html</loc>
   </url>
   <url>
-    <loc>/reference/NSE.html</loc>
+    <loc>/reference/parse_swap_file.html</loc>
   </url>
   <url>
     <loc>/reference/parse_swp_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PBIAS.html</loc>
   </url>
   <url>
     <loc>/reference/plot_over_under.html</loc>
@@ -97,22 +124,28 @@
     <loc>/reference/read_swap_output.html</loc>
   </url>
   <url>
-    <loc>/reference/ribbonize.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RMSE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RSR.html</loc>
-  </url>
-  <url>
     <loc>/reference/rswap_init.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rswap_plot_compare.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rswap_plot_multi.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rswap_plot_performance.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rswap_plot_variable.html</loc>
   </url>
   <url>
     <loc>/reference/run_swap.html</loc>
   </url>
   <url>
     <loc>/reference/save_run.html</loc>
+  </url>
+  <url>
+    <loc>/reference/save_swap_run.html</loc>
   </url>
   <url>
     <loc>/reference/set_swap_format.html</loc>
@@ -122,6 +155,9 @@
   </url>
   <url>
     <loc>/reference/soft_calibration_plot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/update_swap_paths.html</loc>
   </url>
   <url>
     <loc>/reference/update_swp_paths.html</loc>

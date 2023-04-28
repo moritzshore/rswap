@@ -5,7 +5,7 @@ If you desire, you can automatically match the output of the SWAP model to the d
 verbose will print not only model running status, but also what rswap is doing
 timeout allows you to set the maximum runtime of the model
 
-"><meta property="og:image" content="/logo.svg"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+"><meta property="og:image" content="/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -63,6 +63,7 @@ optionally, a certain <code>swap_file</code>.</p><ul><li><p>If you desire, you c
 <span>  <span class="va">project_path</span>,</span>
 <span>  swap_file <span class="op">=</span> <span class="st">"swap.swp"</span>,</span>
 <span>  autoset_output <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  force <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  timeout <span class="op">=</span> <span class="cn">Inf</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -85,6 +86,10 @@ output. if this is set to <code>FALSE</code>, then INLIST csv must be set by the
 manually or with <code>set_swp_output()</code> or <code><a href="change_swap_par.html">change_swap_par()</a></code> for several other <code>rswap</code> function to work</p></dd>
 
 
+<dt>force</dt>
+<dd><p>If an rswap directory already exists, no new one will be generated unless <code>force=TRUE</code></p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>print status? (flag)</p></dd>
 
@@ -102,7 +107,7 @@ manually or with <code>set_swp_output()</code> or <code><a href="change_swap_par
     <div id="details">
     <h2>Details</h2>
     <p>This function does more than simply run the model, it does the following, in this order:</p><ol><li><p>Build the rswap directory: <code><a href="build_rswap_directory.html">build_rswap_directory()</a></code></p></li>
-<li><p>Parses the main swap file: <code>parse_swap_file()</code></p></li>
+<li><p>Parses the main swap file: <code><a href="parse_swap_file.html">parse_swap_file()</a></code></p></li>
 <li><p>Updates several parameters in the main file (such as paths, and output settings): <code><a href="set_swap_output.html">set_swap_output()</a></code></p></li>
 <li><p>Writes the new SWAP main file: <code>write_swp_file()</code></p></li>
 <li><p>Runs the new SWAP main file.</p></li>
