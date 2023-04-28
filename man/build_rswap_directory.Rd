@@ -4,10 +4,12 @@
 \alias{build_rswap_directory}
 \title{Build rswap Directory}
 \usage{
-build_rswap_directory(project_path, verbose = F)
+build_rswap_directory(project_path, force = F, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string)}
+
+\item{force}{overwrite any existing directory? (flag)}
 
 \item{verbose}{print status? (flag)}
 }
