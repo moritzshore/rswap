@@ -362,8 +362,9 @@ get_swap_variables <- function(swap_data, verbose = F){
 #'
 #' load_swap_output(example_path)
 #' @importFrom utils read.table
+#' @importFrom crayon blue
 load_swap_output <-  function(project_path, archived = F, verbose = F){
-  #TODO add verbose
+  #TODO load into rswap environment and add a force option
   #TODO rewrite to return ALL SWAP output.
 
   if(archived){
@@ -402,6 +403,8 @@ load_swap_output <-  function(project_path, archived = F, verbose = F){
 
   # TODO rename these to be more clear?
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
+
+  if(verbose){cat(crayon::blue("\u2139", "loaded SWAP model output"))}
 
   r_frame %>% return()
   }

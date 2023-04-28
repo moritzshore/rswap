@@ -40,9 +40,9 @@ A useful place to start would be the `rswap_init()` function. This function crea
 project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
 ```
 
-> You can use this `project_path` to run all the following example code on this page!.
+> **Hint:** You can use this `project_path` to run all the following example code on this page!
 
-**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`) unless stated otherwise, instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run(), write_swap_file()`), and remember that anything in the `project_path/rswap` directory is temporary!
+**⚠️IMPORTANT⚠️** Its important to know that `rswap` never modifies files in your project directory (`project_path`) unless stated otherwise. Instead all files are *copied* from `project_path` to `project_path/rswap`, modified there, and executed. All results are stored there as well and will be overwritten over time. Remember to save your results if you would like to keep them (`save_run(), write_swap_file()`), and remember that anything in the `project_path/rswap` directory is temporary!
 
 ## Running SWAP <a name="run"></a>
 
@@ -55,8 +55,9 @@ run_swap(project_path, autoset_output = TRUE)
 `run_swap()` can be further customized with the following parameters:
 
 -   `swap_file` can be set to a custom name for your SWAP main file (\*.swp)
--   `autoset_output` can be enabled, such that the output of the SWAP model matches your provided observed data
+-   `autoset_output` can be enabled (recomended), such that the output of the SWAP model matches your provided observed data
 -   `timeout` sets the max allowed runtime of SWAP
+-   `force` forces a rebuild of the the rswap project from the source files (WIP)
 -   `verbose` Prints everything the function does to the console with pretty colors
 
 ## Accessing Data <a name="data"></a>
@@ -66,40 +67,50 @@ run_swap(project_path, autoset_output = TRUE)
 To read the output of your executed SWAP run, you can use the following command:
 
 ``` r
-modelled_data <- read_swap_output(project_path)
+modelled_data <- load_swap_output(project_path)
 ```
 
-`read_swap_output()` returns two dataframes, `daily_output` which contains depth wise values of various variables. The other is `custom_depth` which contains custom variables at custom depths either explicitly altered by the user, or automatically parsed by the `autoset_output` flag of `run_swap()`. This dataframe is used widely throughout the package. (more/all results will be added over time)
+`load_swap_output()` returns two dataframes, `daily_output` which contains depth wise values of
+various variables. The other is `custom_depth` which contains custom variables at custom depths
+either explicitly altered by the user, or automatically parsed by the `autoset_output` flag of
+ `run_swap()`. This dataframe is used widely throughout the package. (more/all results will be
+ added over time)
 
 ### Observed Data
 
-As `rswap` heavily revolves around calibration, observed data is of high importance. When running `build_rswap_directory()` a template observed file will be copied into the `project_directory` (if not already existing). It is up to the user to fill this file with the appropriate data and column names. Documentation for how to do this is in a companion text file.
+As `rswap` heavily revolves around calibration, observed data is of high importance. 
+When running `build_rswap_directory()` a template observed file will be copied into the
+`project_directory` (if not already existing). It is up to the user to fill this file with the
+ appropriate data and column names. Documentation for how to do this is in a companion text file.
 
 To load your observed file, you can use the following command:
 
 ``` r
-observed_data <- load_observed(project_path)
+observed_data <- load_swap_observed(project_path)
 ```
 
-Which will return a dataframe of the user-entered observed data, as well as a vector for the detected variables.
+Which will return a dataframe of the user-entered observed data
 
-To find out what depths your observed variables have, you can use the following command:
+To find out what observed variables you have, as well as their depths, you can use:
 
 ``` r
-get_depths(observed_data$data)
+get_swap_variables(observed_data)
+
+get_swap_depths(observed_data)
+
 ```
 
 ..this can also be filtered by a specific variable by passing `variable`
 
 ## Visuals <a name="visuals"></a>
 
-There are a variety of functions used to visualize your SWAP data, such as `plot_over_under()`
+There are a variety of functions used to visualize your SWAP data, such as `rswap_plot_variable()`
 
 ``` r
-plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
+rswap_plot_variable(project_path, variable = "WC", depth = c(15, 40, 70))
 ```
 
-`plot_over_und()` can be passed a `variable`, as well as a vector `depth`.
+`rswap_plot_variable()` can be passed a `variable`, as well as a vector `depth`.
 
 <p align="center">
 
@@ -107,15 +118,14 @@ plot_over_under(project_path, variable = "WC", depth = c(15, 40, 70))
 
 </p>
 
-> (this plot heavily relies on code from [Neal Grantham](https://www.nsgrantham.com/fill-between-two-lines-ggplot2/))
-
-For a more detailed look at multiple variables at once, you can use the `soft_calibration_plot()`
+For a more detailed look at multiple variables at once, you can use the `rswap_plot_multi()`
 
 ``` r
-soft_calibration_plot(project_path, vars = c("H", "WC", "DRAINAGE"))
+rswap_plot_multi(project_path, vars = c("H", "WC", "DRAINAGE"))
 ```
 
-This function can be passed up to 3 variables, and will display them interactively on the same plot. If observed data is available, they will be displayed as well.
+This function can be passed up to 3 variables, and will display them interactively on the same plot.
+ If observed data is available, it will be displayed as well.
 
 <p align="center">
 
@@ -125,28 +135,33 @@ This function can be passed up to 3 variables, and will display them interactive
 
 ## Model Performance <a name="performance"></a>
 
-A few functions focus on assessing model performance by comparing modelling values to user provided observed values. This functionality is based on the `get_performance()` function:
+A few functions focus on assessing model performance by comparing modelling values to user provided 
+observed values. This functionality is based on the `get_swap_performance()` function:
 
 ``` r
-get_performance(project_path, stat = "NSE", variable = "WC", depth = 15)
+get_swap_performance(project_path, stat = "d", variable = "WC", depth = 15)
 ```
 
-This function is very flexible and can be passed any number of `variables`, `depths`, and performance indicators `stat` (currently supported are `NSE`, `PBIAS`, `RSR`, and `RMSE`.
+This function is very flexible and can be passed any number of `variables`, `depths`, and 
+performance indicators `stat` (currently supported are select functions from package `hydroGOF`)
 
 ## Saving Runs <a name="saving"></a>
 
-While calibrating a model it can be useful to keep track of different model runs with different parameterization. `rswap` aids this process with a variety of functions, such as
+While calibrating a model it can be useful to keep track of different model runs with different
+ parameterization. `rswap` aids this process with a variety of functions, such as
 
 ``` r
-save_run(project_path, run_name = "COFRED = 0.35")
+save_swap_run(project_path, run_name = "COFRED = 0.35")
 ```
 
-This function saves your entire model set up in a directory (`project_directory/rswap_saved`). Once a model run has been saved, it can be compared to other model runs, with the following functions.
+This function saves your entire model set up in a directory (`project_directory/rswap_saved`). 
+Once a model run has been saved, it can be compared to other model runs, with the following 
+functions.
 
 ## Comparing Runs <a name="compare"></a>
 
 ``` r
-comparative_plot(project_path, variable = "WC", depth = 15)
+rswap_plot_compare(project_path, variable = "WC", depth = 15)
 ```
 
 <p align="center">
@@ -157,10 +172,11 @@ comparative_plot(project_path, variable = "WC", depth = 15)
 
 Once again, this function is quite flexible, and can be passed any available `variable` or `depth`
 
-You can compare the performance of your various model runs by using the `plot_statistics()` function.
+You can compare the performance of your various model runs by using the `rswap_plot_performance()` 
+function.
 
 ``` r
-plot_statistics(project_path, var = "WC", depth = c(15,40,70))
+rswap_plot_performance(project_path, stat = "d", var = "WC", depth = c(15,40,70))
 ```
 
 <p align="center">
@@ -169,7 +185,7 @@ plot_statistics(project_path, var = "WC", depth = c(15,40,70))
 
 </p>
 
-This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`. the graph type can be switched between `default`, `sorted` and `ggplot`
+This plot is equally flexible and can be passed any `variable` and any amount of `depths` for any supported `stat`.
 
 ## Modification of Parameters <a name="mod"></a>
 
@@ -191,9 +207,9 @@ This function has many different behaviors depending on which flags are enabled,
 
 ``` r
 # removes any non-essential data from the input file:
-clean_swp_file(project_path) 
+clean_swap_file(project_path) 
 # parses the data to be R-readable:
-parse_swp_file(project_path) 
+parse_swap_file(project_path) 
 # writes the SWAP main file sourced from ".csv" files stored in the rswap directory
 write_swap_file(project_path, outfile = "swap_modified.swp")
 ```
@@ -202,7 +218,7 @@ write_swap_file(project_path, outfile = "swap_modified.swp")
 
 ``` r
 param <- load_swap_parameters(project_path)
-param <- change_swap_par(param, name = "SHAPE", value = "0.75")
+param <- change_swap_parameter(param, name = "SHAPE", value = "0.75")
 write_swap_parameters(project_path, param)
 ```
 
@@ -250,24 +266,18 @@ The aforementioned functions rely on more basic general functions which, while a
 
 ``` r
 # Load data
-ob_dat <- load_observed(project_path)
-mod_dat <- read_swap_output(project_path)
+ob_dat <- load_swap_observed(project_path)
+mod_dat <- load_swap_output(project_path)
 
 # Filters SWAP data (observed or modelled) by variable and depth
 mod_filt <- filter_swap_data(data = mod_dat$custom_depth, var = "WC", depth = 15)
 ob_filt <-  filter_swap_data(data = mod_dat$custom_depth, var = "WC", depth = 15)
 
 # Filters and Matches dataframe structure of observed and modelled
-data <- match_mod_obs(project_path, variable = "WC", depth = 15)
-
-# Model performance metrics
-NSE(obs = data$obs$WC_15, mod = data$mod$WC_15)
-PBIAS(obs = data$obs$WC_15, mod = data$mod$WC_15)
-RMSE(obs = data$obs$WC_15, mod = data$mod$WC_15)
-RSR(obs = data$obs$WC_15, mod = data$mod$WC_15)
+data <- match_swap_data(project_path, variable = "WC", depth = 15)
 
 # Melts together all saved runs + current into tidy format
-melt_all_runs(project_path, variable = "WC", depth = 15)
+melt_swap_runs(project_path, variable = "WC", depth = 15)
 ```
 
 ## Roadmap <a name="roadmap"></a>
@@ -286,16 +296,10 @@ melt_all_runs(project_path, variable = "WC", depth = 15)
 
 -   Parsing support for all SWAP files, not just the main file.
 -   Add support for multiple variables at differing depths for `autoset_output`
--   Update `plot_over_under()` to use [ggbraid](https://nsgrantham.github.io/ggbraid/)
--   Give all exported `rswap` functions a consistent naming scheme (`verb_swap_noun()`)
--   `plot_statistics()` sorting to follow stat property
--   Add "exact variable matching" and stop removing "RAIN" in `io.R` -\> `melt_all_runs()`
--   Renovate `soft_calibration_plot()` to accept any variable using the new system.
--   Add D-Statistic from Moriasi et al 2015.
--   Load observed data into package environment, to prevent the need for constant re-loading
--   Add `verbose` to `read_swap_output()` and rename to `load_swap_output()`
 -   Add support for reading saved runs with differing output.
--   `load_swap_data()` to return just the dataframe, add a dedicated function for var names
+-   Add "exact variable matching" and stop removing "RAIN" in `io.R` `melt_all_runs()`
+-   Renovate `rswap_plot_multi()` to accept any variable using the new system.
+-   Load  data into package environment, to prevent the need for constant re-loading. add force=T option to reload
 
 ## Support and Contributing <a name="support"></a>
 
