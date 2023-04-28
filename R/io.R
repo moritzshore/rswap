@@ -5,6 +5,7 @@
 #' Makes a temporary sub-directory workspace for the package to run SWAP in.
 #'
 #' @param project_path path to project directory (string)
+#' @param force overwrite any existing directory? (flag)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue
@@ -24,11 +25,19 @@
 #' # This example code will not be executed as it needs to write files!
 #' # build_rswap_directory(example_path, verbose = TRUE)
 
-build_rswap_directory <- function(project_path, verbose = F){
-
-  # TODO should this delete the previous one?
+build_rswap_directory <- function(project_path, force = F, verbose = F){
 
   temp_directory <- glue("{project_path}/rswap")
+
+  if(dir.exists(temp_directory)){
+      if(force == FALSE){
+        if(verbose){cat("\u2139", blue("rswap directory already exists, not rebuilding (use force=TRUE to override)"))}
+        return(paste0(project_path, "/rswap"))
+      }else{
+        if(verbose){cat("\u2139", blue("rswap directory already exists: overwriting \U0001f9f9 due to force=TRUE "))}
+        unlink(temp_directory)
+      }
+  }
 
   if(verbose){
     cat(blue("\U0001f477 Building rswap directory: \n"))
