@@ -37,7 +37,7 @@ library(rswap)
 A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly.
 
 ``` r
-project_path <- rswap_init(swapexe = "C:/path/to/swap.exe")
+project_path <- rswap_init(swap_exe = "C:/path/to/swap.exe")
 ```
 
 > **Hint:** You can use this `project_path` to run all the following example code on this page!
