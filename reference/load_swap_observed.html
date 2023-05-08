@@ -96,8 +96,7 @@ your project directory, and must bear the name <code>swap_observed_data.csv</cod
 <span class="r-in"><span><span class="co"># example_path &lt;- "C:/path/to/swap_folder/example_project"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">load_swap_observed</span><span class="op">(</span><span class="va">example_path</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ✅ <span style="color: #0000BB;">Observed data with the following variables loaded:</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">H</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">WC</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">TEMP</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ℹ <span style="color: #0000BB;">Observed data already loaded, not reloading. (use force=TRUE to force reload)</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 36 × 10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    DATE         H_15   H_40   H_70 WC_15 WC_40 WC_70 TEMP_15 TEMP_40 TEMP_70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -112,10 +111,6 @@ your project directory, and must bear the name <code>swap_observed_data.csv</cod
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2002-09-30 -<span style="color: #BB0000;">166.</span>  -<span style="color: #BB0000;">112.</span>  -<span style="color: #BB0000;">74.5</span>  0.210 0.175 0.163   17.1     4.06    5.74</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2002-10-31  -<span style="color: #BB0000;">84.6</span>  -<span style="color: #BB0000;">65.1</span> -<span style="color: #BB0000;">55.2</span>  0.274 0.251 0.195    9.79    2.78    4.22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $observed_variables</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "H"    "WC"   "TEMP"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>

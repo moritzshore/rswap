@@ -90,10 +90,23 @@ accessible.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># load some SWAP data (either observed, or modeled using load_swap_output())</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_swap_observed.html">load_swap_observed</a></span><span class="op">(</span>project_path <span class="op">=</span> <span class="va">example_path</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ✅ <span style="color: #0000BB;">Observed data with the following variables loaded:</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">H</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">WC</span> <span style="color: #00BB00; font-weight: bold; text-decoration: underline;">TEMP</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ✅ <span style="color: #0000BB;">Observed data loaded</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">filter_swap_data</span><span class="op">(</span><span class="va">data</span>, var <span class="op">=</span> <span class="st">"WC"</span>, depth <span class="op">=</span> <span class="st">"15"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in filter_swap_data(data, var = "WC", depth = "15"):</span> Error: no matching column found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 36 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    DATE       WC_15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 2002-01-31 0.315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2002-02-28 0.342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 2002-03-31 0.287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2002-04-30 0.314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2002-05-31 0.286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2002-06-30 0.244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2002-07-31 0.397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2002-08-31 0.220</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2002-09-30 0.210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2002-10-31 0.274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
