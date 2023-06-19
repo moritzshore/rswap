@@ -1,7 +1,7 @@
 # rswap <img src="man/figures/logo.png" align="right" height="138" />
 
 
-rswap is an R-package designed to help interface and work with [SWAP4](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP4.2](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap) ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap) ![GitHub](https://img.shields.io/github/license/moritzshore/rswap) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 
@@ -34,7 +34,7 @@ remotes::install_github(repo = "moritzshore/rswap", ref = remotes::github_releas
 library(rswap)
 ```
 
-A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly.
+A useful place to start would be the `rswap_init()` function. This function creates the "Hupselbrook" example case in the same directory as your `swap.exe`. It goes on to run the setup, copy in the observed data template file, and plot the results. If this function finished successfully, you know `rswap` is working properly. **Note, rswap only works with SWAP's latest version: 4.2**
 
 ``` r
 project_path <- rswap_init(swap_exe = "C:/path/to/swap.exe")
