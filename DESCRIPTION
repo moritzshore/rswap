@@ -28,14 +28,12 @@ Imports:
     processx,
     purrr,
     readr,
-    remotes,
     stringi,
     stringr,
     tibble,
     tidyr,
     utils,
     vroom
-Remotes: github::nsgrantham/ggbraid
 Suggests: 
     devtools,
     rmarkdown,
