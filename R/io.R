@@ -35,7 +35,7 @@ build_rswap_directory <- function(project_path, force = F, verbose = F){
         return(paste0(project_path, "/rswap"))
       }else{
         if(verbose){cat("\u2139", blue("rswap directory already exists: overwriting \U0001f9f9 due to force=TRUE "))}
-        unlink(temp_directory)
+        unlink(temp_directory, recursive = T)
       }
   }
 
