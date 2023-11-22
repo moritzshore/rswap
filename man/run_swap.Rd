@@ -8,7 +8,7 @@ run_swap(
   project_path,
   swap_file = "swap.swp",
   autoset_output = F,
-  force = F,
+  force = T,
   verbose = F,
   timeout = Inf
 )
@@ -23,7 +23,7 @@ your observed data provided in the observed file and match it to the SWAP
 output. if this is set to \code{FALSE}, then INLIST csv must be set by the user either
 manually or with \code{set_swp_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
 
-\item{force}{If an rswap directory already exists, no new one will be generated unless \code{force=TRUE}}
+\item{force}{If an rswap directory already exists, no new one will be generated/reloaded unless \code{force=TRUE} defaults to true.}
 
 \item{verbose}{print status? (flag)}
 

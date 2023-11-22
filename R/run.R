@@ -21,7 +21,7 @@
 #' your observed data provided in the observed file and match it to the SWAP
 #' output. if this is set to `FALSE`, then INLIST csv must be set by the user either
 #' manually or with `set_swp_output()` or `change_swap_par()` for several other `rswap` function to work
-#' @param force If an rswap directory already exists, no new one will be generated unless `force=TRUE`
+#' @param force If an rswap directory already exists, no new one will be generated/reloaded unless `force=TRUE` defaults to true.
 #' @param verbose print status? (flag)
 #' @param timeout number of seconds before run timeout (unlimited by default) (numeric)
 #'
@@ -37,7 +37,7 @@
 run_swap <- function(project_path,
                      swap_file = "swap.swp",
                      autoset_output = F,
-                     force = F,
+                     force = T,
                      verbose = F,
                      timeout = Inf) {
 
@@ -77,7 +77,8 @@ run_swap <- function(project_path,
   parameters <- set_swap_output(project_path = project_path,
                                parameters = parameters,
                                autoset_output = autoset_output,
-                               verbose = verbose)
+                               verbose = verbose,
+                               force = force)
 
   # write the modified parameter set
   write_swap_parameters(project_path = project_path,
