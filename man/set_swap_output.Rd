@@ -4,7 +4,13 @@
 \alias{set_swap_output}
 \title{Set SWAP output}
 \usage{
-set_swap_output(project_path, parameters, autoset_output = F, verbose = F)
+set_swap_output(
+  project_path,
+  parameters,
+  autoset_output = F,
+  verbose = F,
+  force = T
+)
 }
 \arguments{
 \item{project_path}{path to project directory}
@@ -14,6 +20,8 @@ set_swap_output(project_path, parameters, autoset_output = F, verbose = F)
 \item{autoset_output}{flag for matching output to observed file.}
 
 \item{verbose}{print status? (flag)}
+
+\item{force}{forces a reload of the SWAP project files (default, true)}
 }
 \value{
 Returns parameter dataframe with modified INLIST_CSV parameter.

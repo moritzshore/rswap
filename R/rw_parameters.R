@@ -386,6 +386,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 #' @param parameters parameter dataframe
 #' @param autoset_output flag for matching output to observed file.
 #' @param verbose print status? (flag)
+#' @param force forces a reload of the SWAP project files (default, true)
 #'
 #' @importFrom glue glue
 #' @importFrom dplyr %>% last
@@ -399,7 +400,12 @@ set_swap_output <-
   function(project_path,
            parameters,
            autoset_output = F,
-           verbose = F) {
+           verbose = F,
+           force = T) {
+
+    if(autoset_output == T && force == F){
+      warning("RSWAP: Cannot autoset output with any updated values if force is set to FALSE!")
+    }
 
     # change console output based on verbose flag
     if (verbose) {
@@ -472,7 +478,8 @@ set_swap_output <-
       if(verbose){cat(blue("\u23fa Autosetting output to match observed file!"),"\n")}
 
       # load variables and depths
-      obs <- load_swap_observed(project_path, archived = F, verbose = verbose)
+      # Note: think about the force parameter
+      obs <- load_swap_observed(project_path, archived = F, verbose = verbose, force = force)
       variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
       depths <- get_swap_depths(data = obs) %>% sort()
       cat("\u2139",
