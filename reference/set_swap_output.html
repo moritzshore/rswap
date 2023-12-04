@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rswap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -50,7 +50,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_swap_output</span><span class="op">(</span><span class="va">project_path</span>, <span class="va">parameters</span>, autoset_output <span class="op">=</span> <span class="cn">F</span>, verbose <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_swap_output</span><span class="op">(</span></span>
+<span>  <span class="va">project_path</span>,</span>
+<span>  <span class="va">parameters</span>,</span>
+<span>  autoset_output <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  force <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -69,6 +75,10 @@
 
 <dt>verbose</dt>
 <dd><p>print status? (flag)</p></dd>
+
+
+<dt>force</dt>
+<dd><p>forces a reload of the SWAP project files (default, true)</p></dd>
 
 </dl></div>
     <div id="value">
