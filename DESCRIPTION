@@ -14,7 +14,9 @@ URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
 Language: English
 Depends: 
-    R (>= 4.0)
+    R (>= 4.0),
+    hydroGOF,
+    ggbraid
 Imports: 
     crayon,
     dplyr,
@@ -32,9 +34,6 @@ Imports:
     tidyr,
     utils,
     vroom
-Depends:
-    hydroGOF
-    ggbraid
 Suggests:
     devtools,
     rmarkdown,
