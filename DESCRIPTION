@@ -34,7 +34,8 @@ Imports:
     tidyr,
     utils,
     vroom
-Remotes: github::hzambran/hydroGOF
+Remotes: 
+    github::hzambran/hydroGOF
     github::nsgrantham/ggbraid
 Suggests: 
     devtools,
