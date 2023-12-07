@@ -18,11 +18,9 @@ Depends:
 Imports: 
     crayon,
     dplyr,
-    ggbraid,
     ggplot2,
     ggpubr,
     glue,
-    hydroGOF,
     magrittr,
     plotly,
     processx,
@@ -34,10 +32,10 @@ Imports:
     tidyr,
     utils,
     vroom
-Remotes: 
-    github::hzambran/hydroGOF
-    github::nsgrantham/ggbraid
-Suggests: 
+Depends:
+    hydroGOF
+    ggbraid
+Suggests:
     devtools,
     rmarkdown,
     roxygen2
