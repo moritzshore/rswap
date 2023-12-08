@@ -12,8 +12,7 @@ Description: R-based interface for calibrating the SWAP model (among other
 License: GPL (>= 3)
 URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
-Language: English
-Depends: 
+Depends:
     R (>= 4.0)
 Imports: 
     crayon,
@@ -34,13 +33,16 @@ Imports:
     tidyr,
     utils,
     vroom
-Remotes: 
-    github::hzambran/hydroGOF
-    github::nsgrantham/ggbraid
-Suggests: 
+Suggests:
+    hydroTSM,
     devtools,
     rmarkdown,
     roxygen2
+Remotes: 
+    github::hzambran/hydroGOF,
+    github::hzambran/hydroTSM,
+    github::nsgrantham/ggbraid
 Encoding: UTF-8
+Language: English
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
