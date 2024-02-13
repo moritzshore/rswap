@@ -1,7 +1,7 @@
 Type: Package
 Package: rswap
 Title: an R interface for the SWAP model
-Version: 0.3.6
+Version: 0.3.7
 Date: 2023-03-31
 Authors@R: 
     person("Moritz", "Shore", , "moritz.shore@nibio.no", role = c("aut", "cre"),
@@ -34,15 +34,12 @@ Imports:
     utils,
     vroom
 Suggests:
-    hydroTSM,
     devtools,
     rmarkdown,
     roxygen2
 Remotes: 
-    github::hzambran/hydroGOF,
-    github::hzambran/hydroTSM,
     github::nsgrantham/ggbraid
 Encoding: UTF-8
 Language: English
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
