@@ -151,15 +151,15 @@ check_swap_message <- function(status, verbose = F){
 
 # check to see if SWAP.exe is in the right place
 check_exe_location <- function(swap_exe, verbose) {
-  # check if SWAP.exe is in the right place
-  if (file.exists(swap_exe) == FALSE) {
-    stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
-  } else{
-    if (verbose) {
-      cat("\u2714",
-          blue(underline("swap.exe")), blue("found"), "\n")
+  if (.Platform$OS.type == "windows") {
+    if (file.exists(swap_exe) == FALSE) {stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))}
+    else if(verbose){cat("\u2714", blue(underline("swap.exe")), blue("found"), "\n")}
     }
+  else if (.Platform$OS.type == "unix") {
+    if (file.exists(swap_exe) == FALSE) {stop(glue("swap420 must be located in parent directory of {project}!\n Required Path: {swap_exe}"))}
+    else if(verbose){cat("\u2714", blue(underline("swap420")), blue("found"), "\n")}
   }
+  else{stop(paste("operating system not recognized:",.Platform$OS.type,"please open an issue on github."))}
 }
 
 parse_run_paths <- function(project_path, verbose, swap_file) {
@@ -168,7 +168,16 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
   project <- seperated %>% utils::tail(1)
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe_path <- work_dir %>% paste(collapse = "/")
-  swap_exe <- paste0(swap_exe_path,"/swap.exe")
+
+  if(.Platform$OS.type == "windows"){
+    swap_exe <- paste0(swap_exe_path,"/swap.exe")
+  }else if(.Platform$OS.type == "unix"){
+    swap_exe <- paste0(swap_exe_path,"/swap420")
+  }
+  else{
+    stop(paste("Operating system not recognized:", .Platform$OS.type,
+        "please open a new issue on github!"))
+    }
   swap_file_path <- glue("{project}/rswap/{swap_file}")
 
   outpath <- paste0("rswap/", swap_file)
@@ -183,16 +192,25 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
 
 run_swap_base <- function(verbose, swap_run_paths, timeout) {
   if(verbose){
-    cat(blue(bold(">> Running")), yellow(bold("swap.exe")), blue(bold("in working directory: ")))
+    cat(blue(bold(">> Running")), yellow(bold("SWAP")), blue(bold("in working directory: ")))
     cat(underline(swap_run_paths$work_dir),"\n")
     cat(blue(bold(">> Executing the following file: ")))
     cat(underline(swap_run_paths$swap_file_path),"\n")
     cat(blue(bold(glue(">> With max runtime of:"))), underline(glue("{timeout} seconds")),"\n")
   }
 
+  if (.Platform$OS.type == "windows") {
+    swap_command <- "swap.exe"
+  } else if (.Platform$OS.type == "unix") {
+    swap_command <- "swap420"
+  } else{
+    stop(paste0("operating system not recognized!", .Platform$OS.type,
+        "please open a new issue on github!"))
+  }
+
   model_start <- Sys.time()
   msg <- processx::run(
-    command = "swap.exe",
+    command = swap_command,
     wd = swap_run_paths$work_dir,
     args =  swap_run_paths$swap_file_path,
     error_on_status = F,

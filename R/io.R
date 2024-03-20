@@ -105,7 +105,7 @@ build_rswap_directory <- function(project_path, force = F, verbose = F){
 #'
 #'
 #' @param project_path path to the temp directory (string)
-#' @param swap_exe path to swap.exe (string)
+#' @param swap_exe path to SWAP (string)
 #' @param parameters SWAP main file parameters (string)
 #' @param verbose print status? (flag)
 #'
@@ -732,7 +732,7 @@ melt_swap_runs <-
 #' This function is an optional starting point when using rswap for the first
 #' time. What it does is copy in the example swap setup "hupselbrook" into a
 #' sample project directory "rswap_init" within the same working directory as
-#' your swap.exe executable (hence the need to pass the path to the .exe).
+#' your swap executable (hence the need to pass the path).
 #'
 #' The sample directory contains the SWAP input files, as well as a template for
 #' observed values. This provides a good starting point for setting up your own
@@ -742,7 +742,7 @@ melt_swap_runs <-
 #' If this function does not successfully complete, then there is an underlying
 #' issue you need to fix before continuing to use rswap.
 #'
-#' @param swap_exe path to swap.exe (string)
+#' @param swap_exe path to SWAP model (string)
 #'
 #' @returns Returns the project path of "hupselbrook" SWAP setup.
 #'
@@ -752,7 +752,7 @@ melt_swap_runs <-
 #'
 #' @examples
 #' # This function cannot execute example code as it relies on the externally
-#' # provided 'swap.exe'
+#' # provided swap model
 #'
 #' # rswap_init("C:/path/to/swap.exe")
 #'
