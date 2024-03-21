@@ -1,14 +1,14 @@
 Type: Package
 Package: rswap
 Title: an R interface for the SWAP model
-Version: 0.3.7
-Date: 2023-03-31
+Version: 0.4.0
+Date: 2024-03-21
 Authors@R: 
     person("Moritz", "Shore", , "moritz.shore@nibio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7586-997X"))
 Maintainer: Moritz Shore <moritz.shore@nibio.no>
-Description: R-based interface for calibrating the SWAP model (among other
-    things).
+Description: R-based interface for running and calibrating the SWAP model 
+    (among other things).
 License: GPL (>= 3)
 URL: https://moritzshore.github.io/rswap/
 BugReports: https://github.com/moritzshore/rswap/issues
@@ -16,7 +16,9 @@ Depends:
     R (>= 4.0)
 Imports: 
     crayon,
+    doParallel,
     dplyr,
+    foreach,
     ggbraid,
     ggplot2,
     ggpubr,
