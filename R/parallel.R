@@ -37,7 +37,7 @@ run_swap_parallel <- function(project_paths,
                               verbose = F,
                               timeout = Inf) {
 
-  # start timmer
+  # start timer
   t1 <- Sys.time()
 
   # if no cores are provided, then use 2 less than exist.
