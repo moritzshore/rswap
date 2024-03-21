@@ -34,7 +34,7 @@ build_rswap_directory <- function(project_path, force = F, verbose = F){
         if(verbose){cat("\u2139", blue("rswap directory already exists, not rebuilding (use force=TRUE to override)"))}
         return(paste0(project_path, "/rswap"))
       }else{
-        if(verbose){cat("\u2139", blue("rswap directory already exists: overwriting \U0001f9f9 due to force=TRUE "))}
+        if(verbose){cat("\u2139", blue("rswap directory already exists: overwriting \U0001f9f9 due to force=TRUE\n"))}
         unlink(temp_directory, recursive = T)
       }
   }
