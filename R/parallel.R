@@ -1,5 +1,6 @@
 run_swap_parallel <- function(project_paths,
                               n_cores = NULL,
+                              swap_exe = NULL,
                               swap_files = NULL,
                               autoset_output = F,
                               force = T,
@@ -7,29 +8,24 @@ run_swap_parallel <- function(project_paths,
                               timeout = Inf) {
 
   # if no cores are provided, then use 2 less than exist.
-  if(is.null(n_cores)){
-    n_cores = parallel::detectCores() - 2
-  }
+  if(is.null(n_cores)){n_cores = parallel::detectCores() - 2}
 
   # if no swap file names are passed, then use the default
-  if(is.null(swap_files)){
-    if(get_os() == "windows"){swap_files <- rep("swap.exe", length(project_paths))}
-    else if(get_os() == "linux"){swap_files <- rep("swap420", length(project_paths))}
-    else{stop("OS not recognized / supported?!")}
-  }
+  if(is.null(swap_files)){swap_files <- rep("swap.swp", length(project_paths))}
 
-  #project_paths <- list.files("C:/Users/mosh/Documents/rswaptesting/paralel/", full.names = T)
+  #project_paths <- list.files("C:/Users/mosh/Documents/rswaptesting/paralel/", full.names = T, pattern = "hupsel")
 
-  dirname <- dirname(project_paths[1])
+  pardir <- dirname(project_paths[1])
 
-  log <- paste0(dirname, "/rswap_parallel.log")
+  parpardir <- dirname(pardir)
+  log <- paste0(parpardir, "/rswap_parallel.log")
   cl <- parallel::makeCluster(n_cores,  outfile=log)
   doParallel::registerDoParallel(cl)
-
-  batch_info <- foreach(proj = project_paths, swapfile = swap_files) %dopar% {
-      run_swap(project_path = proj,
-              )
-  }
+  result <-
+    foreach::foreach(run_name = project_paths) %dopar% {
+      rswap::run_swap(run_name)
+    }
+  parallel::stopCluster(cl)
 }
 
 # modded from https://www.r-bloggers.com/2015/06/identifying-the-os-from-r/
