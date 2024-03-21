@@ -152,11 +152,11 @@ check_swap_message <- function(status, verbose = F){
 # check to see if SWAP.exe is in the right place
 check_exe_location <- function(swap_exe, verbose) {
   if (.Platform$OS.type == "windows") {
-    if (file.exists(swap_exe) == FALSE) {stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))}
+    if (file.exists(swap_exe) == FALSE) {stop("swap.exe must be located in parent directory of project path!\n", swap_exe)}
     else if(verbose){cat("\u2714", blue(underline("swap.exe")), blue("found"), "\n")}
     }
   else if (.Platform$OS.type == "unix") {
-    if (file.exists(swap_exe) == FALSE) {stop(glue("swap420 must be located in parent directory of {project}!\n Required Path: {swap_exe}"))}
+    if (file.exists(swap_exe) == FALSE) {stop("swap420 must be located in parent directory of project path!\n", swap_exe)}
     else if(verbose){cat("\u2714", blue(underline("swap420")), blue("found"), "\n")}
   }
   else{stop(paste("operating system not recognized:",.Platform$OS.type,"please open an issue on github."))}
