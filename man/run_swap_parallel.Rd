@@ -8,6 +8,7 @@ run_swap_parallel(
   project_paths,
   n_cores = NULL,
   working_dir = NULL,
+  swap_exe = NULL,
   swap_files = NULL,
   autoset_output = F,
   force = T,

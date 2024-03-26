@@ -166,12 +166,6 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
   # Parse paths
   seperated <- project_path %>% str_split("/") %>% unlist()
   project <- seperated %>% utils::tail(1)
-  project_clean <- seperated %>% utils::tail(1) %>%
-    # remove all special characters
-    str_replace_all("[^[:alnum:]]", "")
-
-  if(project != project_clean){stop("rswap: project folders cannot contain special characters! alphanumeric only, sorry! \n",
-                                    "folder in question: ", project, "\n")}
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe_path <- work_dir %>% paste(collapse = "/")
 

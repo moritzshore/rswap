@@ -31,6 +31,7 @@
 run_swap_parallel <- function(project_paths,
                               n_cores = NULL,
                               working_dir = NULL,
+                              swap_exe = NULL,
                               swap_files = NULL,
                               autoset_output = F,
                               force = T,
@@ -50,7 +51,6 @@ run_swap_parallel <- function(project_paths,
   # if no working dir is defined, use the parent directory of the first path
   if(is.null(working_dir)){
     working_dir <- dirname(project_paths[1])
-    log <- paste0(working_dir, "/rswap_parallel.log")
   }
 
   paralleldir <- paste0(working_dir, "/rswap_parallel")
@@ -58,24 +58,29 @@ run_swap_parallel <- function(project_paths,
   unlink(paralleldir, recursive = T)
   dir.create(paralleldir)
 
-
   if (.Platform$OS.type == "windows") {
-    swap_exe <- "swap.exe"
+    swap_name <- "swap.exe"
   } else if (.Platform$OS.type == "unix") {
-    swap_exe <- "swap420"
+    swap_name <- "swap420"
   } else{
     stop(paste0("operating system not recognized!", .Platform$OS.type,
                 "please open a new issue on github!"))
   }
 
+  # default behavior if no SWAP exe is specified.
+  if(is.null(swap_exe)){
+    swap_exe <- paste0(working_dir, "/", swap_name)
+  }
+
 
   if(verbose){
-    cat(magenta(bold((paste0("Running ",swap_exe)))), underline(bold("in parallel with")), bgYellow(paste0(length(project_paths), " runs")), bold(magenta("using")), bgYellow(n_cores, "cores"),"\n")
+    cat(magenta(bold((paste0("Running ",swap_name)))), underline(bold("in parallel with")), bgYellow(paste0(length(project_paths), " runs")), bold(magenta("using")), bgYellow(n_cores, "cores"),"\n")
     cat(magenta(">>> Working dir:", underline(working_dir), "\n"))
+    cat(magenta(">>> SWAP location:", underline(swap_exe), "\n"))
     cat(magenta(">>> Created", underline(paralleldir), "for parallel runs\n"))
     }
 
-  cl <- parallel::makeCluster(n_cores,  outfile=log)
+  cl <- parallel::makeCluster(n_cores,  outfile="")
   doParallel::registerDoParallel(cl)
   if(verbose){
     cat(magenta(italic(">>> sucessfully registered cluster, starting runs...\n")))
@@ -87,7 +92,7 @@ run_swap_parallel <- function(project_paths,
   swap_file = NULL
 
   result <-
-    foreach::foreach(
+    foreach(
       run_name = project_paths,
       swap_file = swap_files,
       threadnr = c(1:length(project_paths))
@@ -96,7 +101,7 @@ run_swap_parallel <- function(project_paths,
       parrundir <- paste0(paralleldir, "/", paste0("thread_", threadnr))
       dir.create(parrundir)
       file.copy(run_name, parrundir, recursive = T)
-      file.copy(paste0(working_dir, "/", swap_exe), parrundir)
+      file.copy(swap_exe, parrundir)
 
       ppath <- paste0(parrundir, "/", basename(run_name))
       run_swap(
@@ -122,7 +127,7 @@ run_swap_parallel <- function(project_paths,
     cat(bold(magenta("STATUS:")), bgYellow("[", success, "/", length(result),"]"), bold(magenta("runs succeeded\n")))
   }
 
-  if(verbose){cat(magenta(">>> Deleting", swap_exe, "instances \n"))}
+  if(verbose){cat(magenta(">>> Deleting", swap_name, "instances \n"))}
   unlink(list.files(paralleldir, pattern = "swap.exe", recursive = T, full.names = T))
 
   result_dirs <- list.files(paralleldir, full.names = T) %>% list.files(full.names = T)
