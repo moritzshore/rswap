@@ -145,7 +145,7 @@ update_swap_paths <- function(project_path, swap_exe,
         if ((infil_index %>% length()) > 0) {
           val <-  parameters$value[infil_index] %>% str_remove_all("'")
           newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap v{version} @ {Sys.time()}")
-          parameters = change_swap_par(parameters, "INIFIL", newval, verbose)
+          parameters = change_swap_parameter(parameters, "INIFIL", newval, verbose)
         }
       }
     }
