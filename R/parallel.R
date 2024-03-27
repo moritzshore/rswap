@@ -4,7 +4,7 @@
 #'
 #' @param project_paths character vectores of all projects which should be run in parallel.
 #' @param n_cores (optional) the number of CPU cores to use. Defaults to 2 less than available.
-#' @param working_dir (optional) the directory in which SWAP is located. (defaults to parent directory of first `project_path`)
+#' @param working_dir (optional) the directory in which model runs will be run, processed, and saved. defaults to XXXX
 #' @param swap_files (optional) character vector with the same length as `project_paths`. Defines the name of the swap main files to run. defaults to "swap.swp".
 #' @param autoset_output (optional) Flag which if set to TRUE, rswap will automatically detect your observed data provided in the observed file and match it to the SWAP output. if this is set to FALSE, then INLIST csv must be set by the user either manually or with set_swp_output() or change_swap_par() for several other rswap function to work
 #' @param force (optional) Flag, if an rswap directory already exists, no new one will be generated/reloaded unless force=TRUE defaults to true.
@@ -41,9 +41,14 @@ run_swap_parallel <- function(project_paths,
   # start timer
   t1 <- Sys.time()
 
+
+
   # if no cores are provided, then use 2 less than exist.
   if(is.null(n_cores)){n_cores = parallel::detectCores() - 2}
   if(n_cores < 1){n_cores = 1}
+
+  # if more cores are being used than there are runs, then set them equal
+  if(n_cores > length(project_paths)){n_cores = length(project_paths)}
 
   # if no swap file names are passed, then use the default
   if(is.null(swap_files)){swap_files <- rep("swap.swp", length(project_paths))}
@@ -143,6 +148,9 @@ run_swap_parallel <- function(project_paths,
   if(verbose){
     cat(magenta(bold("FINISHED!"), "runtime:\n"))
     print(t2-t1)}
+
+  #name the result based off project name
+  names(result) <- basename(project_paths)
 
   return(result)
 }
