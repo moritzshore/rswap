@@ -21,7 +21,7 @@ run_swap_parallel(
 
 \item{n_cores}{(optional) the number of CPU cores to use. Defaults to 2 less than available.}
 
-\item{working_dir}{(optional) the directory in which SWAP is located. (defaults to parent directory of first \code{project_path})}
+\item{working_dir}{(optional) the directory in which model runs will be run, processed, and saved. defaults to XXXX}
 
 \item{swap_files}{(optional) character vector with the same length as \code{project_paths}. Defines the name of the swap main files to run. defaults to "swap.swp".}
 

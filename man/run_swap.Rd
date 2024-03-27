@@ -42,6 +42,10 @@ optionally, a certain \code{swap_file}.
 }
 }
 \details{
+If you pass more than one \code{project_path}, then rswap will run your multiple
+projects in parallel using \code{run_swap_parallel()}. If you would like finer
+control over the parallel specific parameters, please use that function.
+
 This function does more than simply run the model, it does the following, in this order:
 \enumerate{
 \item Build the rswap directory: \code{build_rswap_directory()}
