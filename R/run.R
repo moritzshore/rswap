@@ -24,7 +24,7 @@
 #' @param autoset_output If set to `TRUE`, rswap will automatically detect
 #' your observed data provided in the observed file and match it to the SWAP
 #' output. if this is set to `FALSE`, then INLIST csv must be set by the user either
-#' manually or with `set_swp_output()` or `change_swap_par()` for several other `rswap` function to work
+#' manually or with `set_swap_output()` or `change_swap_par()` for several other `rswap` function to work
 #' @param force If an rswap directory already exists, no new one will be generated/reloaded unless `force=TRUE` defaults to true.
 #' @param verbose print status? (flag)
 #' @param timeout number of seconds before run timeout (unlimited by default) (numeric)
@@ -52,9 +52,11 @@ run_swap <- function(project_path,
     par_result <- run_swap_parallel(
       project_paths = project_path,
       autoset_output = autoset_output,
+      # grandparent directory of 1st parallel path
+      working_dir = dirname(dirname(project_path[1])),
       force = force,
       verbose = verbose,
-      timeout = timeout,
+      timeout = timeout
     )
     return(par_result)
   }
