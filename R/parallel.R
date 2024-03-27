@@ -2,9 +2,9 @@
 #'
 #' This function allows you to execute multiple SWAP runs in parallel.
 #'
-#' @param project_paths character vectores of all projects which should be run in parallel.
+#' @param project_paths character vector path of all projects which should be run in parallel.
 #' @param n_cores (optional) the number of CPU cores to use. Defaults to 2 less than available.
-#' @param working_dir (optional) the directory in which model runs will be run, processed, and saved. defaults to XXXX
+#' @param working_dir (optional) the directory in which model runs will be run, processed, and saved. defaults to parent director of the first project_path
 #' @param swap_files (optional) character vector with the same length as `project_paths`. Defines the name of the swap main files to run. defaults to "swap.swp".
 #' @param autoset_output (optional) Flag which if set to TRUE, rswap will automatically detect your observed data provided in the observed file and match it to the SWAP output. if this is set to FALSE, then INLIST csv must be set by the user either manually or with set_swp_output() or change_swap_par() for several other rswap function to work
 #' @param force (optional) Flag, if an rswap directory already exists, no new one will be generated/reloaded unless force=TRUE defaults to true.
@@ -31,7 +31,6 @@
 run_swap_parallel <- function(project_paths,
                               n_cores = NULL,
                               working_dir = NULL,
-                              swap_exe = NULL,
                               swap_files = NULL,
                               autoset_output = F,
                               force = T,
@@ -40,8 +39,6 @@ run_swap_parallel <- function(project_paths,
 
   # start timer
   t1 <- Sys.time()
-
-
 
   # if no cores are provided, then use 2 less than exist.
   if(is.null(n_cores)){n_cores = parallel::detectCores() - 2}
@@ -53,9 +50,9 @@ run_swap_parallel <- function(project_paths,
   # if no swap file names are passed, then use the default
   if(is.null(swap_files)){swap_files <- rep("swap.swp", length(project_paths))}
 
-  # if no working dir is defined, use the parent directory of the first path
+  # if no working dir is defined, use the grandparent directory of the first path
   if(is.null(working_dir)){
-    working_dir <- dirname(project_paths[1])
+    working_dir <- dirname(dirname(project_paths[1]))
   }
 
   paralleldir <- paste0(working_dir, "/rswap_parallel")
@@ -72,9 +69,11 @@ run_swap_parallel <- function(project_paths,
                 "please open a new issue on github!"))
   }
 
-  # default behavior if no SWAP exe is specified.
-  if(is.null(swap_exe)){
-    swap_exe <- paste0(working_dir, "/", swap_name)
+  # default exe location (needs to be here for short file paths)
+  # https://github.com/moritzshore/rswap/wiki/SWAP-errors#cut-off-paths
+  swap_exe <- paste0(working_dir, "/", swap_name)
+  if(file.exists(swap_exe) == FALSE){
+    stop(swap_name, " must be located in the working directory:\n",working_dir, "\n")
   }
 
 
@@ -85,7 +84,9 @@ run_swap_parallel <- function(project_paths,
     cat(magenta(">>> Created", underline(paralleldir), "for parallel runs\n"))
     }
 
-  cl <- parallel::makeCluster(n_cores,  outfile="")
+  cl <-parallel::makeCluster(n_cores,
+                             outfile = paste0(working_dir, "rswap_parallel.log"))
+
   doParallel::registerDoParallel(cl)
   if(verbose){
     cat(magenta(italic(">>> sucessfully registered cluster, starting runs...\n")))
@@ -109,6 +110,7 @@ run_swap_parallel <- function(project_paths,
       file.copy(swap_exe, parrundir)
 
       ppath <- paste0(parrundir, "/", basename(run_name))
+      print(paste0("!!!!!!!!!", ppath, "!!!!!!!!!!" ))
       run_swap(
         project_path = ppath,
         swap_file = swap_file,
