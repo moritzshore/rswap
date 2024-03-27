@@ -8,7 +8,6 @@ run_swap_parallel(
   project_paths,
   n_cores = NULL,
   working_dir = NULL,
-  swap_exe = NULL,
   swap_files = NULL,
   autoset_output = F,
   force = T,
@@ -17,11 +16,11 @@ run_swap_parallel(
 )
 }
 \arguments{
-\item{project_paths}{character vectores of all projects which should be run in parallel.}
+\item{project_paths}{character vector path of all projects which should be run in parallel.}
 
 \item{n_cores}{(optional) the number of CPU cores to use. Defaults to 2 less than available.}
 
-\item{working_dir}{(optional) the directory in which model runs will be run, processed, and saved. defaults to XXXX}
+\item{working_dir}{(optional) the directory in which model runs will be run, processed, and saved. defaults to parent director of the first project_path}
 
 \item{swap_files}{(optional) character vector with the same length as \code{project_paths}. Defines the name of the swap main files to run. defaults to "swap.swp".}
 

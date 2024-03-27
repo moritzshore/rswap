@@ -21,7 +21,7 @@ run_swap(
 \item{autoset_output}{If set to \code{TRUE}, rswap will automatically detect
 your observed data provided in the observed file and match it to the SWAP
 output. if this is set to \code{FALSE}, then INLIST csv must be set by the user either
-manually or with \code{set_swp_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
+manually or with \code{set_swap_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
 
 \item{force}{If an rswap directory already exists, no new one will be generated/reloaded unless \code{force=TRUE} defaults to true.}
 
