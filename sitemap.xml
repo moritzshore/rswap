@@ -16,9 +16,6 @@
     <loc>/reference/build_rswap_directory.html</loc>
   </url>
   <url>
-    <loc>/reference/change_swap_par.html</loc>
-  </url>
-  <url>
     <loc>/reference/change_swap_parameter.html</loc>
   </url>
   <url>
@@ -34,19 +31,7 @@
     <loc>/reference/clean_swap_file.html</loc>
   </url>
   <url>
-    <loc>/reference/clean_swp_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/comparative_plot.html</loc>
-  </url>
-  <url>
     <loc>/reference/filter_swap_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_depths.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_performance.html</loc>
   </url>
   <url>
     <loc>/reference/get_swap_depths.html</loc>
@@ -67,9 +52,6 @@
     <loc>/reference/install_SWAPtools.html</loc>
   </url>
   <url>
-    <loc>/reference/load_observed.html</loc>
-  </url>
-  <url>
     <loc>/reference/load_swap_observed.html</loc>
   </url>
   <url>
@@ -88,13 +70,7 @@
     <loc>/reference/load_variables_db.html</loc>
   </url>
   <url>
-    <loc>/reference/match_mod_obs.html</loc>
-  </url>
-  <url>
     <loc>/reference/match_swap_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/melt_all_runs.html</loc>
   </url>
   <url>
     <loc>/reference/melt_swap_data.html</loc>
@@ -110,18 +86,6 @@
   </url>
   <url>
     <loc>/reference/parse_swap_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/parse_swp_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_over_under.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_statistics.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_swap_output.html</loc>
   </url>
   <url>
     <loc>/reference/rswap_init.html</loc>
@@ -142,7 +106,7 @@
     <loc>/reference/run_swap.html</loc>
   </url>
   <url>
-    <loc>/reference/save_run.html</loc>
+    <loc>/reference/run_swap_parallel.html</loc>
   </url>
   <url>
     <loc>/reference/save_swap_run.html</loc>
@@ -154,13 +118,7 @@
     <loc>/reference/set_swap_output.html</loc>
   </url>
   <url>
-    <loc>/reference/soft_calibration_plot.html</loc>
-  </url>
-  <url>
     <loc>/reference/update_swap_paths.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_swp_paths.html</loc>
   </url>
   <url>
     <loc>/reference/write_swap_file.html</loc>
