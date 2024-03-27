@@ -1,7 +1,7 @@
 # rswap <img src="man/figures/logo.png" align="right" height="138" />
 
 
-rswap is an R-package designed to help interface and work with [SWAP4.2](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks during the calibration process. The scope of the package will hopefully be expanded overtime to include sensitivity analysis, multi-core parallelization, autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP4.2](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks. It is designed to be fully interoperable / backwards compatible with a base SWAP4.2 setup. The scope of the package will hopefully be expanded overtime to include sensitivity analysi , autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap) ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap) ![GitHub](https://img.shields.io/github/license/moritzshore/rswap) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 
@@ -17,9 +17,8 @@ rswap is an R-package designed to help interface and work with [SWAP4.2](https:/
 8.  [Modification of Parameters](#mod)
 9.  [SWAPtools Integration](#swaptools)
 10. [Miscellaneous functions](#misc)
-11. [Roadmap](#roadmap)
-12. [Support and Contributing](#support)
-13. [Acknowledgements](#ack) [References](#ref)
+11. [Support and Contributing](#support)
+12. [Acknowledgements](#ack) [References](#ref)
 
 ## Installing `rswap` <a name="install"></a>
 
@@ -46,7 +45,9 @@ project_path <- rswap_init(swap_exe = "C:/path/to/swap.exe")
 
 ## Running SWAP <a name="run"></a>
 
-The SWAP model can be run using the `run_swap()` function. It needs to know where your model setup is located (`project_path`). The `swap.exe` must be located in the parent directory of `project_path`!
+The SWAP model can be run using the `run_swap()` function. It needs to know
+where your model setup is located (`project_path`). The `swap.exe` must be
+located in the parent directory of `project_path`!
 
 ``` r
 run_swap(project_path, autoset_output = TRUE)
@@ -59,6 +60,12 @@ run_swap(project_path, autoset_output = TRUE)
 -   `timeout` sets the max allowed runtime of SWAP
 -   `force` forces a rebuild of the the rswap project from the source files (WIP)
 -   `verbose` Prints everything the function does to the console with pretty colors
+
+### In parallel?
+
+If you pass more than one project path, these projects will be run in **parallel** using
+the `run_swap_parallel()` function. Using this dedicated function will give you finer control
+over the parallelized parameters.
 
 ## Accessing Data <a name="data"></a>
 
@@ -279,27 +286,6 @@ data <- match_swap_data(project_path, variable = "WC", depth = 15)
 # Melts together all saved runs + current into tidy format
 melt_swap_runs(project_path, variable = "WC", depth = 15)
 ```
-
-## Roadmap <a name="roadmap"></a>
-
-### Major
-
--   Linux Support (0.4.0)
--   Sensitivity analysis (0.5.0)
--   Multi-core running (0.6.0)
--   Autocalibration / PEST integration (0.7.0)
--   Scenario runs (0.8.0)
--   SWAPtools plotting integration (0.9.0)
--   ...(1.0)
-
-### Minor
-
--   Parsing support for all SWAP files, not just the main file.
--   Add support for multiple variables at differing depths for `autoset_output`
--   Add support for reading saved runs with differing output.
--   Add "exact variable matching" and stop removing "RAIN" in `io.R` `melt_all_runs()`
--   Renovate `rswap_plot_multi()` to accept any variable using the new system.
--   Load  data into package environment, to prevent the need for constant re-loading. add force=T option to reload
 
 ## Support and Contributing <a name="support"></a>
 

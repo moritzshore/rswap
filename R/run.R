@@ -8,6 +8,10 @@
 #' - `verbose` will print not only model running status, but also what rswap is doing
 #' - `timeout` allows you to set the maximum runtime of the model
 #'
+#' If you pass more than one `project_path`, then rswap will run your multiple
+#' projects in parallel using `run_swap_parallel()`. If you would like finer
+#' control over the parallel specific parameters, please use that function.
+#'
 #' This function does more than simply run the model, it does the following, in this order:
 #'  1. Build the rswap directory: `build_rswap_directory()`
 #'  2. Parses the main swap file: `parse_swap_file()`
@@ -20,7 +24,7 @@
 #' @param autoset_output If set to `TRUE`, rswap will automatically detect
 #' your observed data provided in the observed file and match it to the SWAP
 #' output. if this is set to `FALSE`, then INLIST csv must be set by the user either
-#' manually or with `set_swp_output()` or `change_swap_par()` for several other `rswap` function to work
+#' manually or with `set_swap_output()` or `change_swap_par()` for several other `rswap` function to work
 #' @param force If an rswap directory already exists, no new one will be generated/reloaded unless `force=TRUE` defaults to true.
 #' @param verbose print status? (flag)
 #' @param timeout number of seconds before run timeout (unlimited by default) (numeric)
@@ -40,6 +44,22 @@ run_swap <- function(project_path,
                      force = T,
                      verbose = F,
                      timeout = Inf) {
+
+  # if more than one project is passed, then run them in parallel.
+  if(length(project_path) > 1){
+    # TODO, better support for "swap.swp"
+    # TODO, support custom exe location
+    par_result <- run_swap_parallel(
+      project_paths = project_path,
+      autoset_output = autoset_output,
+      # grandparent directory of 1st parallel path
+      working_dir = dirname(dirname(project_path[1])),
+      force = force,
+      verbose = verbose,
+      timeout = timeout
+    )
+    return(par_result)
+  }
 
   # IO timer start
   io_start <- Sys.time()
@@ -151,15 +171,15 @@ check_swap_message <- function(status, verbose = F){
 
 # check to see if SWAP.exe is in the right place
 check_exe_location <- function(swap_exe, verbose) {
-  # check if SWAP.exe is in the right place
-  if (file.exists(swap_exe) == FALSE) {
-    stop(glue("swap.exe must be located in parent directory of {project}!\n Required Path: {swap_exe}"))
-  } else{
-    if (verbose) {
-      cat("\u2714",
-          blue(underline("swap.exe")), blue("found"), "\n")
+  if (.Platform$OS.type == "windows") {
+    if (file.exists(swap_exe) == FALSE) {stop("swap.exe must be located in parent directory of project path!\n", swap_exe)}
+    else if(verbose){cat("\u2714", blue(underline("swap.exe")), blue("found"), "\n")}
     }
+  else if (.Platform$OS.type == "unix") {
+    if (file.exists(swap_exe) == FALSE) {stop("swap420 must be located in parent directory of project path!\n", swap_exe)}
+    else if(verbose){cat("\u2714", blue(underline("swap420")), blue("found"), "\n")}
   }
+  else{stop(paste("operating system not recognized:",.Platform$OS.type,"please open an issue on github."))}
 }
 
 parse_run_paths <- function(project_path, verbose, swap_file) {
@@ -168,7 +188,16 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
   project <- seperated %>% utils::tail(1)
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe_path <- work_dir %>% paste(collapse = "/")
-  swap_exe <- paste0(swap_exe_path,"/swap.exe")
+
+  if(.Platform$OS.type == "windows"){
+    swap_exe <- paste0(swap_exe_path,"/swap.exe")
+  }else if(.Platform$OS.type == "unix"){
+    swap_exe <- paste0(swap_exe_path,"/swap420")
+  }
+  else{
+    stop(paste("Operating system not recognized:", .Platform$OS.type,
+        "please open a new issue on github!"))
+    }
   swap_file_path <- glue("{project}/rswap/{swap_file}")
 
   outpath <- paste0("rswap/", swap_file)
@@ -183,16 +212,25 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
 
 run_swap_base <- function(verbose, swap_run_paths, timeout) {
   if(verbose){
-    cat(blue(bold(">> Running")), yellow(bold("swap.exe")), blue(bold("in working directory: ")))
+    cat(blue(bold(">> Running")), yellow(bold("SWAP")), blue(bold("in working directory: ")))
     cat(underline(swap_run_paths$work_dir),"\n")
     cat(blue(bold(">> Executing the following file: ")))
     cat(underline(swap_run_paths$swap_file_path),"\n")
     cat(blue(bold(glue(">> With max runtime of:"))), underline(glue("{timeout} seconds")),"\n")
   }
 
+  if (.Platform$OS.type == "windows") {
+    swap_command <- "swap.exe"
+  } else if (.Platform$OS.type == "unix") {
+    swap_command <- "swap420"
+  } else{
+    stop(paste0("operating system not recognized!", .Platform$OS.type,
+        "please open a new issue on github!"))
+  }
+
   model_start <- Sys.time()
   msg <- processx::run(
-    command = "swap.exe",
+    command = swap_command,
     wd = swap_run_paths$work_dir,
     args =  swap_run_paths$swap_file_path,
     error_on_status = F,

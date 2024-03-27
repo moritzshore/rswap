@@ -7,7 +7,7 @@
 rswap_init(swap_exe)
 }
 \arguments{
-\item{swap_exe}{path to swap.exe (string)}
+\item{swap_exe}{path to SWAP model (string)}
 }
 \value{
 Returns the project path of "hupselbrook" SWAP setup.
@@ -16,7 +16,7 @@ Returns the project path of "hupselbrook" SWAP setup.
 This function is an optional starting point when using rswap for the first
 time. What it does is copy in the example swap setup "hupselbrook" into a
 sample project directory "rswap_init" within the same working directory as
-your swap.exe executable (hence the need to pass the path to the .exe).
+your swap executable (hence the need to pass the path).
 }
 \details{
 The sample directory contains the SWAP input files, as well as a template for
@@ -29,7 +29,7 @@ issue you need to fix before continuing to use rswap.
 }
 \examples{
 # This function cannot execute example code as it relies on the externally
-# provided 'swap.exe'
+# provided swap model
 
 # rswap_init("C:/path/to/swap.exe")
 

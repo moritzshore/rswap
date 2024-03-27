@@ -9,7 +9,7 @@ update_swap_paths(project_path, swap_exe, parameters, verbose = F)
 \arguments{
 \item{project_path}{path to the temp directory (string)}
 
-\item{swap_exe}{path to swap.exe (string)}
+\item{swap_exe}{path to SWAP (string)}
 
 \item{parameters}{SWAP main file parameters (string)}
 
