@@ -8,6 +8,10 @@
 #' - `verbose` will print not only model running status, but also what rswap is doing
 #' - `timeout` allows you to set the maximum runtime of the model
 #'
+#' If you pass more than one `project_path`, then rswap will run your multiple
+#' projects in parallel using `run_swap_parallel()`. If you would like finer
+#' control over the parallel specific parameters, please use that function.
+#'
 #' This function does more than simply run the model, it does the following, in this order:
 #'  1. Build the rswap directory: `build_rswap_directory()`
 #'  2. Parses the main swap file: `parse_swap_file()`
@@ -40,6 +44,20 @@ run_swap <- function(project_path,
                      force = T,
                      verbose = F,
                      timeout = Inf) {
+
+  # if more than one project is passed, then run them in parallel.
+  if(length(project_path) > 1){
+    # TODO, better support for "swap.swp"
+    # TODO, support custom exe location
+    par_result <- run_swap_parallel(
+      project_paths = project_path,
+      autoset_output = autoset_output,
+      force = force,
+      verbose = verbose,
+      timeout = timeout,
+    )
+    return(par_result)
+  }
 
   # IO timer start
   io_start <- Sys.time()
