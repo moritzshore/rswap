@@ -482,9 +482,8 @@ set_swap_output <-
       obs <- load_swap_observed(project_path, archived = F, verbose = verbose, force = force)
       variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
       depths <- get_swap_depths(data = obs) %>% sort()
-      cat("\u2139",
-          blue("Following depths detected in SWAP output:"),
-          green(bold(underline(depths))), "\n")
+      if(verbose){cat("\u2139",blue("Following depths detected in SWAP output:"),
+          green(bold(underline(depths))), "\n")}
 
       # CREATING INLIST_CSV
       # TODO need to expand these... or figure out how to do this.
