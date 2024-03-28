@@ -78,7 +78,7 @@ build_rswap_directory <- function(project_path, force = F, verbose = F){
 
   # legacy support for old met files:
   # copies over any files with a "numeric" file type. (best way i could think of)
-  not_numeric <- str_split(file_list, "[.]", simplify = T)[,2] %>%
+  not_numeric <- stringr::str_split(file_list, "[.]", simplify = T)[,2] %>%
     as.numeric() %>% is.na() %>% suppressWarnings()
   met_files <- file_list[which(not_numeric == FALSE)]
   met_status <- file.copy(from = met_files, to = temp_directory)
@@ -124,7 +124,7 @@ update_swap_paths <- function(project_path, swap_exe,
 
     # parse the various paths
     rswap_dir <- paste0(project_path, "/rswap/")
-    swap_exe_name <- swap_exe %>% str_split("/") %>% unlist() %>% tail(n=1)
+    swap_exe_name <- swap_exe %>% stringr::str_split("/") %>% unlist() %>% tail(n=1)
     path_without_swap <-  swap_exe %>% str_remove(swap_exe_name)
     swap_main_file_path <- rswap_dir %>% str_remove(path_without_swap)
 
@@ -143,7 +143,7 @@ update_swap_paths <- function(project_path, swap_exe,
       if (parameters$value[swinco_index] == 3) {
         infil_index <- (parameters$param == "INIFIL") %>% which()
         if ((infil_index %>% length()) > 0) {
-          val <-  parameters$value[infil_index] %>% str_remove_all("'")
+          val <-  parameters$value[infil_index] %>% stringr::str_remove_all("'")
           newval <- glue("'{swap_main_file_path}{val}' ! Changed by rswap v{version} @ {Sys.time()}")
           parameters = change_swap_parameter(parameters, "INIFIL", newval, verbose)
         }
@@ -390,7 +390,8 @@ load_swap_output <-  function(project_path, archived = F, verbose = F){
   result_output$DATETIME <- result_output$DATETIME %>% as.Date()
   colnames(result_output)[1] <- "DATE"
 
-  new_cols <- result_output %>% colnames() %>% str_replace("\\..", "_") %>% str_remove("\\.")
+  new_cols <- result_output %>% colnames() %>%
+    stringr::str_replace("\\..", "_") %>% stringr::str_remove("\\.")
   colnames(result_output) <- new_cols
 
   result_daily <- utils::read.table(
@@ -526,8 +527,8 @@ filter_swap_data <- function(data, variable = NULL, depth = NULL){
 #'
 get_swap_depths <- function(data, variable = NULL) {
 
-  splitted <- colnames(data) %>% str_remove("obs") %>%
-    str_split("_") %>% unlist() %>% toupper()
+  splitted <- colnames(data) %>% stringr::str_remove("obs") %>%
+    stringr::str_split("_") %>% unlist() %>% toupper()
 
   char_index <- splitted %>% as.numeric %>% is.na() %>% which() %>% suppressWarnings()
 
@@ -541,7 +542,7 @@ get_swap_depths <- function(data, variable = NULL) {
     var_cols <- vars %in% all_vars %>% which()
   }
 
-  depths <- colnames(data)[var_cols] %>% str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
+  depths <- colnames(data)[var_cols] %>% stringr::str_split("_") %>% unlist() %>% as.numeric() %>% suppressWarnings()
   depths <- depths[which(depths %>% is.na() == FALSE)] # remove the NA values
   depths <- depths %>% unique()
 
@@ -591,7 +592,7 @@ match_swap_data <- function(project_path, variable, depth = NULL,
   }
 
   if(archived){
-    project_path<-project_path %>% str_remove("/rswap/")
+    project_path <- project_path %>% stringr::str_remove("/rswap/")
   }
 
   observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived)
@@ -767,7 +768,7 @@ rswap_init <- function(swap_exe){
   new_name <- old_name %>% str_replace("swap.swwp", "swap.swp")
   file.rename(old_name, new_name)
 
-  exe_name <-swap_exe %>% str_split("/") %>% unlist() %>% tail(1)
+  exe_name <-swap_exe %>% stringr::str_split("/") %>% unlist() %>% tail(1)
   wd <- swap_exe %>% str_remove(exe_name)
 
   example_path <- paste0(wd, "hupselbrook")
