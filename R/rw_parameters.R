@@ -22,6 +22,10 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
   # path and read
   path <- paste0(project_path, "/", swap_file)
   swp <- readLines(path)
+
+  # replace the degrees symbol with degC (causes error otherwise)
+  swp <- stringr::str_replace(swp, "\xbaC", "degC")
+
   # remove all the comment lines starting with *,
   comment_lines = (substr(x = swp, 1, 1) == "*") %>% which()
   if (comment_lines %>% length() > 0) {
