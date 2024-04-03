@@ -31,14 +31,17 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
   if (comment_lines %>% length() > 0) {
     swp <- swp[-comment_lines]
   }
+
   # remove all the comment lines which start with "!"
   c_lines <- swp %>% stringr::str_trim()
+
   comment_lines2 = (substr(x = c_lines, 1, 1) == "!") %>% which()
   if (comment_lines2 %>% length() > 0) {
     swp <- swp[-comment_lines2]
   }
   # remove any empty lines
   c_lines <- swp %>% stringr::str_trim()
+
   empty_lines = (substr(x = c_lines, 1, 1) == "") %>% which()
   if (empty_lines %>% length() > 0) {
     swp <- swp[-empty_lines]
@@ -441,7 +444,7 @@ set_swap_output <-
     } else{
       if(verbose){
         cat("\u2795",
-            blue("adding", bold("SWCSV = 1"), "to parameter list"))
+            blue("adding", bold("SWCSV = 1"), "to parameter list\n"))
       }
       rbind(parameters,
             data.frame(
@@ -452,7 +455,6 @@ set_swap_output <-
     }
     # when more output is needed, I will need to add more and more, so this
     # should / will be updated to do as a loop, as it is done below:
-
 
     if(autoset_output){
 
