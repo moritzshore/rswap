@@ -419,25 +419,17 @@ set_swap_output <-
 
     }
 
-
     # add the critical output params if they are not present.
-    if("INLIST_CSV" %in% parameters$param == FALSE){
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("INLIST_CSV = ''"), "to parameter list"))
+    # inlist CSV is only needed if we are autosetting output
+    if(autoset_output){
+      if("INLIST_CSV" %in% parameters$param == FALSE){
+        if(verbose){
+          cat("\u2795",
+              blue("adding", bold("INLIST_CSV = ''"), "to parameter list\n"))
+        }
+        add <- data.frame(param = "INLIST_CSV", value = "''", comment = glue("added by rswap on {Sys.time()}"))
+        parameters <- rbind(parameters, add)
       }
-      add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
-      parameters <- rbind(parameters, add)
-    }
-
-    # add the critical output params if they are not present.
-    if("INLIST_CSV_TZ" %in% parameters$param == FALSE){
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("INLIST_CSV_TZ = ''"), "to parameter list"))
-      }
-      add <- data.frame(param = "INLIST_CSV_TZ ", value = "''", comment = glue("added by rswap on {Sys.time()}"))
-      parameters <- rbind(parameters, add)
     }
 
     # SWCSV needs to be present in the SWAP main file, such that the needed
@@ -456,21 +448,6 @@ set_swap_output <-
               param = "SWCSV",
               value = "1",
               comment = glue("added by rswap v{version} @ {Sys.time()}")
-            ))
-    }
-    # The exact same thing goes for SWCSV...
-    if ("SWCSV_TZ" %in% parameters$param) {
-      parameters = change_swap_parameter(parameters, "SWCSV_TZ", "1", verbose)
-    } else{
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("SWCSV_TZ = 1"), "to parameter list"))
-      }
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV_TZ",
-              value = "1",
-              comment = glue("added by rswap v{version} {Sys.time()}")
             ))
     }
     # when more output is needed, I will need to add more and more, so this
