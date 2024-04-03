@@ -37,8 +37,29 @@ run_swap_parallel <- function(project_paths,
                               verbose = F,
                               timeout = Inf) {
 
+
+  # So why are we creating new directories for each SWAP run?
+
+  # Well, in theory we could do it in-place with one directory, however SWAP
+  # creates certain files such as "reruns.log" in the working directory, which
+  # then get locked during execution. When the other threads get going they
+  # cannot write to this file, so only a single SWAP run will succeed. The
+  # band-aid fix is then giving each SWAP run its own working directory, which
+  # also requires copying all the files and the executable -- inefficient. The
+  # best solution would be to contact the SWAP team and see if we can get them
+  # to write these files in the same working directory as the swap.swp file for
+  # example.
+
+  # Another improvement I considered was automatically deleting the original
+  # project folders and replacing them with the ones that were just run. This is
+  # not that great because deleting original setups is a dangerous idea. An
+  # alternative could be to just copy in the results files, however then you
+  # need to figure out which ones those are... But a thing to remember.
+
   # start timer
   t1 <- Sys.time()
+
+  parallel_project_name <- dirname(project_paths[1]) %>% basename()
 
   # if no cores are provided, then use 2 less than exist.
   if(is.null(n_cores)){n_cores = parallel::detectCores() - 2}
@@ -85,7 +106,7 @@ run_swap_parallel <- function(project_paths,
     }
 
   cl <-parallel::makeCluster(n_cores,
-                             outfile = paste0(working_dir, "rswap_parallel.log"))
+                             outfile = paste0(working_dir, "/rswaparallel_", parallel_project_name, ".log"))
 
   doParallel::registerDoParallel(cl)
   if(verbose){
@@ -138,10 +159,15 @@ run_swap_parallel <- function(project_paths,
   unlink(list.files(paralleldir, pattern = "swap.exe", recursive = T, full.names = T))
 
   result_dirs <- list.files(paralleldir, full.names = T) %>% list.files(full.names = T)
-  result_dir <- paste0(working_dir, "/rswap_parallel_results")
-  if(dir.exists(result_dir)){warning("rswap parallel: overwriting previous results!")}
-  unlink(result_dir, recursive = T)
+  result_dir <- paste0(working_dir, "/", parallel_project_name, "_rswap_parallel_results")
+
+  if (dir.exists(result_dir)) {
+    unlink(result_dir, recursive = T)
+    warning("rswap parallel: overwriting previous results!")
+  }
+
   dir.create(result_dir)
+
   if(verbose){cat(magenta(">>> moving results to", underline(result_dir), "\n"))}
   file.copy(result_dirs, result_dir, overwrite = T, recursive = T)
   unlink(paralleldir, recursive = T)
