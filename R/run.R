@@ -45,10 +45,6 @@ run_swap <- function(project_path,
                      verbose = F,
                      timeout = Inf) {
 
-  # remove last backslash if accidentally passed
-  if (substr(project_path, nchar(project_path), nchar(project_path)) == "/") {
-    project_path <- substr(project_path, 0, nchar(project_path) - 1)
-  }
 
   # if more than one project is passed, then run them in parallel.
   if(length(project_path) > 1){
@@ -64,6 +60,11 @@ run_swap <- function(project_path,
       timeout = timeout
     )
     return(par_result)
+  }else{
+    # remove last backslash if accidentally passed
+    if (substr(project_path, nchar(project_path), nchar(project_path)) == "/") {
+      project_path <- substr(project_path, 0, nchar(project_path) - 1)
+    }
   }
 
   # IO timer start
