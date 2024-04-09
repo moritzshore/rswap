@@ -945,6 +945,19 @@ modify_swap_file <- function(project_path,
                              write = T,
                              verbose = F) {
 
+  # vectorized behavior (recursive)
+  if (length(project_path) > 1) {
+    if(verbose){cat("[rswap vectorized behavior] Modifiying", length(project_path), "swap files\n")}
+    if(length(project_path) != length(value)){
+      stop("project_path and value vectors need the same length!")
+    }
+    # both "project_path" and "value" are vectors, the rest are constant which
+    # get recycled. This is intended behavior.
+    result <- mapply(modify_swap_file, project_path, input_file, output_file,
+                     variable, value, row, fast, write, verbose)
+    return(result %>% as.vector())
+}
+
   # check the file type, if we are reading or writing here
   if (write & (input_file %>% is.null())) {
     if(output_file %>% is.null()){
