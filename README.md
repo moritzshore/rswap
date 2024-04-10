@@ -258,11 +258,10 @@ You can perform a quick sensitivity analysis using `rswap` using the function
 `check_swap_sensitivity()` for example, like so:
 
 ``` r
-check_swap_sensitivity(
-project_path = "C:/tetves", variable = "OSAT",
-values = seq(0.32, 0.48, by = 0.01), row = 1, statistic = "NSE",
-obs_variable = "WC", depth = 15, cleanup = TRUE, autoset_output = TRUE,
-verbose = TRUE)
+check_swap_sensitivity(project_path = "C:/tetves", variable = "OSAT",
+                       values = seq(0.32, 0.48, by = 0.01), row = 1,
+                       statistic = "NSE", obs_variable = "WC", depth = 15, 
+                       cleanup = TRUE, autoset_output = TRUE, verbose = TRUE)
 ```
 
 This "wrapper" function uses the vectorized behavior of `modify_swap_file()`,
