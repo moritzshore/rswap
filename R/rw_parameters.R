@@ -22,19 +22,26 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
   # path and read
   path <- paste0(project_path, "/", swap_file)
   swp <- readLines(path)
+
+  # replace the degrees symbol with degC (causes error otherwise)
+  swp <- stringr::str_replace(swp, "\xbaC", "degC")
+
   # remove all the comment lines starting with *,
   comment_lines = (substr(x = swp, 1, 1) == "*") %>% which()
   if (comment_lines %>% length() > 0) {
     swp <- swp[-comment_lines]
   }
+
   # remove all the comment lines which start with "!"
   c_lines <- swp %>% stringr::str_trim()
+
   comment_lines2 = (substr(x = c_lines, 1, 1) == "!") %>% which()
   if (comment_lines2 %>% length() > 0) {
     swp <- swp[-comment_lines2]
   }
   # remove any empty lines
   c_lines <- swp %>% stringr::str_trim()
+
   empty_lines = (substr(x = c_lines, 1, 1) == "") %>% which()
   if (empty_lines %>% length() > 0) {
     swp <- swp[-empty_lines]
@@ -415,25 +422,17 @@ set_swap_output <-
 
     }
 
-
     # add the critical output params if they are not present.
-    if("INLIST_CSV" %in% parameters$param == FALSE){
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("INLIST_CSV = ''"), "to parameter list"))
+    # inlist CSV is only needed if we are autosetting output
+    if(autoset_output){
+      if("INLIST_CSV" %in% parameters$param == FALSE){
+        if(verbose){
+          cat("\u2795",
+              blue("adding", bold("INLIST_CSV = ''"), "to parameter list\n"))
+        }
+        add <- data.frame(param = "INLIST_CSV", value = "''", comment = glue("added by rswap on {Sys.time()}"))
+        parameters <- rbind(parameters, add)
       }
-      add <- data.frame(param = "INLIST_CSV", value = "", comment = glue("added by rswap on {Sys.time()}"))
-      parameters <- rbind(parameters, add)
-    }
-
-    # add the critical output params if they are not present.
-    if("INLIST_CSV_TZ" %in% parameters$param == FALSE){
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("INLIST_CSV_TZ = ''"), "to parameter list"))
-      }
-      add <- data.frame(param = "INLIST_CSV_TZ ", value = "''", comment = glue("added by rswap on {Sys.time()}"))
-      parameters <- rbind(parameters, add)
     }
 
     # SWCSV needs to be present in the SWAP main file, such that the needed
@@ -445,7 +444,7 @@ set_swap_output <-
     } else{
       if(verbose){
         cat("\u2795",
-            blue("adding", bold("SWCSV = 1"), "to parameter list"))
+            blue("adding", bold("SWCSV = 1"), "to parameter list\n"))
       }
       rbind(parameters,
             data.frame(
@@ -454,24 +453,8 @@ set_swap_output <-
               comment = glue("added by rswap v{version} @ {Sys.time()}")
             ))
     }
-    # The exact same thing goes for SWCSV...
-    if ("SWCSV_TZ" %in% parameters$param) {
-      parameters = change_swap_parameter(parameters, "SWCSV_TZ", "1", verbose)
-    } else{
-      if(verbose){
-        cat("\u2795",
-            blue("adding", bold("SWCSV_TZ = 1"), "to parameter list"))
-      }
-      rbind(parameters,
-            data.frame(
-              param = "SWCSV_TZ",
-              value = "1",
-              comment = glue("added by rswap v{version} {Sys.time()}")
-            ))
-    }
     # when more output is needed, I will need to add more and more, so this
     # should / will be updated to do as a loop, as it is done below:
-
 
     if(autoset_output){
 
@@ -482,9 +465,8 @@ set_swap_output <-
       obs <- load_swap_observed(project_path, archived = F, verbose = verbose, force = force)
       variables <- get_swap_variables(swap_data = obs, verbose = verbose) %>% toupper()
       depths <- get_swap_depths(data = obs) %>% sort()
-      cat("\u2139",
-          blue("Following depths detected in SWAP output:"),
-          green(bold(underline(depths))), "\n")
+      if(verbose){cat("\u2139",blue("Following depths detected in SWAP output:"),
+          green(bold(underline(depths))), "\n")}
 
       # CREATING INLIST_CSV
       # TODO need to expand these... or figure out how to do this.
