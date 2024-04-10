@@ -44,6 +44,16 @@ get_swap_performance <-
            depth = NULL,
            verbose = F) {
 
+    # vectorized behavior (recursive)
+    if(length(project_path)>1){
+      result = lapply(X = project_path, FUN = function(x){
+        get_swap_performance(project_path = x, stat = stat, archived = archived,
+                             variable = variable, depth = depth, verbose = verbose)
+      }
+      )
+      return(result)
+    }
+
     # Supported functions from hydroGOF:
     hydroGOF_support <- c("br2", "cp", "d", "KGE", "mae", "md", "me", "mNSE", "mse",
                           "nrmse", "NSE", "pbias", "rd", "rmse", "rNSE", "rPearson", "rSD",
