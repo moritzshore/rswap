@@ -1,7 +1,7 @@
 # rswap <img src="man/figures/logo.png" align="right" height="138" />
 
 
-rswap is an R-package designed to help interface and work with [SWAP4.2](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks. It is designed to be fully interoperable / backwards compatible with a base SWAP4.2 setup. The scope of the package will hopefully be expanded overtime to include sensitivity analysis , autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
+rswap is an R-package designed to help interface and work with [SWAP4.2](https://www.swap.alterra.nl/) [[1]](#1). It consists of a variety of functions that assist the user in otherwise tedious and repetitive tasks. It is designed to be fully interoperable / backwards compatible with a base SWAP4.2 setup. The scope of the package will hopefully be expanded overtime to include autocalibration / PEST integration, scenario runs, and much more. **DISCLAIMER: rswap is very much in development, and therefore not robustly tested, nor extremely stable. use at your own risk, and be critical of the results, for now..**
 
 ![GitHub R package version](https://img.shields.io/github/r-package/v/moritzshore/rswap) ![GitHub issues](https://img.shields.io/github/issues/moritzshore/rswap) ![GitHub](https://img.shields.io/github/license/moritzshore/rswap) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7795153.svg)](https://doi.org/10.5281/zenodo.7795153)
 
@@ -15,10 +15,11 @@ rswap is an R-package designed to help interface and work with [SWAP4.2](https:/
 6.  [Saving model runs](#saving)
 7.  [Comparing model runs](#compare)
 8.  [Modification of Parameters](#mod)
-9.  [SWAPtools Integration](#swaptools)
-10. [Miscellaneous functions](#misc)
-11. [Support and Contributing](#support)
-12. [Acknowledgements](#ack) [References](#ref)
+9.  [Sensitivity Analysis](#sens)
+10. [SWAPtools Integration](#swaptools)
+11. [Miscellaneous functions](#misc)
+12. [Support and Contributing](#support)
+13. [Acknowledgements](#ack) [References](#ref)
 
 ## Installing `rswap` <a name="install"></a>
 
@@ -250,6 +251,33 @@ write_swap_vectors(project_path, vectors)
 To run SWAP with the modifications you've made to your parameters, you need to make sure you `write_swap_file()` before running `run_swap()` -- **All changes in `/rswap/` are temporary until you write your SWAP file!**
 
 > This functionality is currently only tested for the SWAP main file. Support for the other SWAP input files is coming soon©
+
+## Sensitivity Analysis <a name="sens"></a>
+
+You can perform a quick sensitivity analysis using `rswap` using the function
+`check_swap_sensitivity()` for example, like so:
+
+``` r
+check_swap_sensitivity(
+project_path = "C:/tetves", variable = "OSAT",
+values = seq(0.32, 0.48, by = 0.01), row = 1, statistic = "NSE",
+obs_variable = "WC", depth = 15, cleanup = TRUE, autoset_output = TRUE,
+verbose = TRUE)
+```
+
+This "wrapper" function uses the vectorized behavior of `modify_swap_file()`,
+`run_swap_parallel()` and `get_swap_performance()` to produce the following 
+graph:
+
+<p align="center">
+
+<img src="man/figures/sensitivity.png" width="60%" height="60%"/>
+
+</p>
+
+Also returned is a dataframe of the results. This function can be adjusted for
+any parameter or performance statistic. Output analysis of a selected variable
+will be implemented in the future.
 
 ## SWAPtools integration <a name="swaptools"></a>
 
