@@ -1,3 +1,13 @@
+### This file contains the code related to meteorological operations.
+
+## TODO:
+# - in autoset functionality, the dates of the model run could be auto set to
+#   the met data dataframe.
+#
+# - The plotting functions could be changed to implement the "load_meteo" func
+#
+# - Add the force functionality to load meteo
+
 
 #' Load SWAP meteo data
 #'
@@ -21,35 +31,121 @@
 #' * `Rain`     -- precipitation, (mm) ie. "0.2"
 #' * `ETref`    -- (optional) Reference Evapotranspiration (mm) ie. "0.4"
 #' * `Wet`      -- (optional) Rain intensity, fraction of day between 0 and 1, ie. "0.029"
-#'
-#' @return
+#' @param project_path Path to project directory (string)
+#' @param verbose print status? (flag)
+#' @return A dataframe of the meteo data
 #' @export
+#' @importFrom readr read_csv
 #'
 #' @examples
-load_swap_meteo <- function(project_path){
+#' #tbc
+load_swap_meteo <- function(project_path, verbose = FALSE){
 
+  ## TODO, add forcing
 
-  if(file.existd){
+  met_path <- paste0(project_path, "/rswap_meteo_data.csv")
+
+  if(file.exists(met_path)){
+    if(verbose){cat("met file exists in project path, loading\n")}
+  }
+  else{
+    if(verbose){cat("met file does not exist in project path, creating template\n")}
     pkg_path <- system.file(package = "rswap")
     extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
-    met_path <- paste0(extdata, "/rswap_meteo_data.csv")
-    file.copy(from = met_path, to = paste0(example_path, to_path))
-
+    inst_path <- paste0(extdata, "/rswap_meteo_data.csv")
+    status = file.copy(from = inst_path, to = met_path)
+    if(status == FALSE){stop("error creating meteo template!")}
   }
-
+    met_df <- readr::read_csv(met_path)
+    return(met_df)
 }
 
 
 #' Saves SWAP meteo data to project
 #'
-#' Writes a / the SWAP meteo dataframe as loaded by `load_swap_meteo()`
+#' This function writes the provided dataframe back into the rswap template
+#' csv file, and optionally also exports the data into a SWAP compatible format
+#' (.met). Additionally, one can automatically update the parameters `TSTART`,
+#' `TEND` and `METFIL` by setting `autoset = TRUE`.
 #'
-#' @return
+#' Writes a / the SWAP meteo dataframe as loaded by `load_swap_meteo()`
+#' @param project_path Path to project directory (string)
+#' @param data dataframe with SWAP meteo data as loaded by `load_swap_meteo()`
+#' @param export (optional) flag, should the data be written to SWAP format?
+#' @param name (optional) string, desired name of the meteo file.
+#' @param autoset (optional) flag, automatically adjusts SWAP project with the
+#'   start and end times of the provided data, as well as the metfile name.
+#' @param swap_file (optional) name of the swap file to modify (swap.swp by
+#'   default)
+#' @param verbose (flag) print actions to console?
+#' @return path to where the met file was written.
 #' @export
+#' @importFrom readr write_csv
+#' @importFrom dplyr %>%
+#' @importFrom stringr str_remove_all
+#' @importFrom crayon blue cyan bold italic underline
 #'
 #' @examples
-save_swap_meteo <- function(){
+#' #tbc
+write_swap_meteo <- function(project_path,
+                            data,
+                            export = TRUE,
+                            name = NULL,
+                            autoset = FALSE,
+                            swap_file = "swap.swp",
+                            verbose = TRUE) {
 
+  if(export == FALSE){
+    if(autoset){stop("Cannot autoset if export is false!")}
+
+    write_path <- paste0(project_path,"/", "rswap_meteo_data.csv")
+    readr::write_csv(x = data, file = write_path)
+    if(verbose){cat("meteo data saved in: \n",
+                    underline(italic(blue(write_path))), "\n",
+                    italic("note: data not written to SWAP format because `export == FALSE`"))}
+    return(write_path)
+
+  }
+
+  if(is.null(name)){
+    name <- data$Station[1] %>% str_remove_all("'")
+  }
+
+  write_path <- paste0(project_path,"/", name, ".met" )
+  if(verbose){cat(blue("> writing SWAP met file to "), underline(write_path))}
+  readr::write_csv(x = data, file = write_path)
+
+  write_path2 <- paste0(project_path,"/", "rswap_meteo_data.csv")
+  readr::write_csv(x = data, file = write_path2)
+  if(verbose){cat("meteo data saved in: \n",
+                  underline(italic(blue(write_path2))), "\n")}
+
+  if(autoset){
+    swap_pars <- load_swap_parameters(project_path,swap_file, verbose)
+    old_tstart <- swap_pars$value[which(swap_pars$param == "TSTART")]
+    old_tend <- swap_pars$value[which(swap_pars$param == "TEND")]
+    old_statname <- swap_pars$value[which(swap_pars$param == "METFIL")]
+
+    n <- length(data$DD)
+    new_tstart <- paste0(data$YYYY[1], "-", data$MM[1] ,"-", data$DD[1])
+    new_tend <- paste0(data$YYYY[n], "-", data$MM[n] ,"-", data$DD[n])
+    new_statname <- paste0("'", name, ".met", "'")
+
+    swap_pars$value[which(swap_pars$param == "TSTART")] <- new_tstart
+    swap_pars$value[which(swap_pars$param == "TEND")] <- new_tend
+    swap_pars$value[which(swap_pars$param == "METFIL")] <- new_statname
+
+    if(verbose){
+      cat("changing ",bold("TSTART")," and ", bold("TEND"), " from ", underline(blue(paste0("[", old_tstart,",", old_tend,
+          "]"))), " to ", bold(cyan(underline(paste0("[",new_tstart, ",", new_tend, "]")))), " and changing ", bold("METFIL"),  " from ",
+          blue(underline(old_statname)), " to ", cyan(underline(bold(new_statname))), "\n", sep = "")
+    }
+
+    write_swap_parameters(project_path, parameters = swap_pars, verbose)
+
+  }
+
+  return(write_path)
 }
 
 #' Convert RH to AVP
@@ -58,10 +154,11 @@ save_swap_meteo <- function(){
 #' actual vapour pressure.
 #'
 #'
-#' @return
+#' @return tbc
 #' @export
 #'
 #' @examples
+#' #tbc
 convert_swap_humidity <- function(){
 
 }
