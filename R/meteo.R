@@ -26,6 +26,43 @@
 #' @export
 #'
 #' @examples
-load_swap_meteo <- function(){
+load_swap_meteo <- function(project_path){
+
+
+  if(file.existd){
+    pkg_path <- system.file(package = "rswap")
+    extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
+    met_path <- paste0(extdata, "/rswap_meteo_data.csv")
+    file.copy(from = met_path, to = paste0(example_path, to_path))
+
+  }
 
 }
+
+
+#' Saves SWAP meteo data to project
+#'
+#' Writes a / the SWAP meteo dataframe as loaded by `load_swap_meteo()`
+#'
+#' @return
+#' @export
+#'
+#' @examples
+save_swap_meteo <- function(){
+
+}
+
+#' Convert RH to AVP
+#'
+#' Converts the commonly used relative humidity (RH) to the SWAP required
+#' actual vapour pressure.
+#'
+#'
+#' @return
+#' @export
+#'
+#' @examples
+convert_swap_humidity <- function(){
+
+}
+
