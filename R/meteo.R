@@ -1,6 +1,7 @@
 ### This file contains the code related to meteorological operations.
 
 ## TODO:
+# - Add functionality to convert the regular date to a DD MM YYYY column set. 
 # - in autoset functionality, the dates of the model run could be auto set to
 #   the met data dataframe.
 #
