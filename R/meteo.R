@@ -2,6 +2,9 @@
 
 ## TODO:
 # - Add functionality to convert the regular date to a DD MM YYYY column set. 
+#
+# - Add a plot-meteo function to analyze the input data. 
+#
 # - in autoset functionality, the dates of the model run could be auto set to
 #   the met data dataframe.
 #
