@@ -128,7 +128,7 @@ run_swap <- function(project_path,
   io_start2 <- Sys.time()
 
   # check SWAP message
-  check_swap_message(run_result$status, verbose)
+  check_swap_message(project_path, swap_file, status = run_result$status, verbose)
 
   # move run files to temp dir
   move_run_files(swap_run_paths$work_dir, swap_run_paths$project, verbose)
@@ -156,8 +156,10 @@ run_swap <- function(project_path,
 
 #' checks SWAP error message
 #' @keywords internal
-#' @param msg file from processx
-check_swap_message <- function(status, verbose = F){
+#' @importFrom dplyr %>% first
+#' @importFrom stringr str_split
+#' @importFrom crayon red
+check_swap_message <- function(project_path, swap_file, status, verbose = F){
 
   if(status == 100){
     if(verbose){
@@ -169,6 +171,13 @@ check_swap_message <- function(status, verbose = F){
   # TODO expand this
   if (status != "100") {
     warning(glue("SWAP error, code {status}"))
+
+    # this code reads in the error log file and prints it to the console, useful
+    # feature for when the model fails.
+    swap_file_name <- stringr::str_split(swap_file, ".swp") %>% unlist() %>% first()
+    error_file <- paste0(project_path, "/rswap/", swap_file_name, "_swap.log")
+    cat(red(readLines(error_file)), sep = "\n")
+
     if (status == "2") {
       warning(glue("SWAP model timed out, with timeout {timeout}"))
     }
