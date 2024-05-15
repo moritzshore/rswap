@@ -1055,7 +1055,8 @@ modify_swap_file <- function(project_path,
     pars <- load_swap_parameters(project_path, verbose = verbose)
     par_vars <- pars$param
     if(variable %in% par_vars){
-      change_swap_parameter(param = pars,name = variable, value = value, verbose = verbose)
+      new_pars <- change_swap_parameter(param = pars,name = variable, value = value, verbose = verbose)
+      write_swap_parameters(project_path, new_pars, verbose)
     }else{
       stop("variable ", variable, " not found")
     }
