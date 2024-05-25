@@ -133,6 +133,6 @@ rswap_plot_performance <-
     ) %>%
       # remove the colorbar legend
       plotly::hide_colorbar() %>%
-      # print out the finsihed plot
-      print()
+      # return the finished plot
+      return()
   }
