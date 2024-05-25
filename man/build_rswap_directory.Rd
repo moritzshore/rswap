@@ -4,7 +4,7 @@
 \alias{build_rswap_directory}
 \title{Build rswap Directory}
 \usage{
-build_rswap_directory(project_path, force = F, verbose = F)
+build_rswap_directory(project_path, force = T, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string)}
