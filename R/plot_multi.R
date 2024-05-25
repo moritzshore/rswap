@@ -39,12 +39,12 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
   observed_file_path <- glue("{project_path}/rswap_observed_data.csv")
 
   # cant do more than 4 variables. (3+RAIN)
-  if(length(vars)>3){return("too many variables, max 3")}
+  if(length(vars)>3){stop("too many variables, max 3")}
 
   # check to see if any of the entered vars are not supported
   if(!(vars %in% c("H", "WC", "DRAINAGE", "TEMP")) %>% any()){
-    print("at least one not supported variable. supported variables are:")
-    return(c("H", "WC", "DRAINAGE", "TEMP"))
+    print()
+    stop("at least one not supported variable. supported variables are: H, WC, DRAINAGE, TEMP")
   }
 
   # adds the unit to the ylab labels
@@ -355,6 +355,6 @@ rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){
            legend = list(orientation = 'h'), # horizontal legend
            hovermode = "x unified"
     )
-  # print out the plot.
-  fig %>% print()
+  # return the plot.
+  return(fig)
 }
