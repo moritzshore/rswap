@@ -25,7 +25,7 @@
 #' # This example code will not be executed as it needs to write files!
 #' # build_rswap_directory(example_path, verbose = TRUE)
 
-build_rswap_directory <- function(project_path, force = F, verbose = F){
+build_rswap_directory <- function(project_path, force = T, verbose = F){
 
   temp_directory <- glue("{project_path}/rswap")
 
