@@ -66,7 +66,10 @@ check_swap_sensitivity <- function(project_path,
   ### TODO ###
   ############
   base_proj <- paste0(project_path, "/rswap/")
-  TODO = dir.exists(base_proj)
+  qparse = dir.exists(paste0(base_proj, "/parameters"))
+
+  if(!qparse){parse_swap_file(project_path, swap_file, verbose)}
+
 
   working_dir <- dirname(project_path)
   project_name <- basename(project_path)

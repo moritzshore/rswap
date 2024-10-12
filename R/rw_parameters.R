@@ -98,8 +98,11 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   }
 
 
-  # TODO only build if needed or force true
-  rswap_dir <- build_rswap_directory(project_path)
+  # Only build if needed or force true
+  if (!dir.exists(paste0(project_path, "/rswap/parameters"))) {
+    rswap_dir <- build_rswap_directory(project_path)
+  }else{rswap_dir = paste0(project_path, "/rswap/")}
+
   swp <- clean_swap_file(rswap_dir, swap_file = swap_file)
 
   swp_file <- paste0(rswap_dir, "/", swap_file)
