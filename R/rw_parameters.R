@@ -1042,7 +1042,10 @@ modify_swap_file <- function(project_path,
     }
     # don't pass swap_file because it should have been parsed already!
 
-    find_table <- (stringi::stri_extract_all_regex(str = tab_vars_pre, pattern = variable, simplify = T ) %>% is.na() == FALSE) %>% which()
+    # TODO: stri_extract_first_regex is an unstable way of doing things because
+    # if some variable name overlaps another, it might return the wrong one.
+    # this should be fixed to something more robust!
+    find_table <- (stringi::stri_extract_first_regex(str = tab_vars_pre, pattern = variable) %>% is.na() == FALSE) %>% which()
     single_table_path <- paste0(project_path, "/rswap/tables/",tab_vars_pre[find_table], ".csv")
 
     tab_df <- readr::read_csv(single_table_path, col_types = readr::cols(.default = "c"))
