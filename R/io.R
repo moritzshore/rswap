@@ -163,9 +163,9 @@ update_swap_paths <- function(project_path, swap_exe,
 #' Once a run has been saved, it can be compared to other saved runs, and/or the
 #' next run you perform. This can be done with functions such as
 #' `comparative_plot()` or `plot_statistics()`
-#'
+#'r
 #' @param project_path path to the project directory (string)
-#' @param run_name name of run to be saved. default is "rswap_{time,date}" (string)
+#' @param run_name name of run to be saved. (string)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom glue glue

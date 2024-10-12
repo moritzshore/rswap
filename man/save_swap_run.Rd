@@ -9,7 +9,7 @@ save_swap_run(project_path, run_name = NULL, verbose = F)
 \arguments{
 \item{project_path}{path to the project directory (string)}
 
-\item{run_name}{name of run to be saved. default is "rswap_{time,date}" (string)}
+\item{run_name}{name of run to be saved. (string)}
 
 \item{verbose}{print status? (flag)}
 }
@@ -23,6 +23,7 @@ one via the \code{run_name} parameter.
 Once a run has been saved, it can be compared to other saved runs, and/or the
 next run you perform. This can be done with functions such as
 \code{comparative_plot()} or \code{plot_statistics()}
+r
 }
 \examples{
 # path to sample results (only for package internal example, you don't need
