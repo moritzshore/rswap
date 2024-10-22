@@ -275,8 +275,16 @@ graph:
 </p>
 
 Also returned is a dataframe of the results. This function can be adjusted for
-any parameter or performance statistic. Output analysis of a selected variable
-will be implemented in the future.
+any parameter or performance statistic. 
+
+If you would like to see model output response to the varying input, all you need to do is remove the `statistic` parameter and you will get something like this:
+
+<p align="center">
+
+<img src="man/figures/sense2.png" width="60%" height="60%"/>
+
+</p>
+
 
 ## SWAPtools integration <a name="swaptools"></a>
 
