@@ -168,55 +168,104 @@ check_swap_sensitivity <- function(project_path,
   }
 
   # if the effect on an output variable is desired, run this routine:
-  #
-  # TODO #
-  #
-  if(is.null(statistic)){
-    stop("[rswap] sorry, non-statistical sensitivity has not been implemented yet,
-         please pass a 'statistic' parameter")
-
-
-
+  if (is.null(statistic)) {
     # load base df
+    # Warning, this will break once load_swap_output is renovated
     base_df <- rswap::load_swap_output(sens_res_paths[1])[[2]] %>% select("DATE")
 
     # grab all the output
-    var_sens_vectorized <- function(sens_res_path, obs_variable, depth){
-      # Warning, this will break once load_swap_output is renovated
-      id =  sens_res_path %>% stringr::str_split("/", simplify = F) %>% unlist() %>% last()
-      rswap::melt_swap_data(sens_res_path, obs_variable ,depth) %>% filter(type =="mod") %>% cbind(id) %>% return()
-      }
-    data_Extract <- lapply(sens_res_paths, obs_variable =obs_variable , depth = depth, var_sens_vectorized)
-    outputDF <- do.call(rbind, data_Extract)
-    outputDF<-outputDF %>% as_tibble()
+    var_sens_vectorized <- function(sens_res_path, obs_variable, depth) {
+      id =  sens_res_path %>% stringr::str_split("/", simplify = F) %>%
+        unlist() %>% last()
+      rswap::melt_swap_data(sens_res_path, obs_variable , depth) %>%
+        filter(type == "mod") %>% cbind(id) %>% return()
+    }
+    # extract all the data from each run
+    data_Extract <- lapply(sens_res_paths,
+                           obs_variable = obs_variable ,
+                           depth = depth,
+                           var_sens_vectorized)
 
-    intermediate_df <- data.frame(id = paste0("run_",c(1:length(values))), sens_val = paste(variable ,"@", values))
+    # bind them together, convert to tibble, and join with ID table giving a
+    # dataframe ready to plot with.
+    outputDF <- do.call(rbind, data_Extract)
+    outputDF <- outputDF %>% as_tibble()
+    intermediate_df <- data.frame(id = paste0("run_", c(1:length(values))),
+                                  sens_val = paste(variable , "@", values))
     plot_df <- left_join(outputDF, intermediate_df, by = "id")
 
+    # defining a color scheme with the given amount of runs
     nb.cols <- length(values)
     mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(nb.cols)
 
-    plotly::plot_ly(data = plot_df, x = ~DATE, y = ~value,
-                    color = ~sens_val,
-                    colors = mycolors,
-                    type = 'scatter', mode = 'lines')
+    # creating base plot
+    fig <- plotly::plot_ly(
+      data = plot_df,
+      x = ~ DATE,
+      y = ~ value,
+      color = ~ sens_val,
+      colors = mycolors,
+      type = 'scatter',
+      mode = 'lines'
+    )
+
+    # loading observed data
+    # TODO: make sure this doesnt break if there is no observed data
+    obs_data <- load_swap_observed(project_path, verbose = verbose)
+
+    # defining reference var based on whether or not it is depth respective
+    if (!is.null(depth)) {
+      reference_var <- paste0(obs_variable, "_", depth)
+    } else{
+      reference_var <- obs_variable
+    }
+
+    # if a reference var is detected in the observed data, then add it to the
+    # plot.
+    if (reference_var %in% (obs_data %>% colnames())) {
+      to_add <- obs_data %>% select("DATE", all_of(reference_var))
+      colnames(to_add) <- c("DATE", "Observed")
+
+      fig <- fig %>% plotly::add_trace(
+        data = to_add,
+        y = ~ Observed,
+        name = reference_var,
+        color = "Observed",
+        line = list(color = "black"),
+        marker = list(
+          color = "white",
+          line = list(color = 'black', width = 1)
+        ),
+        mode = 'lines+markers'
+      )
+    }
+
+    # plotting layout adustsments
+    fig <- fig %>% plotly::layout(
+      title = paste(reference_var, "with respect to variation in", variable),
+      xaxis = list(title = "Date of Simulation"),
+      yaxis = list (title = obs_variable)
+    )
+
+    fig %>% print()
 
   }
 }
 
 # Testing parameter set.
-variable = "OSAT"
-project_path = tetves
-values <- seq(0.32, 0.48, by = 0.01)
-row = 1
-statistic = "NSE"
-swap_file = "swap.swp"
-n_cores = NULL
-autoset_output = T
-depth = 15
-force = T
-verbose = T
-obs_variable = "WC"
-timeout = Inf
-cleanup = TRUE
+# variable = "OSAT"
+# project_path =  "C:/Users/mosh/Documents/GIT/staging_ground/test_rswap/tetves/"
+# values <- seq(0.32, 0.48, by = 0.01)
+# row = 1
+# statistic = "NSE"
+# swap_file = "swap.swp"
+# n_cores = NULL
+# autoset_output = T
+# depth = 15
+# force = T
+# verbose = T
+# obs_variable = "WC"
+# timeout = Inf
+# cleanup = TRUE
+
 
