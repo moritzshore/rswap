@@ -72,9 +72,6 @@ check_swap_sensitivity <- function(project_path,
 
 
   # if the project has not been parsed yet, parse it here!
-  ##
-  # TODO
-  #
   base_proj <- paste0(project_path, "/rswap/")
   qparse = dir.exists(paste0(base_proj, "/parameters"))
   if(!qparse){parse_swap_file(project_path, swap_file, verbose)}
@@ -158,12 +155,9 @@ check_swap_sensitivity <- function(project_path,
       title = paste0("rswap sensitivity analysis: ", project_name),
       xaxis = list(title =  variable),
       yaxis = list(title = statistic))
-    print(fig)
 
-
-    if(cleanup){
-      unlink(sens_dir, recursive = T)
-    }
+    fig %>% print()
+    if(cleanup){unlink(sens_dir, recursive = T)}
     return(result_df)
   }
 
@@ -238,6 +232,14 @@ check_swap_sensitivity <- function(project_path,
         ),
         mode = 'lines+markers'
       )
+    }else{
+      warning(
+        "Reference variable",
+        reference_var,
+        "not found in observed data:",
+        (obs_data %>% colnames()),
+        "\n Not displaying observed timeseries"
+      )
     }
 
     # plotting layout adustsments
@@ -246,11 +248,11 @@ check_swap_sensitivity <- function(project_path,
       xaxis = list(title = "Date of Simulation"),
       yaxis = list (title = obs_variable)
     )
-
     fig %>% print()
-
+    if(cleanup){unlink(sens_dir, recursive = T)}
+    return(plot_df)
+    }
   }
-}
 
 # Testing parameter set.
 # variable = "OSAT"
