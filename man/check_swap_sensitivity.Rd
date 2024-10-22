@@ -28,30 +28,40 @@ check_swap_sensitivity(
 
 \item{values}{Parameter set to vary your variable across (vector)}
 
-\item{row}{(optional, numeric) if your parameter is stored in a table you need to pass
-the row in which it is in}
+\item{row}{(optional, numeric) if your parameter is stored in a table you
+need to pass the row in which it is in}
 
-\item{statistic}{(optional, string) if you would like to evaluate the sensitivity of
-model performance to the passed parameter set, please specify which
-statistical indicator you would like to use (supported by \code{hydroGOF})}
+\item{statistic}{(optional, string) if you would like to evaluate the
+sensitivity of model performance to the passed parameter set, please
+specify which statistical indicator you would like to use (supported by
+\code{hydroGOF})}
 
-\item{obs_variable}{(optional, string) the observed variable you would like model perfomance to be evaluted with (required if \code{statistic} is passed)}
+\item{obs_variable}{(optional, string) the observed variable you would like
+model performance to be evaluated with (required if \code{statistic} is passed)
+or the output variable you would to see how the sensitivity of (requires
+\code{statistic} to be not passed)}
 
-\item{depth}{(optional, numeric) if your \code{obs_variable} has a respective depth, pass it here (cm)}
+\item{depth}{(optional, numeric) if your \code{obs_variable} has a respective
+depth, pass it here (cm)}
 
-\item{cleanup}{(optional, boolean) delete the model files (results) after function completion?}
+\item{cleanup}{(optional, Boolean) delete the model files (results) after
+function completion?}
 
 \item{swap_file}{(optional, string) SWAP file to run, by default "swap.swp"}
 
-\item{n_cores}{(optional, numeric) The number of CPU cores to run the sensitivity anaylysis on.}
+\item{n_cores}{(optional, numeric) The number of CPU cores to run the
+sensitivity analysis on.}
 
-\item{autoset_output}{(optional, boolean) Match model output to observed data?}
+\item{autoset_output}{(optional, Boolean) Match model output to observed
+data?}
 
-\item{force}{(optional, boolean) If an rswap directory already exists, no new one will be generated/reloaded unless force=TRUE. Defaults to TRUE}
+\item{force}{(optional, Boolean) If an rswap directory already exists, no new
+one will be generated/reloaded unless force=TRUE. Defaults to TRUE}
 
-\item{verbose}{(optional, boolean) Print actions to console?}
+\item{verbose}{(optional, Boolean) Print actions to console?}
 
-\item{timeout}{(optional, numeric) Maximum model runtime in seconds. Unlimited by default.}
+\item{timeout}{(optional, numeric) Maximum model run time in seconds.
+Unlimited by default.}
 }
 \value{
 Prints interactive plot and returns dataframe of the results.
@@ -60,8 +70,8 @@ Prints interactive plot and returns dataframe of the results.
 This function automates a simple sensitivity analysis for your SWAP project.
 }
 \details{
-Currently supported output is statistical evalution only. This function is not
-yet fully finished!
+Currently supported output is statistical evalution only. This function is
+not yet fully finished!
 }
 \examples{
 if(FALSE){

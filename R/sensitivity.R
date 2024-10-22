@@ -33,8 +33,11 @@
 #' @param timeout (optional, numeric) Maximum model run time in seconds.
 #'   Unlimited by default.
 #'
-#' @importFrom plotly plot_ly layout
-#' @importFrom dplyr rename bind_rows
+#' @importFrom plotly plot_ly layout add_trace
+#' @importFrom stringr str_split
+#' @importFrom dplyr rename bind_rows all_of select %>% left_join as_tibble last filter
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices colorRampPalette
 #'
 #' @return Prints interactive plot and returns dataframe of the results.
 #'
@@ -236,7 +239,7 @@ check_swap_sensitivity <- function(project_path,
       warning(
         "Reference variable",
         reference_var,
-        "not found in observed data:",
+        " not found in observed data: ",
         (obs_data %>% colnames()),
         "\n Not displaying observed timeseries"
       )
