@@ -4,10 +4,12 @@
 \alias{rswap_init}
 \title{Initialize rswap}
 \usage{
-rswap_init(swap_exe)
+rswap_init(swap_exe, quiet = FALSE)
 }
 \arguments{
 \item{swap_exe}{path to SWAP model (string)}
+
+\item{quiet}{flag to stop output}
 }
 \value{
 Returns the project path of "hupselbrook" SWAP setup.

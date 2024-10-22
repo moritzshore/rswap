@@ -744,6 +744,7 @@ melt_swap_runs <-
 #' issue you need to fix before continuing to use rswap.
 #'
 #' @param swap_exe path to SWAP model (string)
+#' @param quiet flag to stop output
 #'
 #' @returns Returns the project path of "hupselbrook" SWAP setup.
 #'
@@ -757,7 +758,7 @@ melt_swap_runs <-
 #'
 #' # rswap_init("C:/path/to/swap.exe")
 #'
-rswap_init <- function(swap_exe){
+rswap_init <- function(swap_exe, quiet = FALSE){
 
   pkg_path <- system.file(package = "rswap")
   extdata <- paste0(pkg_path, '/extdata/rswap_example_input')
@@ -779,30 +780,36 @@ rswap_init <- function(swap_exe){
   to_path <- from_path %>% str_remove(extdata)
   file.copy(from = from_path, to = paste0(example_path, to_path))
 
-  status = run_swap(example_path, verbose = T, autoset_output = T)
+  status = run_swap(example_path, verbose = !quiet, autoset_output = T)
 
   if(status == 100){
-    cat("\nrswap ran successfully!\n")
+    # TODO clean this up
+    if(!quiet){(cat("\nrswap ran successfully!\n"))}
   }else{
-    cat("\nOh no! something went wrong with the running rswap!\n")
-    cat("\nERROR CODE:", status, "\n")
+    # TODO clean this up
+    if(!quiet){
+      cat("\nOh no! something went wrong with the running rswap!\n")
+      cat("\nERROR CODE:", status, "\n")
+    }
   }
 
-  data <- load_swap_observed(example_path, verbose = T)
-  mod <- load_swap_output(example_path)
+  data <- load_swap_observed(example_path, verbose = !quiet)
+  mod <- load_swap_output(example_path, verbose = !quiet)
 
   if(mod[[1]] %>% is.data.frame()){
-    cat("\nloading SWAP output... success!\n")
+    if(!quiet){cat("\nloading SWAP output... success!\n")}
   }else{
     stop("something went wrong loading the modelled data")
   }
 
-  variable <- get_swap_variables(data)[1:3]
+  variable <- get_swap_variables(data, verbose = !quiet)[1:3]
   depth <- get_swap_depths(data = data)[1]
-  rswap_plot_multi(project_path = example_path, vars = variable, show = c("RAIN", variable[1]))
+  rswap_plot_multi(project_path = example_path, vars = variable, show = c("RAIN", variable[1]), verbose = !quiet)
+  if(!quiet){
   cat("\nif you can see the plotly plot, then rswap is plotting successfully\n")
   cat("\nrswap initilization complete, you can find the project folder here:","\n")
   cat(example_path, "\n")
+  }
   return(example_path)
 }
 

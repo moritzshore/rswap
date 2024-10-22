@@ -1,47 +1,66 @@
 #' Sensitivity Analysis
 #'
 #' This function automates a simple sensitivity analysis for your SWAP project.
+#' Pass the project path, a SWAP parameter you would like to vary, as well as
+#' the values you would like to vary it by. If you pass a statistical
+#' performance indicator (`statistic`, those supported by package `hydroGOF`)
+#' you will get your results in terms of that indicator. If you do not pass a
+#' `statistic` parameter, you will get output with respect to your
+#' `obs_variable`. Note: if your `obs_variable` is not present in your observed
+#' data, no worries, the plot will just not include observed data.
 #'
-#' Currently supported output is statistical evalution only. This function is not
-#' yet fully finished!
+#' Note: function not robustly tested, please report any errors
+#'
+#' [report errors on GitHub](https://github.com/moritzshore/rswap/issues)
+#'
 #'
 #' @param project_path path to the project directory (string)
 #' @param variable SWAP parameter to alter (string)
 #' @param values Parameter set to vary your variable across (vector)
-#' @param row (optional, numeric) if your parameter is stored in a table you need to pass
-#'   the row in which it is in
-#' @param statistic (optional, string) if you would like to evaluate the sensitivity of
-#'   model performance to the passed parameter set, please specify which
-#'   statistical indicator you would like to use (supported by `hydroGOF`)
-#' @param obs_variable (optional, string) the observed variable you would like model perfomance to be evaluted with (required if `statistic` is passed)
-#' @param depth (optional, numeric) if your `obs_variable` has a respective depth, pass it here (cm)
-#' @param cleanup (optional, boolean) delete the model files (results) after function completion?
+#' @param row (optional, numeric) if your parameter is stored in a table you
+#'   need to pass the row in which it is in
+#' @param statistic (optional, string) if you would like to evaluate the
+#'   sensitivity of model performance to the passed parameter set, please
+#'   specify which statistical indicator you would like to use (supported by
+#'   `hydroGOF`)
+#' @param obs_variable (optional, string) the observed variable you would like
+#'   model performance to be evaluated with (required if `statistic` is passed)
+#'   or the output variable you would to see how the sensitivity of (requires
+#'   `statistic` to be not passed)
+#' @param depth (optional, numeric) if your `obs_variable` has a respective
+#'   depth, pass it here (cm)
+#' @param cleanup (optional, Boolean) delete the model files (results) after
+#'   function completion?
 #' @param swap_file (optional, string) SWAP file to run, by default "swap.swp"
-#' @param n_cores (optional, numeric) The number of CPU cores to run the sensitivity anaylysis on.
-#' @param autoset_output (optional, boolean) Match model output to observed data?
-#' @param force (optional, boolean) If an rswap directory already exists, no new one will be generated/reloaded unless force=TRUE. Defaults to TRUE
-#' @param verbose (optional, boolean) Print actions to console?
-#' @param timeout (optional, numeric) Maximum model runtime in seconds. Unlimited by default.
+#' @param n_cores (optional, numeric) The number of CPU cores to run the
+#'   sensitivity analysis on.
+#' @param autoset_output (optional, Boolean) Match model output to observed
+#'   data?
+#' @param force (optional, Boolean) If an rswap directory already exists, no new
+#'   one will be generated/reloaded unless force=TRUE. Defaults to TRUE
+#' @param verbose (optional, Boolean) Print actions to console?
+#' @param timeout (optional, numeric) Maximum model run time in seconds.
+#'   Unlimited by default.
 #'
-#' @importFrom plotly plot_ly layout
-#' @importFrom dplyr rename bind_rows
+#' @importFrom plotly plot_ly layout add_trace
+#' @importFrom stringr str_split
+#' @importFrom dplyr rename bind_rows all_of select %>% left_join as_tibble last filter
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices colorRampPalette
 #'
 #' @return Prints interactive plot and returns dataframe of the results.
 #'
 #' @examples
+#' # This function cannot execute example code as it relies on the externally
+#' # provided swap model
 #' if(FALSE){
-#' check_swap_sensitivity(
-#' project_path = "C:/Users/mosh/Documents/rswaptesting/tetves/",
-#' variable = "OSAT",
-#' values = seq(0.32, 0.48, by = 0.01),
-#' row = 1,
-#' statistic = "NSE",
-#' obs_variable = "WC",
-#' depth = 15,
-#' cleanup = TRUE,
-#' autoset_output = TRUE,
-#' verbose = TRUE
-#' )}
+#' exe_path = "../swap.exe"
+#' path = rswap_init(swap_exe = exe_path)
+#' check_swap_sensitivity(project_path = path,
+#' variable = "OSAT",row = 1, values = seq(0.32, 0.48, by = 0.01),
+#' obs_variable = "WC", depth = 15,
+#' autoset_output = TRUE, verbose = F)
+#' }
 #'
 #' @export
 #'
@@ -62,22 +81,14 @@ check_swap_sensitivity <- function(project_path,
 
 
   # if the project has not been parsed yet, parse it here!
-  ############
-  ### TODO ###
-  ############
   base_proj <- paste0(project_path, "/rswap/")
   qparse = dir.exists(paste0(base_proj, "/parameters"))
-
   if(!qparse){parse_swap_file(project_path, swap_file, verbose)}
-
 
   working_dir <- dirname(project_path)
   project_name <- basename(project_path)
-
   sens_dir <- paste0(working_dir, "/rswap_sensitity_run_", project_name)
-
   dir.create(sens_dir)
-
   sensnames <- paste0(sens_dir, "/run_",c(1:length(values)), "/")
 
   if(verbose){cat("generating scenario files\n")}
@@ -90,7 +101,7 @@ check_swap_sensitivity <- function(project_path,
   # this does not work yet
   #set_swap_format(parameter = variable, value = .03)
 
-  # modifiy the SWAP files with rswap function
+  # modify the SWAP files with rswap function
   res <- modify_swap_file(project_path = sensnames,
                    input_file = swap_file, output_file = "rswap/swap_sens.swp",
                    variable = variable, value = values, row = row, fast = T, verbose = verbose)
@@ -153,28 +164,108 @@ check_swap_sensitivity <- function(project_path,
       title = paste0("rswap sensitivity analysis: ", project_name),
       xaxis = list(title =  variable),
       yaxis = list(title = statistic))
-    print(fig)
 
-
-    if(cleanup){
-      unlink(sens_dir, recursive = T)
-    }
+    fig %>% print()
+    if(cleanup){unlink(sens_dir, recursive = T)}
     return(result_df)
   }
 
   # if the effect on an output variable is desired, run this routine:
-  ############
-  ### TODO ###
-  ############
-  if(is.null(statistic)){
-    stop("[rswap] sorry, non-statistical sensitivity has not been implemented yet,
-         please pass a 'statistic' parameter")
-  }
-}
+  if (is.null(statistic)) {
+    # load base df
+    # Warning, this will break once load_swap_output is renovated
+    base_df <- rswap::load_swap_output(sens_res_paths[1])[[2]] %>% select("DATE")
 
-## Testing parameter set.
+    # grab all the output
+    var_sens_vectorized <- function(sens_res_path, obs_variable, depth) {
+      id =  sens_res_path %>% stringr::str_split("/", simplify = F) %>%
+        unlist() %>% last()
+      rswap::melt_swap_data(sens_res_path, obs_variable , depth) %>%
+        filter(.data$type == "mod") %>% cbind(id) %>% return()
+    }
+    # extract all the data from each run
+    data_Extract <- lapply(sens_res_paths,
+                           obs_variable = obs_variable ,
+                           depth = depth,
+                           var_sens_vectorized)
+
+    # bind them together, convert to tibble, and join with ID table giving a
+    # dataframe ready to plot with.
+    outputDF <- do.call(rbind, data_Extract)
+    outputDF <- outputDF %>% as_tibble()
+    intermediate_df <- data.frame(id = paste0("run_", c(1:length(values))),
+                                  sens_val = paste(variable , "@", values))
+    plot_df <- left_join(outputDF, intermediate_df, by = "id")
+
+    # defining a color scheme with the given amount of runs
+    nb.cols <- length(values)
+    mycolors <- colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(nb.cols)
+
+    # creating base plot
+    fig <- plotly::plot_ly(
+      data = plot_df,
+      x = ~ DATE,
+      y = ~ value,
+      color = ~ sens_val,
+      colors = mycolors,
+      type = 'scatter',
+      mode = 'lines'
+    )
+
+    # loading observed data
+    # TODO: make sure this doesnt break if there is no observed data
+    obs_data <- load_swap_observed(project_path, verbose = verbose)
+
+    # defining reference var based on whether or not it is depth respective
+    if (!is.null(depth)) {
+      reference_var <- paste0(obs_variable, "_", depth)
+    } else{
+      reference_var <- obs_variable
+    }
+
+    # if a reference var is detected in the observed data, then add it to the
+    # plot.
+    if (reference_var %in% (obs_data %>% colnames())) {
+      to_add <- obs_data %>% select("DATE", all_of(reference_var))
+      colnames(to_add) <- c("DATE", "Observed")
+
+      fig <- fig %>% plotly::add_trace(
+        data = to_add,
+        y = ~ Observed,
+        name = reference_var,
+        color = "Observed",
+        line = list(color = "black"),
+        marker = list(
+          color = "white",
+          line = list(color = 'black', width = 1)
+        ),
+        mode = 'lines+markers'
+      )
+    }else{
+      warning(
+        "Reference variable",
+        reference_var,
+        " not found in observed data: ",
+        (obs_data %>% colnames()),
+        "\n Not displaying observed timeseries"
+      )
+    }
+
+    # plotting layout adustsments
+    fig <- fig %>% plotly::layout(
+      title = paste(reference_var, "with respect to variation in", variable),
+      xaxis = list(title = "Date of Simulation"),
+      yaxis = list (title = obs_variable)
+    )
+    fig %>% print()
+    if(cleanup){unlink(sens_dir, recursive = T)}
+    return(plot_df)
+    }
+  }
+
+# Testing parameter set.
 # variable = "OSAT"
-# project_path = "C:/Users/mosh/Documents/rswaptesting/tetves/"
+# project_path =  "C:/Users/mosh/Documents/GIT/staging_ground/test_rswap/tetves/"
 # values <- seq(0.32, 0.48, by = 0.01)
 # row = 1
 # statistic = "NSE"
@@ -187,4 +278,5 @@ check_swap_sensitivity <- function(project_path,
 # obs_variable = "WC"
 # timeout = Inf
 # cleanup = TRUE
+
 
