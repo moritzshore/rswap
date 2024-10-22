@@ -28,6 +28,7 @@ Imports:
     plotly,
     processx,
     purrr,
+    RColorBrewer,
     readr,
     stringi,
     stringr,
