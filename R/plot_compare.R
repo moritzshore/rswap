@@ -3,6 +3,8 @@
 #' This graph highlights the differences between saved model runs for a given
 #' variable at a certain depth.
 #'
+#' @seealso [rswap_plot_variable()] [rswap_plot_performance()] [rswap_plot_multi()]
+#'
 #' @param project_path path to project directory (string)
 #' @param variable variable to show (string)
 #' @param depth depth of variable, if it has a depth. Otherwise leave blank (string)

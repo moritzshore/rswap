@@ -6,7 +6,9 @@
 #' This makes it easier to use with other r packages such as `ggplot2`.
 #'
 #' This function will adjust to any variables and depths you give it. If you do
-#' not provide any variables, or any depths, all avaiable ones will be used.
+#' not provide any variables, or any depths, all available ones will be used.
+#'
+#' @seealso [match_swap_data()]
 #'
 #'
 #' @param project_path path to project directory `string`

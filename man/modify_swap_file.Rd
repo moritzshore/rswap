@@ -61,3 +61,6 @@ Note: If you are changing a variable located in a SWAP vector or table, you
 need to pass the \code{row} argument (which is an index for vectors, and a normal
 row for tables)
 }
+\seealso{
+\code{\link[=parse_swap_file]{parse_swap_file()}}
+}

@@ -94,3 +94,6 @@ autoset_output = TRUE, verbose = F)
 }
 
 }
+\seealso{
+\code{\link[=run_swap_parallel]{run_swap_parallel()}}
+}

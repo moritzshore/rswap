@@ -1,9 +1,9 @@
 ### This file contains the code related to meteorological operations.
 
 ## TODO:
-# - Add functionality to convert the regular date to a DD MM YYYY column set. 
+# - Add functionality to convert the regular date to a DD MM YYYY column set.
 #
-# - Add a plot-meteo function to analyze the input data. 
+# - Add a plot-meteo function to analyze the input data.
 #
 # - in autoset functionality, the dates of the model run could be auto set to
 #   the met data dataframe.
@@ -43,6 +43,9 @@
 #'
 #' @examples
 #' #tbc
+#'
+#' @seealso [write_swap_meteo()] [est_avp()]
+#'
 load_swap_meteo <- function(project_path, verbose = FALSE){
 
   ## TODO, add forcing
@@ -88,6 +91,8 @@ load_swap_meteo <- function(project_path, verbose = FALSE){
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_remove_all
 #' @importFrom crayon blue cyan bold italic underline
+#'
+#' @seealso [load_swap_meteo()] [est_avp()]
 #'
 #' @examples
 #' #tbc
@@ -152,18 +157,33 @@ write_swap_meteo <- function(project_path,
   return(write_path)
 }
 
-#' Convert RH to AVP
+#' Estimate Actual Vapour Pressure
 #'
-#' Converts the commonly used relative humidity (RH) to the SWAP required
-#' actual vapour pressure.
+#' Converts relative humidity (RH) to actual vapour pressure (AVP) using an
+#' estimation with maximum and minimum temperature. This function exists because
+#' SWAP uses AVP whereas many datasets contain RH. Read more on [fao.org](https://www.fao.org/4/x0490e/x0490e07.htm)
 #'
+#' @seealso [load_swap_meteo()] [write_swap_meteo()]
+#' @param tmin vector, in kelvin (K)
+#' @param tmax vector, in kelvin (K)
+#' @param rh vector, in % (ie. 53.2)
 #'
-#' @return tbc
+#' @return vector of AVP, rounded to 2 decimal placews
 #' @export
 #'
 #' @examples
-#' #tbc
-convert_swap_humidity <- function(){
+#'
+#' est_avp(tmin = c(1.8, 1.9, 2.0), tmax =	c(6, 7, 8),
+#'                    rh = c(60.2, 40.5, 90.2))
+#'
+est_avp <- function(tmin, tmax, rh) {
+  # https://www.fao.org/4/x0490e/x0490e07.htm
 
+  e_0 <- function(temp) {
+    0.6108 * exp(17.27 * (temp) / (temp + 237.3))
+  }
+  e_s <- (e_0(tmax) + e_0(tmin)) / 2
+  e_a <- (rh / 100) * e_s
+
+  return(round(e_a, 2))
 }
-

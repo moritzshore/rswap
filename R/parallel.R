@@ -17,6 +17,7 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach foreach %dopar%
 #'
+#' @seealso [check_swap_sensitivity()] [run_swap()]
 #'
 #' @return Nested list of SWAP status codes for each run (100 = sucess)
 #' @export

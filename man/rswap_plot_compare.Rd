@@ -19,3 +19,6 @@ rswap_plot_compare(project_path, variable, depth = NULL, verbose = F)
 This graph highlights the differences between saved model runs for a given
 variable at a certain depth.
 }
+\seealso{
+\code{\link[=rswap_plot_variable]{rswap_plot_variable()}} \code{\link[=rswap_plot_performance]{rswap_plot_performance()}} \code{\link[=rswap_plot_multi]{rswap_plot_multi()}}
+}

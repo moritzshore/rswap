@@ -27,3 +27,6 @@ If your SWAP main file structure does something different, you might run into tr
 
 This function will be expanded to work with more SWAP input files like .dra
 }
+\seealso{
+\code{\link[=clean_swap_file]{clean_swap_file()}} \code{\link[=build_rswap_directory]{build_rswap_directory()}}
+}

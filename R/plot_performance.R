@@ -16,6 +16,8 @@
 #' Please note, passing multiple variables at differing depths will not work!
 #' (yet)
 #'
+#' @seealso [rswap_plot_variable()] [rswap_plot_compare()] [rswap_plot_multi()]
+#'
 #' @param project_path path to project directory (string)
 #' @param variable variable to show (string)
 #' @param depth depth(s) to show. Leave blank for all (numeric/vector)

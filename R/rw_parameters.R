@@ -8,6 +8,8 @@
 #' This function is designed to be used internally, but may be useful to the end
 #' users. This is currently only tested for the SWAP main file.
 #'
+#' @seealso [parse_swap_file()]
+#'
 #' @param project_path path to the project directory (string)
 #' @param swap_file name of the swap file (string)
 #'
@@ -59,6 +61,8 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
 #' If your SWAP main file structure does something different, you might run into trouble.
 #'
 #' This function will be expanded to work with more SWAP input files like .dra
+#'
+#' @seealso [clean_swap_file()] [build_rswap_directory()]
 #'
 #' @param project_path path to project directory (string)
 #' @param swap_file optional swap main file name (string) defaults to "swap.swp"
@@ -258,6 +262,8 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #' This function currently is only intended for the SWAP main file, but will be
 #' expanded to handle the other SWAP input files over time.
 #'
+#' @seealso [modify_swap_file()]
+#'
 #' @param project_path path to project directory
 #' @param outfile name of the SWAP file to write. will be stored in project directory (string)
 #' @param verbose print status? (flag)
@@ -391,6 +397,8 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 #'
 #' Currently it only modifies INLIST_CSV, but more functionality will be placed
 #' here over time.
+#'
+#' @seealso [run_swap()]
 #'
 #' @param project_path path to project directory
 #' @param parameters parameter dataframe
@@ -549,6 +557,8 @@ set_swap_output <-
 #' format (ie. correct decimal place), as SWAP/FORTRAN is very particular about
 #' this
 #'
+#' @seealso [modify_swap_file()]
+#'
 #' @param param Parameter set (dataframe)
 #' @param name name of the parameter to change (string)
 #' @param value value the parameter should take on (string)
@@ -576,6 +586,8 @@ change_swap_parameter <- function(param, name, value, verbose = F){
 #' This function loads all the SWAP tables as parsed by `parse_swap_file()`If
 #' the SWAP vectors have not been parsed, then this will be done first using
 #' `swap_file`
+#'
+#' @seealso [parse_swap_file()] [write_swap_file()]
 #'
 #' @param project_path Path to project directory (string)
 #' @param swap_file name of the swap file to parse (string)
@@ -627,6 +639,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 #' the SWAP vectors have not been parsed, then this will be done first using
 #' `swap_file`
 #'
+#' @seealso [parse_swap_file()] [write_swap_file()]
 #'
 #' @param project_path path to project_directory (string)
 #' @param swap_file name of the swap file to parse (string)
@@ -684,6 +697,8 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 #' Loads the SWAP parameters as parsed by `parse_swap_file()` and returns them as
 #' a tibble
 #'
+#' @seealso [parse_swap_file()] [write_swap_file()]
+#'
 #' @param project_path path to project directory (string
 #' @param swap_file name of the swap file to parse (string)
 #' @param verbose print status? (flag)
@@ -717,6 +732,8 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
 #' Write SWAP parameters
 #'
 #' Writes the SWAP parameter set into the rswap directory in .csv format
+#'
+#' @seealso [load_swap_parameters()] [write_swap_tables()] [write_swap_vectors()]
 #'
 #' @param project_path path to project directory
 #' @param parameters parameter set as loaded by `load_swap_parameters()` (dataframe)
@@ -753,6 +770,8 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
 #' Write SWAP Tables
 #'
 #' Writes the SWAP table set into the rswap directory in .csv format
+#'
+#' @seealso [load_swap_tables()] [write_swap_parameters()] [write_swap_vectors()]
 #'
 #' @param project_path path to project directory
 #' @param tables tables as loaded by `load_swap_tables()` (list of dataframes)
@@ -795,6 +814,8 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
 #'
 #' Writes the SWAP vector set into the rswap directory in .csv format
 #'
+#' @seealso [load_swap_vectors()] [write_swap_tables()] [write_swap_parameters()]
+#'
 #' @param project_path path to project directory
 #' @param vectors vectors as loaded by `load_swap_vectors()` (list of dataframes)
 #' @param verbose print status? (flag)
@@ -835,6 +856,8 @@ write_swap_vectors <- function(project_path, vectors, verbose = F) {
 #' Change SWAP Table
 #'
 #' changes the value of a variable in the given row of a SWAP table.
+#'
+#' @seealso [load_swap_tables()] [change_swap_parameter()] [change_swap_vector()]
 #'
 #' @param table can be one SWAP table, or a list of SWAP tables as loaded by
 #' `load_swap_tables()`.
@@ -880,6 +903,8 @@ change_swap_table <- function(table, variable, row, value, verbose = F){
 #' Alters a SWAP vector with the given value at the given index. Can optionally
 #' pass a list of vectors as returning by `load_swap_vectors()`, and the variable
 #' name, and rswap will find the right vector for you
+#'
+#'  @seealso [load_swap_vectors()] [change_swap_vector()] [change_swap_table()]
 #'
 #' @param vector dataframe of vector to alter. (Optionally, one can pass a list
 #'  of vectors as returned by `load_swap_vectors()` and then also pass the variable name)
@@ -941,6 +966,8 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
 #' Note: If you are changing a variable located in a SWAP vector or table, you
 #' need to pass the `row` argument (which is an index for vectors, and a normal
 #' row for tables)
+#'
+#' @seealso [parse_swap_file()]
 #'
 #' @param project_path path to project directory `string`
 #' @param input_file SWAP file name to modify (required if fast=FALSE) `string`
@@ -1078,5 +1105,3 @@ modify_swap_file <- function(project_path,
   }
   return(path)
 }
-
-

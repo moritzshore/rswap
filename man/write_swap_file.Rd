@@ -24,3 +24,6 @@ the rswap directory. \strong{Before you use this function, you need to have pars
 This function currently is only intended for the SWAP main file, but will be
 expanded to handle the other SWAP input files over time.
 }
+\seealso{
+\code{\link[=modify_swap_file]{modify_swap_file()}}
+}

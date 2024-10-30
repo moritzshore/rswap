@@ -39,3 +39,6 @@ example_path <- system.file(package = "rswap", "extdata/rswap_example_output")
 rswap_plot_variable(example_path, variable = "WC")
 
 }
+\seealso{
+\code{\link[=rswap_plot_compare]{rswap_plot_compare()}} \code{\link[=rswap_plot_performance]{rswap_plot_performance()}} \code{\link[=rswap_plot_multi]{rswap_plot_multi()}}
+}

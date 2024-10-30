@@ -16,3 +16,6 @@ write_swap_parameters(project_path, parameters, verbose = F)
 \description{
 Writes the SWAP parameter set into the rswap directory in .csv format
 }
+\seealso{
+\code{\link[=load_swap_parameters]{load_swap_parameters()}} \code{\link[=write_swap_tables]{write_swap_tables()}} \code{\link[=write_swap_vectors]{write_swap_vectors()}}
+}

@@ -41,3 +41,6 @@ The following are supported for \code{stat}:
 Please note, passing multiple variables at differing depths will not work!
 (yet)
 }
+\seealso{
+\code{\link[=rswap_plot_variable]{rswap_plot_variable()}} \code{\link[=rswap_plot_compare]{rswap_plot_compare()}} \code{\link[=rswap_plot_multi]{rswap_plot_multi()}}
+}

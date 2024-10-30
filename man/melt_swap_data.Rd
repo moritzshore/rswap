@@ -24,5 +24,8 @@ This makes it easier to use with other r packages such as \code{ggplot2}.
 }
 \details{
 This function will adjust to any variables and depths you give it. If you do
-not provide any variables, or any depths, all avaiable ones will be used.
+not provide any variables, or any depths, all available ones will be used.
+}
+\seealso{
+\code{\link[=match_swap_data]{match_swap_data()}}
 }

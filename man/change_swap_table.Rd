@@ -25,3 +25,6 @@ the desired variable modified at the given row.
 \description{
 changes the value of a variable in the given row of a SWAP table.
 }
+\seealso{
+\code{\link[=load_swap_tables]{load_swap_tables()}} \code{\link[=change_swap_parameter]{change_swap_parameter()}} \code{\link[=change_swap_vector]{change_swap_vector()}}
+}

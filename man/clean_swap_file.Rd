@@ -22,3 +22,6 @@ information).
 This function is designed to be used internally, but may be useful to the end
 users. This is currently only tested for the SWAP main file.
 }
+\seealso{
+\code{\link[=parse_swap_file]{parse_swap_file()}}
+}

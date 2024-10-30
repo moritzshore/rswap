@@ -46,3 +46,6 @@ run_swap_parallel(project_paths)
 }
 
 }
+\seealso{
+\code{\link[=check_swap_sensitivity]{check_swap_sensitivity()}} \code{\link[=run_swap]{run_swap()}}
+}

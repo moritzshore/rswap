@@ -33,3 +33,6 @@ Note: the value of the parameter should be passed as a string in the correct
 format (ie. correct decimal place), as SWAP/FORTRAN is very particular about
 this
 }
+\seealso{
+\code{\link[=modify_swap_file]{modify_swap_file()}}
+}

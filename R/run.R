@@ -19,6 +19,8 @@
 #'  4. Writes the new SWAP main file: `write_swp_file()`
 #'  5. Runs the new SWAP main file.
 #'
+#'  @seealso [run_swap_parallel()]
+#'
 #' @param project_path path to the project directory (string)
 #' @param swap_file name of the *.swp main file (leave blank for "swap.swp")
 #' @param autoset_output If set to `TRUE`, rswap will automatically detect

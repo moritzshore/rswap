@@ -54,4 +54,6 @@ This function does more than simply run the model, it does the following, in thi
 \item Writes the new SWAP main file: \code{write_swp_file()}
 \item Runs the new SWAP main file.
 }
+
+@seealso \code{\link[=run_swap_parallel]{run_swap_parallel()}}
 }

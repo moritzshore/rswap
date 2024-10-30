@@ -40,4 +40,8 @@ caution and let me know if I got anything wrong.
 }
 \examples{
 #tbc
+
+}
+\seealso{
+\code{\link[=write_swap_meteo]{write_swap_meteo()}} \code{\link[=est_avp]{est_avp()}}
 }

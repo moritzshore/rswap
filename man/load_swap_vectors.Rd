@@ -21,3 +21,6 @@ This function loads all the SWAP vectors as parsed by \code{parse_swap_file()}. 
 the SWAP vectors have not been parsed, then this will be done first using
 \code{swap_file}
 }
+\seealso{
+\code{\link[=parse_swap_file]{parse_swap_file()}} \code{\link[=write_swap_file]{write_swap_file()}}
+}

@@ -21,6 +21,8 @@
 #' @importFrom stringr str_split
 #' @importFrom grDevices colorRampPalette
 #'
+#' @seealso [rswap_plot_variable()] [rswap_plot_compare()] [rswap_plot_performance()]
+#'
 #' @export
 #'
 rswap_plot_multi <- function(project_path, vars, show = NULL, verbose = F){

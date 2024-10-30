@@ -30,6 +30,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom utils tail
 #' @importFrom ggbraid geom_braid
+#' @seealso [rswap_plot_compare()] [rswap_plot_performance()] [rswap_plot_multi()]
 rswap_plot_variable <- function(project_path, variable, depth = NULL, interactive = F, verbose = F) {
 
   # if(!interactive){

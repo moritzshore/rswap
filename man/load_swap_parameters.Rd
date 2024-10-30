@@ -20,3 +20,6 @@ Tibble of parameter set
 Loads the SWAP parameters as parsed by \code{parse_swap_file()} and returns them as
 a tibble
 }
+\seealso{
+\code{\link[=parse_swap_file]{parse_swap_file()}} \code{\link[=write_swap_file]{write_swap_file()}}
+}

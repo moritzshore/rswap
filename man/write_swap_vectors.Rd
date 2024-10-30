@@ -16,3 +16,6 @@ write_swap_vectors(project_path, vectors, verbose = F)
 \description{
 Writes the SWAP vector set into the rswap directory in .csv format
 }
+\seealso{
+\code{\link[=load_swap_vectors]{load_swap_vectors()}} \code{\link[=write_swap_tables]{write_swap_tables()}} \code{\link[=write_swap_parameters]{write_swap_parameters()}}
+}

@@ -22,3 +22,6 @@ user understand how the model is working, how the variables are interacting.
 \details{
 currently supports "H", "WC", "DRAINAGE", "TEMP". Working on expanding
 }
+\seealso{
+\code{\link[=rswap_plot_variable]{rswap_plot_variable()}} \code{\link[=rswap_plot_compare]{rswap_plot_compare()}} \code{\link[=rswap_plot_performance]{rswap_plot_performance()}}
+}

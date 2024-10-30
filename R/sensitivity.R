@@ -13,6 +13,7 @@
 #'
 #' [report errors on GitHub](https://github.com/moritzshore/rswap/issues)
 #'
+#' @seealso [run_swap_parallel()]
 #'
 #' @param project_path path to the project directory (string)
 #' @param variable SWAP parameter to alter (string)

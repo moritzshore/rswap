@@ -211,34 +211,3 @@ set_swap_format <- function(parameter, value){
   # I currently dont need to convert TABLE but if i do it will be done here.
 }
 
-
-#' Estimate Actual Vapour Pressure
-#'
-#' Converts relative humidity (RH) to actual vapour pressure (AVP) using an
-#' estimation with maximum and minimum temperature. This function exists because
-#' SWAP uses AVP whereas many datasets contain RH. Read more on [fao.org](https://www.fao.org/4/x0490e/x0490e07.htm)
-#'
-#' @param tmin vector, in kelvin (K)
-#' @param tmax vector, in kelvin (K)
-#' @param rh vector, in % (ie. 53.2)
-#'
-#' @return vector of AVP, rounded to 2 decimal placews
-#' @export
-#'
-#' @examples
-#'
-#' est_avp(tmin = c(1.8, 1.9, 2.0), tmax =	c(6, 7, 8),
-#'                    rh = c(60.2, 40.5, 90.2))
-#'
-est_avp <- function(tmin, tmax, rh) {
-  # https://www.fao.org/4/x0490e/x0490e07.htm
-
-  e_0 <- function(temp) {
-    0.6108 * exp(17.27 * (temp) / (temp + 237.3))
-  }
-  e_s <- (e_0(tmax) + e_0(tmin)) / 2
-  e_a <- (rh / 100) * e_s
-
-  return(round(e_a, 2))
-}
-

@@ -26,3 +26,6 @@ Alters a SWAP vector with the given value at the given index. Can optionally
 pass a list of vectors as returning by \code{load_swap_vectors()}, and the variable
 name, and rswap will find the right vector for you
 }
+\details{
+@seealso \code{\link[=load_swap_vectors]{load_swap_vectors()}} \code{\link[=change_swap_vector]{change_swap_vector()}} \code{\link[=change_swap_table]{change_swap_table()}}
+}

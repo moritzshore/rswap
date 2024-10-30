@@ -46,3 +46,6 @@ Writes a / the SWAP meteo dataframe as loaded by \code{load_swap_meteo()}
 \examples{
 #tbc
 }
+\seealso{
+\code{\link[=load_swap_meteo]{load_swap_meteo()}} \code{\link[=est_avp]{est_avp()}}
+}

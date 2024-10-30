@@ -33,3 +33,6 @@ This function alters the output parameters of your SWAP input files.
 Currently it only modifies INLIST_CSV, but more functionality will be placed
 here over time.
 }
+\seealso{
+\code{\link[=run_swap]{run_swap()}}
+}
