@@ -1,138 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/build_rswap_directory.html</loc>
-  </url>
-  <url>
-    <loc>/reference/change_swap_parameter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/change_swap_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/change_swap_vector.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_swap_message.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_swap_sensitivity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/clean_swap_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_swap_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_swap_depths.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_swap_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_swap_performance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_swap_variables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/install_SWAPtools.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swap_observed.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swap_output.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swap_parameters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swap_tables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_swap_vectors.html</loc>
-  </url>
-  <url>
-    <loc>/reference/load_variables_db.html</loc>
-  </url>
-  <url>
-    <loc>/reference/match_swap_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/melt_swap_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/melt_swap_runs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/modify_swap_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/move_run_files.html</loc>
-  </url>
-  <url>
-    <loc>/reference/parse_swap_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rswap_init.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rswap_plot_compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rswap_plot_multi.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rswap_plot_performance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rswap_plot_variable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_swap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_swap_parallel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/save_swap_run.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_swap_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_swap_output.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_swap_paths.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_swap_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_swap_parameters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_swap_tables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_swap_vectors.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/reference/build_rswap_directory.html</loc></url>
+<url><loc>/reference/change_swap_parameter.html</loc></url>
+<url><loc>/reference/change_swap_table.html</loc></url>
+<url><loc>/reference/change_swap_vector.html</loc></url>
+<url><loc>/reference/check_swap_message.html</loc></url>
+<url><loc>/reference/check_swap_sensitivity.html</loc></url>
+<url><loc>/reference/clean_swap_file.html</loc></url>
+<url><loc>/reference/convert_swap_humidity.html</loc></url>
+<url><loc>/reference/filter_swap_data.html</loc></url>
+<url><loc>/reference/get_swap_depths.html</loc></url>
+<url><loc>/reference/get_swap_format.html</loc></url>
+<url><loc>/reference/get_swap_performance.html</loc></url>
+<url><loc>/reference/get_swap_variables.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/install_SWAPtools.html</loc></url>
+<url><loc>/reference/load_swap_meteo.html</loc></url>
+<url><loc>/reference/load_swap_observed.html</loc></url>
+<url><loc>/reference/load_swap_output.html</loc></url>
+<url><loc>/reference/load_swap_parameters.html</loc></url>
+<url><loc>/reference/load_swap_tables.html</loc></url>
+<url><loc>/reference/load_swap_vectors.html</loc></url>
+<url><loc>/reference/load_variables_db.html</loc></url>
+<url><loc>/reference/match_swap_data.html</loc></url>
+<url><loc>/reference/melt_swap_data.html</loc></url>
+<url><loc>/reference/melt_swap_runs.html</loc></url>
+<url><loc>/reference/modify_swap_file.html</loc></url>
+<url><loc>/reference/move_run_files.html</loc></url>
+<url><loc>/reference/parse_swap_file.html</loc></url>
+<url><loc>/reference/rswap_init.html</loc></url>
+<url><loc>/reference/rswap_plot_compare.html</loc></url>
+<url><loc>/reference/rswap_plot_multi.html</loc></url>
+<url><loc>/reference/rswap_plot_performance.html</loc></url>
+<url><loc>/reference/rswap_plot_variable.html</loc></url>
+<url><loc>/reference/run_swap.html</loc></url>
+<url><loc>/reference/run_swap_parallel.html</loc></url>
+<url><loc>/reference/save_swap_run.html</loc></url>
+<url><loc>/reference/set_swap_format.html</loc></url>
+<url><loc>/reference/set_swap_output.html</loc></url>
+<url><loc>/reference/update_swap_paths.html</loc></url>
+<url><loc>/reference/write_swap_file.html</loc></url>
+<url><loc>/reference/write_swap_meteo.html</loc></url>
+<url><loc>/reference/write_swap_parameters.html</loc></url>
+<url><loc>/reference/write_swap_tables.html</loc></url>
+<url><loc>/reference/write_swap_vectors.html</loc></url>
 </urlset>
+
