@@ -63,7 +63,7 @@ load_swap_meteo <- function(project_path, verbose = FALSE){
     status = file.copy(from = inst_path, to = met_path)
     if(status == FALSE){stop("error creating meteo template!")}
   }
-    met_df <- readr::read_csv(met_path)
+    met_df <- readr::read_csv(met_path, show_col_types = verbose)
     return(met_df)
 }
 
