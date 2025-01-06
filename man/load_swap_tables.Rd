@@ -9,7 +9,7 @@ load_swap_tables(project_path, swap_file = "swap.swp", verbose = F)
 \arguments{
 \item{project_path}{Path to project directory (string)}
 
-\item{swap_file}{name of the swap file to parse (string)}
+\item{swap_file}{name of the swap file to load parameters from (string, either .swp for main file or .dra for drain file)}
 
 \item{verbose}{print status? (flag)}
 }

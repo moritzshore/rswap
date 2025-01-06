@@ -95,6 +95,9 @@ run_swap <- function(project_path,
                          swap_file = swap_file,
                          verbose = verbose)
 
+  # the reason we do not need to do anything with the swap.dra file here is
+  # because we don't need to make any run time changes to the parameter set.
+
   # changes the paths in the swap main file to reflect the temporary location
   parameters <- update_swap_paths(project_path = project_path,
                                  swap_exe = swap_run_paths$swap_exe,

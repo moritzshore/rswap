@@ -79,31 +79,16 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
 #' @export
 #'
 parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
-
-  # finds the end of the table when passed a snipped of the swap file
-  find_eot <- function(short_swp) {
-    first_element <- short_swp %>%  stringr::str_trim() %>% stringr::str_split("\\s+") %>% purrr::map(1) %>% unlist()
-    next_par <- grepl(x = short_swp, "=") %>% which() %>% min() %>% suppressWarnings()
-    if(next_par %>% length() == 0){
-      next_par = Inf
-    }
-    next_non_value_nor_date <- (first_element %>% as.numeric() %>% is.na() == TRUE &
-                                  grepl(x=first_element, "-") == FALSE) %>% which() %>% min() %>% suppressWarnings()
-    if(next_non_value_nor_date %>% length() == 0){
-      next_non_value_nor_date = Inf
-    }
-    eot <- min(c(next_non_value_nor_date, next_par))
-    # special case if at end of file:
-    if(eot %>% is.infinite()){
-      # return the index for the end of the file
-      return(length(short_swp)+1)
-    }
-    return(eot)
+  # TODO, add force?
+  file_ext = substr(swap_file, nchar(swap_file)-3, nchar(swap_file))
+  if(file_ext == ".dra"){
+   drain_file = TRUE
+  }else{
+    drain_file = FALSE
   }
 
-
   # Only build if needed or force true
-  if (!dir.exists(paste0(project_path, "/rswap/parameters"))) {
+  if (!dir.exists(paste0(project_path, "/rswap"))) {
     rswap_dir <- build_rswap_directory(project_path)
   }else{rswap_dir = paste0(project_path, "/rswap/")}
 
@@ -121,9 +106,15 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   tab_df <- list()
   new_i = 0
 
-  table_path = paste0(project_path, "/rswap/tables")
-  vector_path =  paste0(project_path, "/rswap/vectors")
-  parameter_path = paste0(project_path, "/rswap/parameters")
+  if (drain_file) {
+    table_path = paste0(project_path, "/rswap/dra_tables")
+    vector_path =  paste0(project_path, "/rswap/dra_vectors")
+    parameter_path = paste0(project_path, "/rswap/dra_parameters")
+  } else{
+    table_path = paste0(project_path, "/rswap/tables")
+    vector_path =  paste0(project_path, "/rswap/vectors")
+    parameter_path = paste0(project_path, "/rswap/parameters")
+  }
 
   dirs <- c(table_path, vector_path, parameter_path)
 
@@ -151,12 +142,18 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     # the routine for if its a parameter:
     if (is_param == TRUE) {
 
-      # extract the comment denoted by a !
-      comment = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(2)
+      # Routine for if there is a comment (denoted by "!")
+      if(grepl(x = line, "!")){
+        # extract the comment denoted by a !
+        comment = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(2)
+        # split the data from the comment using "!" as an indicator
+        line_split = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(1)
+      }else{
+        # routine for if there is no comment:
+        comment = ""
+        line_split = line
 
-      # split the data from the comment using "!" as an indicator
-      line_split = line %>% stringr::str_split("!") %>% unlist() %>% dplyr::nth(1)
-
+      }
       # split that line again, based off the equals sign. left of the
       # equals sign is the parameter name, to the right is the value
       param = line_split %>% stringr::str_split("=") %>% unlist() %>% stringr::str_trim() %>% dplyr::nth(1)
@@ -235,16 +232,21 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   } # END of for loop
 
   # write parameters:
-  write_swap_parameters(project_path, par_df, verbose)
+  if(drain_file){
+    write_swap_parameters(project_path, par_df, type = "dra", verbose)
+  }else{
+    write_swap_parameters(project_path, par_df, type = "main", verbose)
+
+  }
 
   if(verbose){
     cat(blue("\U0001f4dd SWAP tables have been generated in .csv format here: \n"))
-    cat(green(underline(vector_path)), "\n")
+    cat(green(underline(table_path)), "\n")
   }
 
   if(verbose){
     cat(blue("\U0001f4dd SWAP vectors have been generated in .csv format here: \n"))
-    cat(green(underline(table_path)), "\n")
+    cat(green(underline(vector_path)), "\n")
   }
 
   return(list(
@@ -252,6 +254,28 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     table_path = table_path,
     vector_path = vector_path
   ))
+}
+
+
+# finds the end of the table when passed a snipped of the swap file
+find_eot <- function(short_swp) {
+  first_element <- short_swp %>%  stringr::str_trim() %>% stringr::str_split("\\s+") %>% purrr::map(1) %>% unlist()
+  next_par <- grepl(x = short_swp, "=") %>% which() %>% min() %>% suppressWarnings()
+  if(next_par %>% length() == 0){
+    next_par = Inf
+  }
+  next_non_value_nor_date <- (first_element %>% as.numeric() %>% is.na() == TRUE &
+                                grepl(x=first_element, "-") == FALSE) %>% which() %>% min() %>% suppressWarnings()
+  if(next_non_value_nor_date %>% length() == 0){
+    next_non_value_nor_date = Inf
+  }
+  eot <- min(c(next_non_value_nor_date, next_par))
+  # special case if at end of file:
+  if(eot %>% is.infinite()){
+    # return the index for the end of the file
+    return(length(short_swp)+1)
+  }
+  return(eot)
 }
 
 #' Write SWAP File
@@ -279,9 +303,27 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
 #'
 write_swap_file <- function(project_path, outfile, verbose = F) {
 
+  file_ext = substr(outfile, nchar(outfile) - 3, nchar(outfile))
+
+  if (file_ext == ".dra") {
+    par_dir = "dra_parameters"
+    # the thinking here is the rswap will ALWAYS use the default names in the
+    # rswap directory, therefore it is ok to use hard coded names. I am not sure
+    # if this is 100% the case though..
+    swap_file = "swap.dra"
+  } else if (file_ext == ".swp") {
+    par_dir = "parameters"
+    # the thinking here is the rswap will ALWAYS use the default names in the
+    # rswap directory, therefore it is ok to use hard coded names. I am not sure
+    # if this is 100% the case though..
+    swap_file = "swap.swp"
+  } else{
+    stop("unsupported filetype! (.swp or .dra)")
+  }
+
   version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
 
-  if(file.exists(paste0(project_path,"/rswap/parameters/parameters.csv"))==FALSE){
+  if(file.exists(paste0(project_path,"/rswap/", par_dir, "/parameters.csv"))==FALSE){
     stop("[rswap] no swap file has been parsed by rswap yet. You must do so before writing a swap file!")
   }
 
@@ -303,7 +345,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   # Append parameters
-  parameters = load_swap_parameters(project_path = project_path, verbose = verbose)
+  parameters = load_swap_parameters(project_path = project_path, swap_file = swap_file, verbose = verbose)
   par_write = paste(parameters$param, "=", parameters$value)
 
   utils::write.table(
@@ -321,7 +363,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   # Append tables
-  tables<-load_swap_tables(project_path = project_path, verbose = verbose)
+  tables <- load_swap_tables(project_path = project_path, verbose = verbose, swap_file = swap_file)
   for (table in tables) {
     utils::write.table(
       table,
@@ -352,7 +394,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   }
 
   # Write vectors
-  vectors <- load_swap_vectors(project_path = project_path, verbose = verbose)
+  vectors <- load_swap_vectors(project_path = project_path, swap_file = swap_file, verbose = verbose)
   for (vector in vectors) {
 
     utils::write.table(
@@ -590,7 +632,7 @@ change_swap_parameter <- function(param, name, value, verbose = F){
 #' @seealso [parse_swap_file()] [write_swap_file()]
 #'
 #' @param project_path Path to project directory (string)
-#' @param swap_file name of the swap file to parse (string)
+#' @param swap_file  name of the swap file to load parameters from (string, either .swp for main file or .dra for drain file)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom magrittr %>%
@@ -604,12 +646,26 @@ change_swap_parameter <- function(param, name, value, verbose = F){
 #' @importFrom readr read_csv
 load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 
-  if (dir.exists(paste0(project_path, "/rswap/")) == FALSE) {
-    warning("[rswap] project has not been parsed yet. Doing so now with '", swap_file, "'")
-    p <- parse_swap_file(project_path, swap_file, verbose = T)
+  file_ext = substr(swap_file, nchar(swap_file) - 3, nchar(swap_file))
+
+  if (file_ext == ".dra") {
+    par_dir = "dra_tables"
+  } else if (file_ext == ".swp") {
+    par_dir = "tables"
+  } else{
+    stop("unsupported filetype! (.swp or .dra)")
   }
 
-  table_path <- paste0(project_path, "/rswap/tables/")
+  par_dir_path = paste0(project_path, "/rswap/", par_dir)
+
+  if (dir.exists(par_dir_path) == FALSE) {
+    warning("[rswap] project has not been parsed yet. Doing so now with '", swap_file, "'")
+    p <- parse_swap_file(project_path, swap_file, verbose = verbose)
+    table_path <- p$table_path
+  }else{
+    table_path <- par_dir_path
+  }
+
   files <- list.files(table_path, full.names = T)
   file_names <- list.files(table_path, full.names = F) %>% stringr::str_remove(".csv")
 
@@ -622,13 +678,8 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
   }
 
   table_list <- purrr::map(files, custom_read)
-
   names(table_list) <- file_names
-
-  if (verbose) {
-    cat("\U0001f4d6", blue("SWAP table set loaded."), "\n")
-  }
-
+  if (verbose) {cat("\U0001f4d6", blue("SWAP table set loaded."), "\n")}
   table_list %>% return()
 
 }
@@ -642,7 +693,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
 #' @seealso [parse_swap_file()] [write_swap_file()]
 #'
 #' @param project_path path to project_directory (string)
-#' @param swap_file name of the swap file to parse (string)
+#' @param swap_file name of the swap file to load parameters from (string, either .swp for main file or .dra for drain file)
 #' @param verbose print status? (flag)
 #'
 #' @returns Returns a list of vectors
@@ -660,13 +711,26 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 
   # TODO: load only specific table with extra param
 
-  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
+  file_ext = substr(swap_file, nchar(swap_file) - 3, nchar(swap_file))
+
+  if (file_ext == ".dra") {
+    par_dir = "dra_vectors"
+  } else if (file_ext == ".swp") {
+    par_dir = "vectors"
+  } else{
+    stop("unsupported filetype! (.swp or .dra)")
+  }
+
+  par_dir_path = paste0(project_path, "/rswap/", par_dir)
+
+  if(dir.exists(par_dir_path)==FALSE){
     warning("[rswap] project has not been parsed yet. Doing so now with '",
             swap_file, "'")
     p <- parse_swap_file(project_path, swap_file, verbose = verbose)
+    vector_path <- p$vector_path
+  }else{
+    vector_path <- par_dir_path
   }
-
-  vector_path <- paste0(project_path, "/rswap/vectors/")
 
   files <- list.files(vector_path, full.names = T)
   file_names <- list.files(vector_path, full.names = F) %>% stringr::str_remove(".csv")
@@ -679,16 +743,8 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
   }
 
   vector_list <- purrr::map(files, custom_read)
-
   names(vector_list) <- file_names
-
-
-  if (verbose) {
-    cat("\U0001f4d6",
-        blue("SWAP vector set loaded."),
-        "\n")
-  }
-
+  if (verbose) {cat("\U0001f4d6",blue("SWAP vector set loaded."),"\n")}
   vector_list %>% return()
 }
 
@@ -700,7 +756,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 #' @seealso [parse_swap_file()] [write_swap_file()]
 #'
 #' @param project_path path to project directory (string
-#' @param swap_file name of the swap file to parse (string)
+#' @param swap_file name of the swap file to load parameters from (string, either .swp for main file or .dra for drain file)
 #' @param verbose print status? (flag)
 #' @importFrom tibble tibble
 #' @importFrom magrittr %>%
@@ -710,23 +766,30 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
 #' @export
 load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose = F){
 
-  if(dir.exists(paste0(project_path, "/rswap/"))==FALSE){
+  file_ext = substr(swap_file, nchar(swap_file) - 3, nchar(swap_file))
+
+  if (file_ext == ".dra") {
+    par_dir = "dra_parameters"
+  } else if (file_ext == ".swp") {
+    par_dir = "parameters"
+  } else{
+    stop("unsupported filetype! (.swp or .dra)")
+  }
+
+  par_dir_path = paste0(project_path, "/rswap/", par_dir)
+
+  if (dir.exists(par_dir_path) == FALSE) {
     warning("[rswap] project has not been parsed yet. Doing so now with '",
-            swap_file, "'")
+            swap_file,
+            "'")
     p <- parse_swap_file(project_path, swap_file, verbose = verbose)
+    param_path <- paste0(p$parameter_path, "/parameters.csv")
+  }else{
+    param_path <- paste0(par_dir_path, "/parameters.csv")
   }
-
-  if (verbose) {
-    cat("\U0001f4d6",
-        blue("SWAP parameter set loaded."),
-        "\n")
-  }
-
-  param_path <- paste0(project_path, "/rswap/parameters/parameters.csv")
   table <- utils::read.table(param_path, header = T, sep = ",", quote = '"') %>% dplyr::tibble()
+  if (verbose) {cat("\U0001f4d6", blue("SWAP parameter set loaded."), "\n")}
   table %>% return()
-
-
 }
 
 #' Write SWAP parameters
@@ -737,15 +800,23 @@ load_swap_parameters <- function(project_path, swap_file = "swap.swp", verbose =
 #'
 #' @param project_path path to project directory
 #' @param parameters parameter set as loaded by `load_swap_parameters()` (dataframe)
+#' @param type supported swap parameter sets, current includes "main" (default) and "dra" (drainage)
 #' @param verbose print status? (flag)
 #'
 #' @importFrom crayon blue green underline
 #'
 #' @export
-write_swap_parameters <- function(project_path, parameters, verbose = F){
+write_swap_parameters <- function(project_path, parameters, type = "main", verbose = F){
 
-  file_dir = paste0(project_path, "/rswap/parameters/" )
-  file_path = paste0(project_path, "/rswap/parameters/parameters.csv" )
+  if(type == "main"){
+    file_dir = paste0(project_path, "/rswap/parameters/" )
+    file_path = paste0(project_path, "/rswap/parameters/parameters.csv" )
+  }else if(type == "dra"){
+    file_dir = paste0(project_path, "/rswap/dra_parameters/" )
+    file_path = paste0(project_path, "/rswap/dra_parameters/parameters.csv" )
+  }else{
+    stop("only supported types are 'main' and 'dra'")
+  }
 
   if(dir.exists(file_dir) == FALSE){
     dir.create(file_dir)
@@ -775,15 +846,23 @@ write_swap_parameters <- function(project_path, parameters, verbose = F){
 #'
 #' @param project_path path to project directory
 #' @param tables tables as loaded by `load_swap_tables()` (list of dataframes)
+#' @param type supported swap parameter sets, current includes "main" (default) and "dra" (drainage)
+
 #' @param verbose print status? (flag)
 #'
 #' @importFrom crayon blue green underline
 #' @importFrom utils write.table
 #' @export
 #' @importFrom utils write.table
-write_swap_tables <- function(project_path, tables, verbose = F) {
+write_swap_tables <- function(project_path, tables, type = "main", verbose = F) {
 
-  file_path <-  paste0(project_path, "/rswap/tables/")
+  if(type == "main"){
+    file_path <-  paste0(project_path, "/rswap/tables/")
+  }else if(type == "dra"){
+    file_path <-  paste0(project_path, "/rswap/dra_tables/")
+  }else{
+    stop("only supported types are 'main' and 'dra'")
+  }
 
   if(dir.exists(file_path) == FALSE){
     dir.create(file_path)
@@ -818,15 +897,21 @@ write_swap_tables <- function(project_path, tables, verbose = F) {
 #'
 #' @param project_path path to project directory
 #' @param vectors vectors as loaded by `load_swap_vectors()` (list of dataframes)
+#' @param type supported swap parameter sets, current includes "main" (default) and "dra" (drainage)
+
 #' @param verbose print status? (flag)
 #' @importFrom crayon blue green underline
 #' @importFrom stringr str_remove str_trim
 #'
 #' @export
-write_swap_vectors <- function(project_path, vectors, verbose = F) {
-
-
-  file_path <-  paste0(project_path, "/rswap/vectors/")
+write_swap_vectors <- function(project_path, vectors, type = "main", verbose = F) {
+  if(type == "main"){
+    file_path <-  paste0(project_path, "/rswap/vectors/")
+  }else if(type == "dra"){
+    file_path <-  paste0(project_path, "/rswap/dra_vectors/")
+  }else{
+    stop("only supported types are 'main' and 'dra'")
+  }
 
   if(dir.exists(file_path) == FALSE){
     dir.create(file_path)
@@ -1016,10 +1101,9 @@ modify_swap_file <- function(project_path,
     if(output_file %>% is.null()){
       warning("You need to pass either an input or output file if you have write=TRUE!")
     }
-
-    file_ext <- output_file %>% stringr::str_split("\\.") %>% unlist() %>% dplyr::last()
-    if (file_ext != "swp") {
-      warning("writing has only been implemented for the main swap file '*.swp', so this probably wont work!.. but it might, who knows!")
+    file_ext_out <- output_file %>% stringr::str_split("\\.") %>% unlist() %>% dplyr::last()
+    if ((file_ext_out %in% c("swp", "dra")) == FALSE) {
+      warning("reading has only been implemented for the main swap file '*.swp' and drainage file '*.dra', so this probably wont work!.. but it might, who knows!")
     }
   }
 
@@ -1033,8 +1117,8 @@ modify_swap_file <- function(project_path,
     }
 
     file_ext <- input_file %>% stringr::str_split("\\.") %>% unlist() %>% dplyr::last()
-    if (file_ext != "swp") {
-      warning("reading has only been implemented for the main swap file '*.swp', so this probably wont work!.. but it might, who knows!")
+    if ((file_ext %in% c("swp", "dra")) == FALSE) {
+      warning("reading has only been implemented for the main swap file '*.swp' and drainage file '*.dra', so this probably wont work!.. but it might, who knows!")
     }
   }
 
@@ -1043,14 +1127,21 @@ modify_swap_file <- function(project_path,
     if(is.null(input_file)){
       stop("If you want to use fast=FALSE you need to pass an input file!")
     }
-    parse_swap_file(project_path = project_path, swap_file = input_file, verbose = verbose)
+    fps = parse_swap_file(project_path = project_path, swap_file = input_file, verbose = verbose)
   }
 
-  # determine location of variable (is it a vector, param, or table?)
-  vec_path <- paste0(project_path, "/rswap/vectors")
-  vec_vars <- list.files(vec_path) %>% stringr::str_remove(".csv")
+  # TODO this should only be checked if both files are provided.
+  file_ext = substr(input_file, nchar(input_file) - 3, nchar(input_file))
+  # file_ext_out = substr(output_file, nchar(output_file) - 3, nchar(output_file))
+  # if(file_ext != file_ext_out){stop("file extensions of input and output files must be the same!")}
 
-  tab_path <- paste0(project_path, "/rswap/tables")
+  if(file_ext == ".swp"){type = "main"} else if(file_ext == ".dra"){type = "dra"}else{stop("unsupported file type! (only .swp or .dra)")}
+
+  # determine location of variable (is it a vector, param, or table?)
+  vec_path <- fps$vector_path
+  tab_path <- fps$table_path
+
+  vec_vars <- list.files(vec_path) %>% stringr::str_remove(".csv")
   tab_vars_pre <- list.files(tab_path) %>% stringr::str_remove(".csv")
   tab_vars <- tab_vars_pre %>% stringr::str_split("-") %>% unlist()
 
@@ -1085,11 +1176,12 @@ modify_swap_file <- function(project_path,
     if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{variable} = {value}")), blue(glue("@ row {row}")), "\n")}
     readr::write_csv(x = tab_df, file = single_table_path, quote = "all")
   }else{
-    pars <- load_swap_parameters(project_path, verbose = verbose)
+    # This code executes if it is a parameter
+    pars <- load_swap_parameters(project_path, swap_file = input_file, verbose = verbose)
     par_vars <- pars$param
     if(variable %in% par_vars){
       new_pars <- change_swap_parameter(param = pars,name = variable, value = value, verbose = verbose)
-      write_swap_parameters(project_path, new_pars, verbose)
+      write_swap_parameters(project_path, parameters = new_pars, type = type, verbose = verbose)
     }else{
       stop("variable ", variable, " not found")
     }

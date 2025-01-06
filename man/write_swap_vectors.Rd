@@ -4,12 +4,14 @@
 \alias{write_swap_vectors}
 \title{Write SWAP Vectors}
 \usage{
-write_swap_vectors(project_path, vectors, verbose = F)
+write_swap_vectors(project_path, vectors, type = "main", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}
 
 \item{vectors}{vectors as loaded by \code{load_swap_vectors()} (list of dataframes)}
+
+\item{type}{supported swap parameter sets, current includes "main" (default) and "dra" (drainage)}
 
 \item{verbose}{print status? (flag)}
 }
