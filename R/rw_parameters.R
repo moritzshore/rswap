@@ -572,9 +572,9 @@ set_swap_output <-
 #'
 #' @export
 change_swap_parameter <- function(param, name, value, verbose = F){
-  version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
-  value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
-  param$value[which(param$param == name)] = value2
+  # version <- utils::packageVersion("rswap") %>% as.character() %>% enc2utf8()
+  # value2 <- glue(value, " ! changed by rswap v{version} @ {Sys.time()}")
+  param$value[which(param$param == name)] = value
 
   if(verbose){cat(blue("\U0001f4ac setting"), bold(glue("{name} = {value}")), "\n")}
 
