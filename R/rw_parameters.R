@@ -717,7 +717,7 @@ load_swap_vectors <- function(project_path, swap_file = "swap.swp", verbose = F)
   par_dir_path = paste0(project_path, "/rswap/", par_dir)
 
   if(dir.exists(par_dir_path)==FALSE){
-    warning("[rswap] project has not been parsed yet. Doing so now with '",
+    warning("[rswap] file has not been parsed yet. Doing so now with '",
             swap_file, "'")
     p <- parse_swap_file(project_path, swap_file, verbose = verbose)
     vector_path <- p$vector_path
