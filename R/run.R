@@ -97,6 +97,10 @@ run_swap <- function(project_path,
 
   # the reason we do not need to do anything with the swap.dra file here is
   # because we don't need to make any run time changes to the parameter set.
+  ## --> update, this should be reconsidered. Should this function run the
+  ## parameter sets found in "memory" (rswap folder) or should it only run stuff
+  ## hard coded into the project_path? This is a fundamental thing that needs
+  ## to be decided package wide.. I am not sure yet which is the better option.
 
   # changes the paths in the swap main file to reflect the temporary location
   parameters <- update_swap_paths(project_path = project_path,
