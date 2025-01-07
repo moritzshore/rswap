@@ -21,8 +21,7 @@ Writes a SWAP main file from the parameters, vectors, and tables stored in
 the rswap directory. \strong{Before you use this function, you need to have parsed a SWAP file}
 }
 \details{
-This function currently is only intended for the SWAP main file, but will be
-expanded to handle the other SWAP input files over time.
+This function currently is only intended for the SWAP main file and drainage file. More may be added over time.
 }
 \seealso{
 \code{\link[=modify_swap_file]{modify_swap_file()}}
