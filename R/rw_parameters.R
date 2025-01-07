@@ -283,8 +283,7 @@ find_eot <- function(short_swp) {
 #' Writes a SWAP main file from the parameters, vectors, and tables stored in
 #' the rswap directory. **Before you use this function, you need to have parsed a SWAP file**
 #'
-#' This function currently is only intended for the SWAP main file, but will be
-#' expanded to handle the other SWAP input files over time.
+#' This function currently is only intended for the SWAP main file and drainage file. More may be added over time.
 #'
 #' @seealso [modify_swap_file()]
 #'
@@ -307,16 +306,10 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   if (file_ext == ".dra") {
     par_dir = "dra_parameters"
-    # the thinking here is the rswap will ALWAYS use the default names in the
-    # rswap directory, therefore it is ok to use hard coded names. I am not sure
-    # if this is 100% the case though..
-    swap_file = "swap.dra"
+    filetypename = "drain"
   } else if (file_ext == ".swp") {
     par_dir = "parameters"
-    # the thinking here is the rswap will ALWAYS use the default names in the
-    # rswap directory, therefore it is ok to use hard coded names. I am not sure
-    # if this is 100% the case though..
-    swap_file = "swap.swp"
+    filetypename = "main"
   } else{
     stop("unsupported filetype! (.swp or .dra)")
   }
@@ -331,7 +324,7 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   # Write header
   utils::write.table(
-    x = paste("* SWAP main file created by rswap", version, "at", Sys.time()),
+    x = paste("* SWAP", filetypename, "file created by rswap", version, "at", Sys.time()),
     file = outpath,
     quote = F,
     col.names = F,
@@ -341,11 +334,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   if (verbose) {
     cat("\U0001f4dd",
-        bold(blue("created SWAP main file.")), "\n")
+        bold(blue(paste("created SWAP", filetypename, "file."))), "\n")
   }
 
   # Append parameters
-  parameters = load_swap_parameters(project_path = project_path, swap_file = swap_file, verbose = verbose)
+  parameters = load_swap_parameters(project_path = project_path, swap_file = outfile, verbose = verbose)
   par_write = paste(parameters$param, "=", parameters$value)
 
   utils::write.table(
@@ -359,11 +352,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   if (verbose) {
     cat("\U0001f4dd",
-        blue("SWAP parameters appended to main file."), "\n")
+        blue("SWAP parameters appended to file."), "\n")
   }
 
   # Append tables
-  tables <- load_swap_tables(project_path = project_path, verbose = verbose, swap_file = swap_file)
+  tables <- load_swap_tables(project_path = project_path, verbose = verbose, swap_file = outfile)
   for (table in tables) {
     utils::write.table(
       table,
@@ -390,11 +383,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   if (verbose) {
     cat("\U0001f4dd",
-        blue("SWAP tables appended to main file."), "\n")
+        blue("SWAP tables appended to file."), "\n")
   }
 
   # Write vectors
-  vectors <- load_swap_vectors(project_path = project_path, swap_file = swap_file, verbose = verbose)
+  vectors <- load_swap_vectors(project_path = project_path, swap_file = outfile, verbose = verbose)
   for (vector in vectors) {
 
     utils::write.table(
@@ -422,12 +415,12 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   if (verbose) {
     cat("\U0001f4dd",
-        blue("SWAP vectors appended to main file."), "\n")
+        blue("SWAP vectors appended to file."), "\n")
   }
 
   if (verbose) {
     cat(glue(blue("\u2705",
-                  "SWAP main file written to: \n")))
+                  paste("SWAP", filetypename, "file written to: \n"))))
     cat(green(underline(outpath)), "\n")
   }
   return(outpath)
@@ -659,7 +652,7 @@ load_swap_tables <- function(project_path, swap_file = "swap.swp", verbose = F){
   par_dir_path = paste0(project_path, "/rswap/", par_dir)
 
   if (dir.exists(par_dir_path) == FALSE) {
-    warning("[rswap] project has not been parsed yet. Doing so now with '", swap_file, "'")
+      warning("[rswap] '", swap_file, "' has not been parsed yet. doing so now..\n")
     p <- parse_swap_file(project_path, swap_file, verbose = verbose)
     table_path <- p$table_path
   }else{
