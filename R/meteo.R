@@ -150,7 +150,7 @@ write_swap_meteo <- function(project_path,
           blue(underline(old_statname)), " to ", cyan(underline(bold(new_statname))), "\n", sep = "")
     }
 
-    write_swap_parameters(project_path, parameters = swap_pars, verbose)
+    write_swap_parameters(project_path = project_path, parameters = swap_pars, type = "main", verbose = verbose)
 
   }
 
