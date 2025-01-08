@@ -15,6 +15,7 @@
 #'
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_trim
+#' @importFrom plyr colwise
 #'
 #' @returns Returns a cleaned up SWAP file in string vector form.
 #'
@@ -101,7 +102,7 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
     cat(green((underline(glue("{swp_file}")))), "\n")
   }
 
-  # predefine for-loop vars
+  # pre-define for-loop vars
   par_df <- data.frame()
   tab_df <- list()
   new_i = 0
@@ -358,6 +359,18 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   # Append tables
   tables <- load_swap_tables(project_path = project_path, verbose = verbose, swap_file = outfile)
   for (table in tables) {
+
+    # forcing applicable tables to character format:
+    ## This should maybe be moved to a dedicated function.
+    convert_to_double <- c(
+      # Soil property table
+      "ORES-OSAT-ALFA-NPAR-KSATFIT-LEXP-ALFAW-H_ENPR-KSATEXM-BDENS",
+      "placeholder-for-more"
+    )
+    if(((table %>% names()) %>% paste0(collapse = "-")) %in% convert_to_double){
+      table <- plyr::colwise(to_swap_double)(table)
+    }
+
     utils::write.table(
       table,
       file = outpath,

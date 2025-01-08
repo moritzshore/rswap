@@ -211,3 +211,16 @@ set_swap_format <- function(parameter, value){
   # I currently dont need to convert TABLE but if i do it will be done here.
 }
 
+# adds a trailing .0 to integers.
+to_swap_double <- function(vector) {
+  todoblevec <- function(value) {
+    charform <- as.character(value)
+    # double \\ negates the regex function of `.`
+    if (grepl("\\.", charform)) {
+      return(charform)
+    } else{
+      paste0(charform, ".0") %>% return()
+    }
+  }
+  lapply(vector, todoblevec) %>% unlist() %>% return()
+}

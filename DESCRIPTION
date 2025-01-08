@@ -26,6 +26,7 @@ Imports:
     hydroGOF,
     magrittr,
     plotly,
+    plyr,
     processx,
     purrr,
     RColorBrewer,
