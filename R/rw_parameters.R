@@ -854,6 +854,8 @@ write_swap_parameters <- function(project_path, parameters, type = "main", verbo
 write_swap_tables <- function(project_path, tables, type = "main", verbose = F) {
 
   stop("non operational")
+  tables_reform <- format_swap_table(tables, verbose = verbose)
+
   if(type == "main"){
     file_path <-  paste0(project_path, "/rswap/tables/")
   }else if(type == "dra"){
