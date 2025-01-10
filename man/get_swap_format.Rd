@@ -4,14 +4,24 @@
 \alias{get_swap_format}
 \title{Get SWAP Format}
 \usage{
-get_swap_format(parameters)
+get_swap_format(parameter)
 }
 \arguments{
-\item{parameters}{SWAP parameter to get the format of.}
+\item{parameter}{SWAP parameter to get the format of.}
 }
 \value{
 Returns unit of passed SWAP variable in string form.
 }
 \description{
 Gets the format of a SWAP parameter
+}
+\details{
+This code relies on package "SWAPtools"!
+}
+\examples{
+get_swap_format("OSAT")
+get_swap_format("DRFIL")
+get_swap_format("ISOILLAY")
+get_swap_format("SWSOPHY")
+get_swap_format("TSTART")
 }
