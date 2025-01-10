@@ -361,15 +361,6 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   for (table in tables) {
 
     # forcing applicable tables to character format:
-    ## This should maybe be moved to a dedicated function.
-    convert_to_double <- c(
-      # Soil property table
-      "ORES-OSAT-ALFA-NPAR-KSATFIT-LEXP-ALFAW-H_ENPR-KSATEXM-BDENS",
-      "placeholder-for-more"
-    )
-    if(((table %>% names()) %>% paste0(collapse = "-")) %in% convert_to_double){
-      table <- plyr::colwise(to_swap_double)(table)
-    }
 
     utils::write.table(
       table,
