@@ -8,6 +8,10 @@ format_swap_vector(vector, name, verbose = FALSE)
 }
 \arguments{
 \item{vector}{a vector to be formatted for SWAP}
+
+\item{name}{(string) name of vector to be formatted}
+
+\item{verbose}{(flag) print status?}
 }
 \value{
 A vector with formatted values ready to be written by \code{write_swap_vectors()}

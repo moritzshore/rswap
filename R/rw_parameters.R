@@ -297,7 +297,7 @@ find_eot <- function(short_swp) {
 #'
 #' @importFrom dplyr %>%
 #' @importFrom crayon underline green
-#' @importFrom readr read_csv cols
+#' @importFrom readr read_csv cols write_lines
 #'
 #' @export
 #'

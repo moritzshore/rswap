@@ -8,6 +8,8 @@ format_swap_table(table, verbose = FALSE)
 }
 \arguments{
 \item{table}{dataframe of your SWAP table}
+
+\item{verbose}{(flag) print status?}
 }
 \value{
 A dataframe with formatted values ready to be written by \code{write_swap_tables()}
@@ -19,13 +21,14 @@ when its a string, it will write 'hupsel' instead of hupsel. )
 }
 \examples{
 
-vdsp <- data.frame(
-  ISUBLAY = c(1:5),
-  ISOILLAY =  c(1:5),
-  HSUBLAY =  c(15, 20, 5, 50, 50),
-  HCOMP =  c(1, 5, 1, 5, 10),
+  ISUBLAY = c(1:5)
+  ISOILLAY =  c(1:5)
+  HSUBLAY =  c(15, 20, 5, 50, 50)
+  HCOMP =  c(1, 5, 1, 5, 10)
   NCOMP =  HSUBLAY / HCOMP
-)
+
+  vdsp <- data.frame(ISUBLAY, ISOILLAY, HSUBLAY, HCOMP, NCOMP)
+
 
 format_swap_table(vdsp)
 

@@ -266,6 +266,7 @@ set_swap_format <- function(value, parameter) {
 #' when its a string, it will write 'hupsel' instead of hupsel. )
 #'
 #' @param table dataframe of your SWAP table
+#' @param verbose (flag) print status?
 #'
 #' @importFrom purrr map2
 #' @importFrom tibble as_tibble
@@ -275,13 +276,14 @@ set_swap_format <- function(value, parameter) {
 #'
 #' @examples
 #'
-#' vdsp <- data.frame(
-#'   ISUBLAY = c(1:5),
-#'   ISOILLAY =  c(1:5),
-#'   HSUBLAY =  c(15, 20, 5, 50, 50),
-#'   HCOMP =  c(1, 5, 1, 5, 10),
+#'   ISUBLAY = c(1:5)
+#'   ISOILLAY =  c(1:5)
+#'   HSUBLAY =  c(15, 20, 5, 50, 50)
+#'   HCOMP =  c(1, 5, 1, 5, 10)
 #'   NCOMP =  HSUBLAY / HCOMP
-#' )
+#'
+#'   vdsp <- data.frame(ISUBLAY, ISOILLAY, HSUBLAY, HCOMP, NCOMP)
+#'
 #'
 #' format_swap_table(vdsp)
 #'
@@ -310,6 +312,8 @@ format_swap_table <- function(table, verbose = FALSE) {
 #' when its a string, it will write 'hupsel' instead of hupsel.)
 #'
 #' @param vector a vector to be formatted for SWAP
+#' @param name (string) name of vector to be formatted
+#' @param verbose (flag) print status?
 #'
 #' @returns A vector with formatted values ready to be written by `write_swap_vectors()`
 #' @export

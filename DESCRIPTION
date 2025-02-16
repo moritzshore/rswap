@@ -35,7 +35,6 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    utils,
     vroom
 Suggests:
     devtools,
