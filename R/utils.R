@@ -106,6 +106,29 @@ load_swap_par_db <- function(){
 
   # remove all table parameters since I dont think they're actually real parameters
   param_format_db_no_table <- param_format_db[-which(param_format_db == "table")]
+
+  ## Adding missing pars manually:
+  #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
+
+  spec_pars <-  c("DATEFIX")
+  add_spec <- rep("SPECIAL", length(spec_pars))
+  names(add_spec) <- spec_pars
+
+  int_pars <- c("SWSCRE", "NUMNODNEW")
+  add_ints <- rep("integer", length(int_pars))
+  names(add_ints) <- int_pars
+
+  string_pars <- c("RUFIL", "TSOILFILE")
+  add_strings <- rep("string", length(string_pars))
+  names(add_strings) <- string_pars
+
+  switch_pars <- c("SWWBA", "SWERROR", "SWHEADER", "SWBAL",  "SWBAL", "SWSBA", "SWATE", "SWBMA", "SWDRF", "SWSWB", "SWINI", "SWINC", "SWCRP", "SWSTR", "SWIRG")
+  add_switches <- rep("switch", length(switch_pars))
+  names(add_switches) <- switch_pars
+
+  param_format_db_no_table <- c(param_format_db_no_table,add_spec,add_ints,add_switches,add_strings)
+
+  # returning finished DB
   SWAPtools_env$param_format_db <- param_format_db_no_table
   return(is.vector(SWAPtools_env$param_format_db))
 }
@@ -136,8 +159,19 @@ get_swap_format <- function(parameter) {
     stop("error loading parameter format database! contact maintainer?")
   }
 
-  par_db <- SWAPtools_env$param_format_db
-  format <- par_db[parameter] %>% unname()
+  #SWAPTOOLSDB does not have vectors, so we need to do these manually:
+  if (parameter %in% c("DZNEW", "OUTDAT", "OUTDATINT")) {
+    if (parameter == "DZNEW") {
+      format = "float"
+    } else{
+      format = "date"
+    }
+    # otherwise, normal procedure.
+  } else{
+    par_db <- SWAPtools_env$param_format_db
+    format <- par_db[parameter] %>% unname()
+  }
+
   if(is.na(format)){
     stop("parameter '", parameter, "' not found in database, contact maintainer!")
   }
@@ -161,6 +195,14 @@ get_swap_format <- function(parameter) {
 #'
 set_swap_format <- function(value, parameter) {
 
+  # Warning, this parameter is special case and super unstable.. ! should split
+  # by WHITESPACE not by space no time to do that right now TODO
+  if (parameter %in%  c("COFANI", "DZNEW")) {
+    value <- value %>% str_split(" ") %>% unlist()
+    if ((value %>% is.vector()) == FALSE) {
+      warning("parameter DZNEW or CONFANI might be encoded wrong!")
+    }
+  }
     # check if the database was loaded successfully
     ST <- install_SWAPtools()
     if (ST == FALSE) {
@@ -198,6 +240,11 @@ set_swap_format <- function(value, parameter) {
       # double \\ negates the regex function of `.`
       no_dec_idx <- grep(pattern = "\\.", x = charform, invert = T)
       charform[no_dec_idx] <- paste0(charform[no_dec_idx], ".0")
+
+      # special case. vector but not vector.
+      if (parameter %in%  c("COFANI", "DZNEW")) {
+        charform <- paste0(charform, collapse = " ")
+      }
       return(charform)
     }
 
@@ -205,6 +252,11 @@ set_swap_format <- function(value, parameter) {
     if (format == "date") {
       return_val <- value %>% as.Date() %>% as.character()
       return(return_val)
+    }
+
+    # SPECIAL CASES (the case for DATEFIX)
+    if (format == "SPECIAL"){
+      return_val <- value
     }
 }
 #'Format SWAP Table
