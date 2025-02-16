@@ -86,9 +86,25 @@ run_swap <- function(project_path,
                                            verbose = verbose)
 
   # reads in the swap parameters and tables
-  parse_result <- parse_swap_file(project_path = project_path,
-                                 swap_file = swap_file,
-                                 verbose = verbose)
+    if(force){
+    cat(blue("parsing swap file (force=TRUE)\n"))
+    parse_result <- parse_swap_file(project_path = project_path,
+                                    swap_file = swap_file,
+                                    verbose = verbose)
+  }else{
+    if(!dir.exists(paste0(rswap_directory,"/parameters"))){
+      cat(blue("parsing swap file.. \n"))
+      # TODO, add a format flag to skip re-formatting
+      parse_result <- parse_swap_file(project_path = project_path,
+                                      swap_file = swap_file,
+                                      verbose = verbose)
+    }else{
+      cat("\u2139",blue("a swap file has already been parsed, not re-parsing..\n"))
+      parse_result$parameter_path <- paste0(rswap_directory, "/parameters")
+      parse_result$table_path <-  paste0(rswap_directory, "/tables")
+      parse_result$vector_path <- paste0(rswap_directory, "/vectors")
+    }
+  }
 
   # load in the parameters to be altered
   parameters <- load_swap_parameters(project_path = project_path,
