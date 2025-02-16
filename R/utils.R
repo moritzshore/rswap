@@ -207,7 +207,7 @@ set_swap_format <- function(value, parameter) {
       return(return_val)
     }
 }
-#' Format SWAP Table
+#'Format SWAP Table
 #'
 #' This handy function converts your dataframe into a SWAP compatible format
 #' (mainly, instead of R writing 4 to disk, it writes 4.0 when its a double. Or
@@ -234,26 +234,16 @@ set_swap_format <- function(value, parameter) {
 #' format_swap_table(vdsp)
 #'
 format_swap_table <- function(table, verbose = FALSE) {
-  # Vectorized behavior for a list of tables
-  if((is.data.frame(table)) == FALSE && is.list(table)){
-    lapply(X = table, FUN = format_swap_table)
-  }
 
   if(verbose){
     cat(bold("Formatting:", paste(blue(underline(names(table))), collapse = " ")), "\n")
   }
 
   format_swap_column <- function(one_column, swapcolname) {
-    one_column2 <- one_column[[1]]
-    formatted = set_swap_format(parameter = swapcolname, value = one_column2)
+    formatted = set_swap_format(parameter = swapcolname, value = one_column)
     return(formatted)
   }
 
-  # STOP HERE. cant figure out why only first row is pared. try using lapply?
-  stop("stopped working here")
-  purrr::map2(.x = as.list(table),
-              .y =  names(table),
-              .f = format_swap_column) %>% as_tibble()
   formatted_table <- purrr::map2(.x = as.list(table),
                                  .y = names(table),
                                  .f = format_swap_column) %>% as_tibble()
