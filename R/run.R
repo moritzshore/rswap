@@ -213,6 +213,7 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe_path <- work_dir %>% paste(collapse = "/")
 
+  if(swap_exe_path ==""){swap_exe_path = "."}
   if(.Platform$OS.type == "windows"){
     swap_exe <- paste0(swap_exe_path,"/swap.exe")
   }else if(.Platform$OS.type == "unix"){
