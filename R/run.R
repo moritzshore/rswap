@@ -108,8 +108,8 @@ run_swap <- function(project_path,
 
   # load in the parameters to be altered
   parameters <- load_swap_parameters(project_path = project_path,
-                         swap_file = swap_file,
-                         verbose = verbose)
+                                     file_type = ".swp",
+                                     verbose = verbose)
 
   # the reason we do not need to do anything with the swap.dra file here is
   # because we don't need to make any run time changes to the parameter set.
