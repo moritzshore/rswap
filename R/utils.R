@@ -254,4 +254,38 @@ format_swap_table <- function(table, verbose = FALSE) {
   purrr::map2(.x = as.list(table),
               .y =  names(table),
               .f = format_swap_column) %>% as_tibble()
+  formatted_table <- purrr::map2(.x = as.list(table),
+                                 .y = names(table),
+                                 .f = format_swap_column) %>% as_tibble()
+
+  return(formatted_table)
 }
+
+#' Format SWAP Vector
+#'
+#' This handy function converts your vector into a SWAP compatible format
+#' (mainly, instead of R writing 4 to disk, it writes 4.0 when its a double. Or
+#' when its a string, it will write 'hupsel' instead of hupsel.)
+#'
+#' @param vector a vector to be formatted for SWAP
+#'
+#' @returns A vector with formatted values ready to be written by `write_swap_vectors()`
+#' @export
+#' @seealso [write_swap_vectors()]
+#'
+#' @examples
+#'
+#' format_swap_vector(c(10, 10, 10, 20, 30, 50), "DZNEW")
+#' format_swap_vector(c("2003-12-31", "2004-12-31"), "OUTDAT")
+#' format_swap_vector(c("2003-12-31", "2004-12-31"), "OUTDATINT")
+#'
+format_swap_vector <- function(vector, name, verbose = FALSE) {
+
+  if(verbose){
+    cat(bold("Formatting:", paste(blue(underline(name)), collapse = " ")), "\n")
+  }
+    flat <- vector %>% unlist() %>% unname()
+    formatted = set_swap_format(parameter = name, value = flat)
+    return(formatted)
+}
+
