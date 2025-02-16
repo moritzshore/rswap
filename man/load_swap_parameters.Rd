@@ -4,12 +4,12 @@
 \alias{load_swap_parameters}
 \title{Load SWAP parameters}
 \usage{
-load_swap_parameters(project_path, swap_file = "swap.swp", verbose = F)
+load_swap_parameters(project_path, file_type = ".swp", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string}
 
-\item{swap_file}{name of the swap file to load parameters from (string, either .swp for main file or .dra for drain file)}
+\item{file_type}{type of swap file to load parameters from (either '.swp' for main file or '.dra' for drain file)}
 
 \item{verbose}{print status? (flag)}
 }
@@ -18,7 +18,7 @@ Tibble of parameter set
 }
 \description{
 Loads the SWAP parameters as parsed by \code{parse_swap_file()} and returns them as
-a tibble
+a tibble. Requires a parsed file first!
 }
 \seealso{
 \code{\link[=parse_swap_file]{parse_swap_file()}} \code{\link[=write_swap_file]{write_swap_file()}}

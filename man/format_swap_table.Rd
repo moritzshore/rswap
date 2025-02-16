@@ -4,7 +4,7 @@
 \alias{format_swap_table}
 \title{Format SWAP Table}
 \usage{
-format_swap_table(table)
+format_swap_table(table, verbose = FALSE)
 }
 \arguments{
 \item{table}{dataframe of your SWAP table}
