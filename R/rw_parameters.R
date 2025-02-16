@@ -632,7 +632,6 @@ change_swap_parameter <- function(param, name, value, verbose = F){
 #'
 #' @export
 #' @importFrom readr read_csv
-  file_ext = substr(swap_file, nchar(swap_file) - 3, nchar(swap_file))
 load_swap_tables <- function(project_path, file_type = ".swp", verbose = F){
 
   if (file_type == ".dra") {
@@ -645,9 +644,7 @@ load_swap_tables <- function(project_path, file_type = ".swp", verbose = F){
 
   par_dir_path = paste0(project_path, "/rswap/", par_dir)
 
-    p <- parse_swap_file(project_path, swap_file, verbose = verbose)
-    table_path <- p$table_path
-  }else{
+  if (!dir.exists(par_dir_path)) {
     stop("[rswap] project has not been parsed yet.You need to select a file and do that first!")
   } else{
     table_path <- par_dir_path
@@ -758,11 +755,6 @@ load_swap_parameters <- function(project_path, file_type = ".swp", verbose = F){
   par_dir_path = paste0(project_path, "/rswap/", par_dir)
 
   if (dir.exists(par_dir_path) == FALSE) {
-    warning("[rswap] project has not been parsed yet. Doing so now with '",
-            swap_file,
-            "'")
-    p <- parse_swap_file(project_path, swap_file, verbose = verbose)
-    param_path <- paste0(p$parameter_path, "/parameters.csv")
     stop("[rswap] file type has not been parsed yet. Please do so first. \n")
   }else{
     param_path <- paste0(par_dir_path, "/parameters.csv")
