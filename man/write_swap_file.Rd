@@ -4,12 +4,14 @@
 \alias{write_swap_file}
 \title{Write SWAP File}
 \usage{
-write_swap_file(project_path, outfile, verbose = F)
+write_swap_file(project_path, outfile, format = F, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}
 
 \item{outfile}{name of the SWAP file to write. will be stored in project directory (string)}
+
+\item{format}{(logical) should the parameters stored in the rswap directory be converted to Fortran format before being written? (SLOWER)}
 
 \item{verbose}{print status? (flag)}
 }

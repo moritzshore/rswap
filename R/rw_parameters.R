@@ -290,6 +290,7 @@ find_eot <- function(short_swp) {
 #'
 #' @param project_path path to project directory
 #' @param outfile name of the SWAP file to write. will be stored in project directory (string)
+#' @param format (logical) should the parameters stored in the rswap directory be converted to Fortran format before being written? (SLOWER)
 #' @param verbose print status? (flag)
 #'
 #'
@@ -301,7 +302,7 @@ find_eot <- function(short_swp) {
 #'
 #' @export
 #'
-write_swap_file <- function(project_path, outfile, verbose = F) {
+write_swap_file <- function(project_path, outfile, format = F, verbose = F) {
 
   file_ext = substr(outfile, nchar(outfile) - 3, nchar(outfile))
 
@@ -341,8 +342,10 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   # Append parameters
   parameters = load_swap_parameters(project_path = project_path, file_type = file_ext, verbose = verbose)
   # validate params
-  if(verbose){cat(blue(italic(underline("Formatting parameters for SWAP..\n"))))}
-  parameters$value <- purrr::map2(parameters$value,parameters$param, set_swap_format) %>% unlist()
+  if(format){
+    if(verbose){cat(blue(italic(underline("Formatting parameters for SWAP..\n"))))}
+    parameters$value <- purrr::map2(parameters$value,parameters$param, set_swap_format) %>% unlist()
+  }
 
   par_write = paste(parameters$param, "=", parameters$value)
 
@@ -362,8 +365,11 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
 
   # Append tables
   tables <- load_swap_tables(project_path = project_path, verbose = verbose, file_type = file_ext)
+
   # format tables
-  tables <- lapply(tables, verbose = verbose, format_swap_table)
+  if(format){
+    tables <- lapply(tables, verbose = verbose, format_swap_table)
+  }
 
   for (table in tables) {
     utils::write.table(
@@ -398,25 +404,39 @@ write_swap_file <- function(project_path, outfile, verbose = F) {
   # the dra file does not have any vectors, so don't do this if its the dra file
   if(file_ext != ".dra"){
     vectors <- load_swap_vectors(project_path = project_path, file_type = file_ext, verbose = verbose)
-    # validate vectors
-    vectors_reform <- purrr::map2(.x = vectors,
-                                     .y = names(vectors),
-                                     .f = format_swap_vector)
 
-    for (vector in vectors_reform %>% names()) {
-      # format for vectors is writing the name of the parameter, then an equals
-      # sign, then the data on the next line:
-      write_lines(x = paste0(vector, " = "), file =outpath, append = T)
-      write_lines(x = vectors_reform[[vector]], file = outpath, append = T)
-    }
-
+    # format vectors
+    if(format){
+      vectors <- purrr::map2(.x = vectors,
+                                    .y = names(vectors),
+                                    .f = format_swap_vector)
+      # Special write routine for formatted vectors
+      for (vector in vectors %>% names()) {
+        # format for vectors is writing the name of the parameter, then an equals
+        # sign, then the data on the next line:
+        write_lines(x = paste0(vector, " = "), file =outpath, append = T)
+        write_lines(x = vectors[[vector]], file = outpath, append = T)
+      }
+    }else{
+      for (vector in vectors) {
+        # Special write routine for unformatted vectors
+        utils::write.table(
+          vector,
+          file = outpath,
+          quote = F,
+          row.names = F,
+          col.names = T,
+          append = T,
+          sep = " "
+        ) %>% suppressWarnings()
+        }
+      }
     if (verbose) {cat("\U0001f4dd", blue("SWAP vectors appended to file."), "\n")}
-  }
 
   if (verbose) {
-    cat(glue(blue("\u2705",
-                  paste("SWAP", filetypename, "file written to: \n"))))
+    cat(glue(blue("\u2705", paste("SWAP", filetypename, "file written to: \n"))))
     cat(green(underline(outpath)), "\n")
+    }
   }
   return(outpath)
 }

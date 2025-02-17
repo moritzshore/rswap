@@ -8,6 +8,7 @@ run_swap(
   project_path,
   swap_file = "swap.swp",
   autoset_output = F,
+  format = F,
   force = T,
   verbose = F,
   timeout = Inf
@@ -22,6 +23,8 @@ run_swap(
 your observed data provided in the observed file and match it to the SWAP
 output. if this is set to \code{FALSE}, then INLIST csv must be set by the user either
 manually or with \code{set_swap_output()} or \code{change_swap_par()} for several other \code{rswap} function to work}
+
+\item{format}{(flag) Should the rswap parameters be converted to fortran format before running? (SLOWER)}
 
 \item{force}{If an rswap directory already exists, no new one will be generated/reloaded unless \code{force=TRUE} defaults to true.}
 
