@@ -19,7 +19,6 @@ Imports:
     doParallel,
     dplyr,
     foreach,
-    ggbraid,
     ggplot2,
     ggpubr,
     glue,
@@ -38,6 +37,7 @@ Imports:
     vroom
 Suggests:
     devtools,
+    ggbraid,
     rmarkdown,
     roxygen2
 Remotes: 
