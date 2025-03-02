@@ -102,6 +102,7 @@ run_swap <- function(project_path,
                                       verbose = verbose)
     }else{
       cat("\u2139",blue("a swap file has already been parsed, not re-parsing..\n"))
+      parse_result <- list()
       parse_result$parameter_path <- paste0(rswap_directory, "/parameters")
       parse_result$table_path <-  paste0(rswap_directory, "/tables")
       parse_result$vector_path <- paste0(rswap_directory, "/vectors")
