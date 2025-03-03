@@ -557,7 +557,7 @@ set_swap_output <-
       # but I think I just need a database of every parameter with their properties
       # (Depth-wise? and Units)
       depthwise <- c("TEMP", "WC", "H")
-      nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR")
+      nodepth <- c("RAIN", "SNOW", "DRAINAGE", "DSTOR", "INTERC", "RUNOFF", "EACT", "TACT", "QBOTTOM", "VOLACT")
 
       string <- "["
       for (d in depths) {
