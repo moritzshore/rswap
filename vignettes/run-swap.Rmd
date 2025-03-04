@@ -1,0 +1,20 @@
+---
+title: "run-swap"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{run-swap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rswap)
+```
+
