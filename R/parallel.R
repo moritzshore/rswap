@@ -132,7 +132,7 @@ run_swap_parallel <- function(project_paths,
       file.copy(swap_exe, parrundir)
 
       ppath <- paste0(parrundir, "/", basename(run_name))
-      print(paste0("!!!!!!!!!", ppath, "!!!!!!!!!!" ))
+      print(paste0(">>>> RSWAP PARALLEL: Starting Run:", ppath, "<<<<" ))
       run_swap(
         project_path = ppath,
         swap_file = swap_file,
@@ -143,7 +143,7 @@ run_swap_parallel <- function(project_paths,
       )
     }
   if(verbose){
-    cat(magenta(italic(">>> parallel running completed, closing cluster...\n")))
+    cat(magenta(italic(">>> parallel running completed, closing cluster...")))
   }
   parallel::stopCluster(cl)
 
@@ -164,7 +164,7 @@ run_swap_parallel <- function(project_paths,
 
   if (dir.exists(result_dir)) {
     unlink(result_dir, recursive = T)
-    warning("rswap parallel: overwriting previous results!")
+    warning("rswap parallel: overwriting previous results!\n")
   }
 
   dir.create(result_dir)
