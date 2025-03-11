@@ -1,8 +1,8 @@
 Type: Package
 Package: rswap
 Title: an R interface for the SWAP model
-Version: 0.5.2
-Date: 2024-03-27
+Version: 0.5.3
+Date: 2025-03-11
 Authors@R: 
     person("Moritz", "Shore", , "moritz.shore@nibio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7586-997X"))
