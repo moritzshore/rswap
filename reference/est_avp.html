@@ -19,7 +19,7 @@ SWAP uses AVP whereas many datasets contain RH. Read more on fao.org"><meta prop
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rswap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.3</span>
       </span>
     </div>
 
@@ -62,20 +62,25 @@ SWAP uses AVP whereas many datasets contain RH. Read more on <a href="https://ww
 
 
 <dl><dt id="arg-tmin">tmin<a class="anchor" aria-label="anchor" href="#arg-tmin"></a></dt>
-<dd><p>vector, in kelvin (K)</p></dd>
+<dd><p>numeric vector, in Celsius (C)</p></dd>
 
 
 <dt id="arg-tmax">tmax<a class="anchor" aria-label="anchor" href="#arg-tmax"></a></dt>
-<dd><p>vector, in kelvin (K)</p></dd>
+<dd><p>numeric vector, in Celsius (C)</p></dd>
 
 
 <dt id="arg-rh">rh<a class="anchor" aria-label="anchor" href="#arg-rh"></a></dt>
-<dd><p>vector, in % (ie. 53.2)</p></dd>
+<dd><p>numeric vector, in % (ie. 53.2)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>vector of AVP, rounded to 2 decimal placews</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Note: if you would like to use this for hourly AVP, then just use the same
+value for tmin and tmax</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
