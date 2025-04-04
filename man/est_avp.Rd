@@ -7,11 +7,11 @@
 est_avp(tmin, tmax, rh)
 }
 \arguments{
-\item{tmin}{vector, in kelvin (K)}
+\item{tmin}{numeric vector, in Celsius (C)}
 
-\item{tmax}{vector, in kelvin (K)}
+\item{tmax}{numeric vector, in Celsius (C)}
 
-\item{rh}{vector, in \% (ie. 53.2)}
+\item{rh}{numeric vector, in \% (ie. 53.2)}
 }
 \value{
 vector of AVP, rounded to 2 decimal placews
@@ -20,6 +20,10 @@ vector of AVP, rounded to 2 decimal placews
 Converts relative humidity (RH) to actual vapour pressure (AVP) using an
 estimation with maximum and minimum temperature. This function exists because
 SWAP uses AVP whereas many datasets contain RH. Read more on \href{https://www.fao.org/4/x0490e/x0490e07.htm}{fao.org}
+}
+\details{
+Note: if you would like to use this for hourly AVP, then just use the same
+value for tmin and tmax
 }
 \examples{
 

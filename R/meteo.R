@@ -163,10 +163,13 @@ write_swap_meteo <- function(project_path,
 #' estimation with maximum and minimum temperature. This function exists because
 #' SWAP uses AVP whereas many datasets contain RH. Read more on [fao.org](https://www.fao.org/4/x0490e/x0490e07.htm)
 #'
+#' Note: if you would like to use this for hourly AVP, then just use the same
+#' value for tmin and tmax
+#'
 #' @seealso [load_swap_meteo()] [write_swap_meteo()]
-#' @param tmin vector, in kelvin (K)
-#' @param tmax vector, in kelvin (K)
-#' @param rh vector, in % (ie. 53.2)
+#' @param tmin numeric vector, in Celsius (C)
+#' @param tmax numeric vector, in Celsius (C)
+#' @param rh numeric vector, in % (ie. 53.2)
 #'
 #' @return vector of AVP, rounded to 2 decimal placews
 #' @export
