@@ -4,12 +4,12 @@
 \alias{load_swap_tables}
 \title{Load SWAP tables}
 \usage{
-load_swap_tables(project_path, swap_file = "swap.swp", verbose = F)
+load_swap_tables(project_path, file_type = ".swp", verbose = F)
 }
 \arguments{
 \item{project_path}{Path to project directory (string)}
 
-\item{swap_file}{name of the swap file to parse (string)}
+\item{file_type}{type of swap file to load parameters from (either '.swp' for main file or '.dra' for drain file)}
 
 \item{verbose}{print status? (flag)}
 }

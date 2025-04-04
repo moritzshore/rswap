@@ -4,12 +4,14 @@
 \alias{write_swap_tables}
 \title{Write SWAP Tables}
 \usage{
-write_swap_tables(project_path, tables, verbose = F)
+write_swap_tables(project_path, tables, type = "main", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}
 
 \item{tables}{tables as loaded by \code{load_swap_tables()} (list of dataframes)}
+
+\item{type}{supported swap parameter sets, current includes "main" (default) and "dra" (drainage)}
 
 \item{verbose}{print status? (flag)}
 }

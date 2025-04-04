@@ -1,8 +1,8 @@
 Type: Package
 Package: rswap
 Title: an R interface for the SWAP model
-Version: 0.5.3
-Date: 2025-03-11
+Version: 0.6.0
+Date: 2024-04-04
 Authors@R: 
     person("Moritz", "Shore", , "moritz.shore@nibio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7586-997X"))
@@ -19,13 +19,13 @@ Imports:
     doParallel,
     dplyr,
     foreach,
-    ggbraid,
     ggplot2,
     ggpubr,
     glue,
     hydroGOF,
     magrittr,
     plotly,
+    plyr,
     processx,
     purrr,
     RColorBrewer,
@@ -34,10 +34,10 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    utils,
     vroom
 Suggests:
     devtools,
+    ggbraid,
     rmarkdown,
     roxygen2
 Remotes: 

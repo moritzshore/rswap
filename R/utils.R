@@ -62,40 +62,120 @@ load_variables_db <- function() {
   }
 }
 
-#' Get SWAP Format
-#'
-#' Gets the format of a SWAP parameter
-#' @param parameters SWAP parameter to get the format of.
-#
-#' @returns Returns unit of passed SWAP variable in string form.
-#'
-#' @importFrom tibble %>%
-#' @importFrom purrr map
-#' @export
-get_swap_format <- function(parameters) {
+load_swap_par_db <- function(){
 
-  # current issue: omitting the ones it cant find instead of returning ERROR
-
+  # load the database from SWAPtools
   status = load_variables_db()
   if (status == FALSE) {
     stop("SWAPtools variable database could not be loaded!")
   }
 
+  # extract the parameter names
   par_names <- SWAPtools_env$swap_variables %>% names()
 
-  # hopefully now vectorized:
-  matched <- match(parameters, par_names)
+  # clean up the hierarchy
+  first_level_idx  = (!(par_names %>% grepl(pattern = "::"))) %>% which()
+  second_level_idx  = par_names %>% grepl(pattern = "::") %>% which()
+  remove_before_dot_dot <- function(element){
+    if(grepl(pattern = "::", x = element)){
+      (element %>% str_split("::", simplify = T))[,2] %>% return()
+    }else{
+      element %>% return()
+    }
+  }
+  flattened_db <- lapply(par_names, remove_before_dot_dot) %>% unlist()
 
-  extract <- SWAPtools_env$swap_variables[matched] %>% map(2) %>% unname()
 
-  # convert the nulls to NA
-  if(which(extract == "NULL") %>% length() > 0){
-    warning("rswap warning: some formats were not detected, and returned as NA!")
-    extract <- extract %>% as.character()
-    extract[which(extract == "NULL")] = NA
+  # extract flat formats
+  extract_format <- function(idx, db){
+    db[[idx]]['format'] %>% return()
+  }
+  flatformats <- lapply(1:length(flattened_db), db = SWAPtools_env$swap_variables, extract_format) %>% unlist()
+
+  # create a flat dictonary with duplicates
+  my_dict <- data.frame(parname = flattened_db, parformat = flatformats)
+  # remove duplicates
+  unique_pars <- flattened_db %>% unique()
+  # create  UNIQUE dataframe and join the formats by parname (first match)
+  # TODO: double check that this is valid? (check if the duplicate params all have same format (they should?))
+  uniq_dic <- data.frame(parname = unique_pars)
+  uniq_db <- left_join(uniq_dic, my_dict, by = "parname",multiple = "first")
+  # create and return a named vector
+  param_format_db <- uniq_db$parformat
+  names(param_format_db) <- uniq_db$parname
+
+  # remove all table parameters since I dont think they're actually real parameters
+  param_format_db_no_table <- param_format_db[-which(param_format_db == "table")]
+
+  ## Adding missing pars manually:
+  #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
+
+  spec_pars <-  c("DATEFIX")
+  add_spec <- rep("SPECIAL", length(spec_pars))
+  names(add_spec) <- spec_pars
+
+  int_pars <- c("SWSCRE", "NUMNODNEW")
+  add_ints <- rep("integer", length(int_pars))
+  names(add_ints) <- int_pars
+
+  string_pars <- c("RUFIL", "TSOILFILE")
+  add_strings <- rep("string", length(string_pars))
+  names(add_strings) <- string_pars
+
+  switch_pars <- c("SWWBA", "SWERROR", "SWHEADER", "SWBAL",  "SWBAL", "SWSBA", "SWATE", "SWBMA", "SWDRF", "SWSWB", "SWINI", "SWINC", "SWCRP", "SWSTR", "SWIRG")
+  add_switches <- rep("switch", length(switch_pars))
+  names(add_switches) <- switch_pars
+
+  param_format_db_no_table <- c(param_format_db_no_table,add_spec,add_ints,add_switches,add_strings)
+
+  # returning finished DB
+  SWAPtools_env$param_format_db <- param_format_db_no_table
+  return(is.vector(SWAPtools_env$param_format_db))
+}
+
+
+#' Get SWAP Format
+#'
+#' Gets the format of a SWAP parameter
+#'
+#' This code relies on package "SWAPtools"!
+#'
+#' @param parameter SWAP parameter to get the format of.
+#
+#' @returns Returns unit of passed SWAP variable in string form.
+#'
+#' @importFrom dplyr %>%
+#' @export
+#' @examples
+#' get_swap_format("OSAT")
+#' get_swap_format("DRFIL")
+#' get_swap_format("ISOILLAY")
+#' get_swap_format("SWSOPHY")
+#' get_swap_format("TSTART")
+get_swap_format <- function(parameter) {
+  status = load_swap_par_db()
+
+  if(!status){
+    stop("error loading parameter format database! contact maintainer?")
   }
 
-  return(extract %>% unlist())
+  #SWAPTOOLSDB does not have vectors, so we need to do these manually:
+  if (parameter %in% c("DZNEW", "OUTDAT", "OUTDATINT")) {
+    if (parameter == "DZNEW") {
+      format = "float"
+    } else{
+      format = "date"
+    }
+    # otherwise, normal procedure.
+  } else{
+    par_db <- SWAPtools_env$param_format_db
+    format <- par_db[parameter] %>% unname()
+  }
+
+  if(is.na(format)){
+    stop("parameter '", parameter, "' not found in database, contact maintainer!")
+  }
+  return(format)
 }
 
 #' Set SWAP Format
@@ -113,101 +193,145 @@ get_swap_format <- function(parameters) {
 #'
 #' @export
 #'
-set_swap_format <- function(parameter, value){
+set_swap_format <- function(value, parameter) {
 
-  # check if the database was loaded successfully
-  ST <- install_SWAPtools()
-  if (ST == FALSE) {
-    stop("SWAPtools is required for this functionality!")
-  }
-  status <- load_variables_db()
-  if (status == FALSE) {
-    stop("SWAPtools variable database could not be loaded!")
-  }
-
-  #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
-  format <- get_swap_format(parameter)
-
-  supported <- c("switch","string", "integer", "float")
-
-  if((format %in% supported) == FALSE){
-    warning("[rswap] Sorry, this format is not supported yet (", format, "). returning NA")
-    return(NA)
-  }
-  # if FORTRAN wants a switch,
-  if (format == "switch") {
-    if (format %in% c(0, 1)) {
-      value %>% as.character() %>% return()
-    } else{
-      stop("format of ", parameter, " is a SWITCH and must therefore be either '0' or '1', value passed is: ", value)
+  # Warning, this parameter is special case and super unstable.. ! should split
+  # by WHITESPACE not by space no time to do that right now TODO
+  if (parameter %in%  c("COFANI", "DZNEW")) {
+    value <- value %>% str_split(" ") %>% unlist()
+    if ((value %>% is.vector()) == FALSE) {
+      warning("parameter DZNEW or CONFANI might be encoded wrong!")
     }
   }
+    # check if the database was loaded successfully
+    ST <- install_SWAPtools()
+    if (ST == FALSE) {
+      stop("SWAPtools is required for this functionality!")
+    }
+    status <- load_variables_db()
+    if (status == FALSE) {
+      stop("SWAPtools variable database could not be loaded!")
+    }
 
-  # if FORTRAN wants a string,
-  # as a string
-  if (format == "string") {
-    # and it already is a string, then just return it
-    value %>% as.character() %>% return()
-  }
+    #  "string"  "date"    "switch"  "integer" "vector"  "float"   "table"   "array"
+    format <- get_swap_format(parameter)
 
-  # if FORTRAN wants an integer
-  if(format == "integer"){
-
-    # and the value is numeric, then round it to the nearest integer and return
+    # if FORTRAN wants a string,
     # as a string
-    if(value %>% is.numeric()){
-      value %>% round(0) %>% as.character() %>% return()
+    if (format == "string") {
+      value<- value %>% as.character()
+      ## add a ' to start if not existing
+      need_prefix <- which(substr(value, 0, 1) != "'")
+      value[need_prefix] <- paste0("'", value[need_prefix])
+      need_postfix <- which(substr(value, nchar(value), nchar(value)) != "'")
+      value[need_postfix] <- paste0(value[need_prefix],"'")
+      return(value)
     }
 
-    # if the value is already in string form, turn it into a number,
-    # and then round it to the nearest integer, and then return it back as a
-    # character again.
-    else if(value %>% is.character()){
+    # if FORTRAN wants an integer or switch (switch is not bool)
+    if (format %in% c("integer", "switch")) {
+      return_val <- value %>% as.numeric() %>% round(0) %>% as.character()
+      return(return_val)
+    }
 
-      # check to see if the conversion fails
-      if(value %>% as.numeric() %>% is.na()){
-        stop("rswap error: Value conversion failed! from ", value, " to ", value %>% as.numeric())
+    # if FORTRAN wants an float
+    if (format == "float") {
+      charform <- as.character(value)
+      # double \\ negates the regex function of `.`
+      no_dec_idx <- grep(pattern = "\\.", x = charform, invert = T)
+      charform[no_dec_idx] <- paste0(charform[no_dec_idx], ".0")
+
+      # special case. vector but not vector.
+      if (parameter %in%  c("COFANI", "DZNEW")) {
+        charform <- paste0(charform, collapse = " ")
       }
-
-      # otherwise return.
-      value %>% as.numeric() %>% round(0) %>% as.character() %>% return()
-    }else{
-      stop("rswap error: Do not know how to convert this to integer: " , value)
+      return(charform)
     }
+
+    # if FORTRAN wants a date
+    if (format == "date") {
+      return_val <- value %>% as.Date() %>% as.character()
+      return(return_val)
+    }
+
+    # SPECIAL CASES (the case for DATEFIX)
+    if (format == "SPECIAL"){
+      return_val <- value
+    }
+}
+#'Format SWAP Table
+#'
+#' This handy function converts your dataframe into a SWAP compatible format
+#' (mainly, instead of R writing 4 to disk, it writes 4.0 when its a double. Or
+#' when its a string, it will write 'hupsel' instead of hupsel. )
+#'
+#' @param table dataframe of your SWAP table
+#' @param verbose (flag) print status?
+#'
+#' @importFrom purrr map2
+#' @importFrom tibble as_tibble
+#' @returns A dataframe with formatted values ready to be written by `write_swap_tables()`
+#' @export
+#' @seealso [write_swap_tables()]
+#'
+#' @examples
+#'
+#'   ISUBLAY = c(1:5)
+#'   ISOILLAY =  c(1:5)
+#'   HSUBLAY =  c(15, 20, 5, 50, 50)
+#'   HCOMP =  c(1, 5, 1, 5, 10)
+#'   NCOMP =  HSUBLAY / HCOMP
+#'
+#'   vdsp <- data.frame(ISUBLAY, ISOILLAY, HSUBLAY, HCOMP, NCOMP)
+#'
+#'
+#' format_swap_table(vdsp)
+#'
+format_swap_table <- function(table, verbose = FALSE) {
+
+  if(verbose){
+    cat(bold("Formatting:", paste(blue(underline(names(table))), collapse = " ")), "\n")
   }
 
-  # if FORTRAN wants an float
-  if (format == "float") {
-    # first convert value to string
-    value_string <- value %>% as.character()
-
-    # check if it failed
-    if(value_string %>% is.na()){
-      stop("rswap error: Value conversion failed! from ", value, " to ", value %>% as.numeric())
-    }
-
-    # then detect whether it has a decimal
-    # (double period to escape the single period special character)
-    has_dec <- str_detect(value_string, "..")
-
-    # if the string already has a decimal place, then return as is.
-    if (has_dec) {
-      value_string %>% return()
-    } else{
-      # otherwise, add a .0 onto it
-      paste0(value_string, ".0") %>% return()
-    }
+  format_swap_column <- function(one_column, swapcolname) {
+    formatted = set_swap_format(parameter = swapcolname, value = one_column)
+    return(formatted)
   }
 
-  # if FORTRAN wants a date
-  ## TODO: How to implement this? what date format does FORTRAN need?
-  ## FORTRAN wants this format: 01-jan-2017..
+  formatted_table <- purrr::map2(.x = as.list(table),
+                                 .y = names(table),
+                                 .f = format_swap_column) %>% as_tibble()
 
-  # if FORTRAN wants a vector
-  ## no idea what to do here. need to check what swap variables are even vectors
+  return(formatted_table)
+}
 
-  # same goes for ARRAY (what is the difference between vector and array)
+#' Format SWAP Vector
+#'
+#' This handy function converts your vector into a SWAP compatible format
+#' (mainly, instead of R writing 4 to disk, it writes 4.0 when its a double. Or
+#' when its a string, it will write 'hupsel' instead of hupsel.)
+#'
+#' @param vector a vector to be formatted for SWAP
+#' @param name (string) name of vector to be formatted
+#' @param verbose (flag) print status?
+#'
+#' @returns A vector with formatted values ready to be written by `write_swap_vectors()`
+#' @export
+#' @seealso [write_swap_vectors()]
+#'
+#' @examples
+#'
+#' format_swap_vector(c(10, 10, 10, 20, 30, 50), "DZNEW")
+#' format_swap_vector(c("2003-12-31", "2004-12-31"), "OUTDAT")
+#' format_swap_vector(c("2003-12-31", "2004-12-31"), "OUTDATINT")
+#'
+format_swap_vector <- function(vector, name, verbose = FALSE) {
 
-  # I currently dont need to convert TABLE but if i do it will be done here.
+  if(verbose){
+    cat(bold("Formatting:", paste(blue(underline(name)), collapse = " ")), "\n")
+  }
+    flat <- vector %>% unlist() %>% unname()
+    formatted = set_swap_format(parameter = name, value = flat)
+    return(formatted)
 }
 

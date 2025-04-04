@@ -405,7 +405,7 @@ load_swap_output <-  function(project_path, archived = F, verbose = F){
   # TODO rename these to be more clear?
   r_frame <- list(daily_output = result_daily, custom_depth = result_output)
 
-  if(verbose){cat(crayon::blue("\u2139", "loaded SWAP model output"))}
+  if(verbose){cat(crayon::blue("\u2139", "loaded SWAP model output\n"))}
 
   r_frame %>% return()
   }

@@ -63,7 +63,7 @@ load_swap_meteo <- function(project_path, verbose = FALSE){
     status = file.copy(from = inst_path, to = met_path)
     if(status == FALSE){stop("error creating meteo template!")}
   }
-    met_df <- readr::read_csv(met_path)
+    met_df <- readr::read_csv(met_path, show_col_types = verbose)
     return(met_df)
 }
 
@@ -130,7 +130,7 @@ write_swap_meteo <- function(project_path,
                   underline(italic(blue(write_path2))), "\n")}
 
   if(autoset){
-    swap_pars <- load_swap_parameters(project_path,swap_file, verbose)
+    swap_pars <- load_swap_parameters(project_path = project_path, file_type = ".swp", verbose = verbose)
     old_tstart <- swap_pars$value[which(swap_pars$param == "TSTART")]
     old_tend <- swap_pars$value[which(swap_pars$param == "TEND")]
     old_statname <- swap_pars$value[which(swap_pars$param == "METFIL")]
@@ -150,7 +150,7 @@ write_swap_meteo <- function(project_path,
           blue(underline(old_statname)), " to ", cyan(underline(bold(new_statname))), "\n", sep = "")
     }
 
-    write_swap_parameters(project_path, parameters = swap_pars, verbose)
+    write_swap_parameters(project_path = project_path, parameters = swap_pars, type = "main", verbose = verbose)
 
   }
 

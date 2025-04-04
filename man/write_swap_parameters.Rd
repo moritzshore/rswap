@@ -4,12 +4,14 @@
 \alias{write_swap_parameters}
 \title{Write SWAP parameters}
 \usage{
-write_swap_parameters(project_path, parameters, verbose = F)
+write_swap_parameters(project_path, parameters, type = "main", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}
 
 \item{parameters}{parameter set as loaded by \code{load_swap_parameters()} (dataframe)}
+
+\item{type}{supported swap parameter sets, current includes "main" (default) and "dra" (drainage)}
 
 \item{verbose}{print status? (flag)}
 }

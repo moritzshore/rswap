@@ -4,12 +4,12 @@
 \alias{set_swap_format}
 \title{Set SWAP Format}
 \usage{
-set_swap_format(parameter, value)
+set_swap_format(value, parameter)
 }
 \arguments{
-\item{parameter}{the SWAP parameter name, in string form}
-
 \item{value}{the value to be converted}
+
+\item{parameter}{the SWAP parameter name, in string form}
 }
 \description{
 This function converts a parameter value into the SWAP (FORTRAN) required

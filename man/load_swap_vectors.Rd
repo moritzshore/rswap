@@ -4,12 +4,12 @@
 \alias{load_swap_vectors}
 \title{Load SWAP Vectors}
 \usage{
-load_swap_vectors(project_path, swap_file = "swap.swp", verbose = F)
+load_swap_vectors(project_path, file_type = ".swp", verbose = F)
 }
 \arguments{
 \item{project_path}{path to project_directory (string)}
 
-\item{swap_file}{name of the swap file to parse (string)}
+\item{file_type}{type of swap file to load parameters from (either '.swp' for main file or '.dra' for drain file)}
 
 \item{verbose}{print status? (flag)}
 }
@@ -18,8 +18,7 @@ Returns a list of vectors
 }
 \description{
 This function loads all the SWAP vectors as parsed by \code{parse_swap_file()}. If
-the SWAP vectors have not been parsed, then this will be done first using
-\code{swap_file}
+the SWAP vectors have not been parsed, then you must do this first with \code{parse_swap_file()}
 }
 \seealso{
 \code{\link[=parse_swap_file]{parse_swap_file()}} \code{\link[=write_swap_file]{write_swap_file()}}

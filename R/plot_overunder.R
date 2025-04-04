@@ -29,22 +29,25 @@
 #' @importFrom stringr str_split
 #' @importFrom tidyr pivot_wider
 #' @importFrom utils tail
-#' @importFrom ggbraid geom_braid
+#'
 #' @seealso [rswap_plot_compare()] [rswap_plot_performance()] [rswap_plot_multi()]
 rswap_plot_variable <- function(project_path, variable, depth = NULL, interactive = F, verbose = F) {
 
-  # if(!interactive){
-  #   # I am really not sure if this is best practice...?
-  #   if("ggbraid" %in% utils::installed.packages() == FALSE){
-  #     cat("package ggbraid from github is needed for this plot, installing now\n")
-  #     remotes::install_github("nsgrantham/ggbraid")
-  #     if("ggbraid" %in% utils::installed.packages() == FALSE){
-  #       stop("error installing ggbraid!")
-  #     }else{
-  #       cat("[rswap]: ggbraid succesfully installed!\n")
-  #     }
-  #   }
-  # }
+  if(!interactive){
+    #install_missing_packs("ggbraid")
+    # I am really not sure if this is best practice...?
+    if("ggbraid" %in% utils::installed.packages() == FALSE){
+      cat("package ggbraid from github is needed for this plot, installing now\n")
+      devtools::install_github("nsgrantham/ggbraid")
+      if("ggbraid" %in% utils::installed.packages() == FALSE){
+        stop("error installing ggbraid!")
+      }else{
+        cat("[rswap]: ggbraid succesfully installed!\n")
+      }
+    }
+  }
+
+
 
   proj <- project_path %>% stringr::str_split("/") %>% unlist() %>% utils::tail(1)
   swap_data <- melt_swap_data(project_path, variable, depth, verbose)

@@ -27,6 +27,7 @@
 #' your observed data provided in the observed file and match it to the SWAP
 #' output. if this is set to `FALSE`, then INLIST csv must be set by the user either
 #' manually or with `set_swap_output()` or `change_swap_par()` for several other `rswap` function to work
+#' @param format (flag) Should the rswap parameters be converted to fortran format before running? (SLOWER)
 #' @param force If an rswap directory already exists, no new one will be generated/reloaded unless `force=TRUE` defaults to true.
 #' @param verbose print status? (flag)
 #' @param timeout number of seconds before run timeout (unlimited by default) (numeric)
@@ -43,6 +44,7 @@
 run_swap <- function(project_path,
                      swap_file = "swap.swp",
                      autoset_output = F,
+                     format = F,
                      force = T,
                      verbose = F,
                      timeout = Inf) {
@@ -86,14 +88,38 @@ run_swap <- function(project_path,
                                            verbose = verbose)
 
   # reads in the swap parameters and tables
-  parse_result <- parse_swap_file(project_path = project_path,
-                                 swap_file = swap_file,
-                                 verbose = verbose)
+    if(force){
+    cat(blue("parsing swap file (force=TRUE)\n"))
+    parse_result <- parse_swap_file(project_path = project_path,
+                                    swap_file = swap_file,
+                                    verbose = verbose)
+  }else{
+    if(!dir.exists(paste0(rswap_directory,"/parameters"))){
+      cat(blue("parsing swap file.. \n"))
+      # TODO, add a format flag to skip re-formatting
+      parse_result <- parse_swap_file(project_path = project_path,
+                                      swap_file = swap_file,
+                                      verbose = verbose)
+    }else{
+      cat("\u2139",blue("a swap file has already been parsed, not re-parsing..\n"))
+      parse_result <- list()
+      parse_result$parameter_path <- paste0(rswap_directory, "/parameters")
+      parse_result$table_path <-  paste0(rswap_directory, "/tables")
+      parse_result$vector_path <- paste0(rswap_directory, "/vectors")
+    }
+  }
 
   # load in the parameters to be altered
   parameters <- load_swap_parameters(project_path = project_path,
-                         swap_file = swap_file,
-                         verbose = verbose)
+                                     file_type = ".swp",
+                                     verbose = verbose)
+
+  # the reason we do not need to do anything with the swap.dra file here is
+  # because we don't need to make any run time changes to the parameter set.
+  ## --> update, this should be reconsidered. Should this function run the
+  ## parameter sets found in "memory" (rswap folder) or should it only run stuff
+  ## hard coded into the project_path? This is a fundamental thing that needs
+  ## to be decided package wide.. I am not sure yet which is the better option.
 
   # changes the paths in the swap main file to reflect the temporary location
   parameters <- update_swap_paths(project_path = project_path,
@@ -116,6 +142,7 @@ run_swap <- function(project_path,
   # Write swap file
   write_swap_file(project_path = project_path,
                   outfile = swap_run_paths$outpath,
+                  format = format,
                   verbose = verbose)
 
   # pause the IO timer during the model run
@@ -206,6 +233,7 @@ parse_run_paths <- function(project_path, verbose, swap_file) {
   work_dir <-seperated[1:length(seperated)-1] %>% paste(collapse = "/")
   swap_exe_path <- work_dir %>% paste(collapse = "/")
 
+  if(swap_exe_path ==""){swap_exe_path = "."}
   if(.Platform$OS.type == "windows"){
     swap_exe <- paste0(swap_exe_path,"/swap.exe")
   }else if(.Platform$OS.type == "unix"){
