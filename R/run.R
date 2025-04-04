@@ -130,7 +130,7 @@ run_swap <- function(project_path,
   io_start2 <- Sys.time()
 
   # check SWAP message
-  check_swap_message(project_path, swap_file, status = run_result$status, verbose)
+  check_swap_message(project_path, swap_file, status = run_result$status, timeout = timeout, verbose)
 
   # move run files to temp dir
   move_run_files(swap_run_paths$work_dir, swap_run_paths$project, verbose)
@@ -161,7 +161,7 @@ run_swap <- function(project_path,
 #' @importFrom dplyr %>% first
 #' @importFrom stringr str_split
 #' @importFrom crayon red
-check_swap_message <- function(project_path, swap_file, status, verbose = F){
+check_swap_message <- function(project_path, swap_file, status, timeout, verbose = F){
 
   if(status == 100){
     if(verbose){
