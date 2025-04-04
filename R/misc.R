@@ -1,3 +1,4 @@
+#' @importFrom crayon white bgBlue
 install_missing_packs <- function(required_packages) {
   missing_packs <- which((required_packages %in% utils::installed.packages()) == FALSE)
   if(length(missing_packs) > 0){
