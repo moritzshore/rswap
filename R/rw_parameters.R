@@ -812,6 +812,10 @@ write_swap_parameters <- function(project_path, parameters, type = "main", verbo
     stop("only supported types are 'main' and 'dra'")
   }
 
+  if(dir.exists(file_path)){
+    if(verbose){cat(italic(yellow("Overwriting existing parameters\n")))}
+    file.remove(file_path)
+  }
   if(dir.exists(file_dir) == FALSE){
     dir.create(file_dir)
   }
