@@ -9,6 +9,7 @@
 #' @param depth depth(s) to plot `numeric` (optional, if left blank, all available depths will be used)
 #' @param interactive use an interactive plotly plot? `flag`
 #' @param verbose print status? `flag`
+#' @param filepath if you want to save the plot to disk, provide a path. (only if interactive = FALSE)
 #'
 #' @export
 #'
@@ -31,7 +32,7 @@
 #' @importFrom utils tail
 #'
 #' @seealso [rswap_plot_compare()] [rswap_plot_performance()] [rswap_plot_multi()]
-rswap_plot_variable <- function(project_path, variable, depth = NULL, interactive = F, verbose = F) {
+rswap_plot_variable <- function(project_path, variable, depth = NULL, interactive = F, verbose = F, filepath = NULL) {
 
   if(!interactive){
     #install_missing_packs("ggbraid")
@@ -67,8 +68,18 @@ rswap_plot_variable <- function(project_path, variable, depth = NULL, interactiv
       scale_x_date(date_labels="%b-%y",date_breaks  ="1 month")+
       theme(axis.text.x = element_text(angle = 45, hjust = 0.5, vjust = 0.5))+
       labs(linetype = "")+
-      theme(legend.position = c(.94, 1.19))
+      theme(legend.position = "bottom")
     g_plot %>% graphics::plot()
+    if((filepath %>% is.null()) == FALSE){
+      ggplot2::ggsave(
+        filename = filepath,
+        plot = g_plot,
+        create.dir = TRUE,
+        limitsize = T
+      )
+    }
+
+
   }
 
   if(interactive){

@@ -9,7 +9,8 @@ rswap_plot_variable(
   variable,
   depth = NULL,
   interactive = F,
-  verbose = F
+  verbose = F,
+  filepath = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ rswap_plot_variable(
 \item{interactive}{use an interactive plotly plot? \code{flag}}
 
 \item{verbose}{print status? \code{flag}}
+
+\item{filepath}{if you want to save the plot to disk, provide a path. (only if interactive = FALSE)}
 }
 \description{
 This function plots a single SWAP \code{variable} at any given \code{depth}. If no depths
