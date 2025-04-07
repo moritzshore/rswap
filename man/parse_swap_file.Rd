@@ -12,6 +12,8 @@ parse_swap_file(project_path, swap_file = "swap.swp", verbose = F, force = F)
 \item{swap_file}{optional swap main file name (string) defaults to "swap.swp"}
 
 \item{verbose}{print status? (flag)}
+
+\item{force}{reload? (WIP)}
 }
 \value{
 Returns paths to where the parameters, vectors, and tables are written

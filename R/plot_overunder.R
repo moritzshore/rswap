@@ -22,7 +22,7 @@
 #'
 #' rswap_plot_variable(example_path, variable = "WC")
 #'
-#' @importFrom ggplot2 ggplot geom_line aes facet_wrap ylab ggtitle
+#' @importFrom ggplot2 ggplot geom_line aes facet_wrap ylab ggtitle theme_bw scale_x_date theme element_text labs
 #' @importFrom graphics plot
 #' @importFrom dplyr .data
 #' @importFrom plotly ggplotly

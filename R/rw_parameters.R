@@ -68,6 +68,7 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
 #' @param project_path path to project directory (string)
 #' @param swap_file optional swap main file name (string) defaults to "swap.swp"
 #' @param verbose print status? (flag)
+#' @param force reload? (WIP)
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom stringr str_trim str_split
