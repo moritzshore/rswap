@@ -51,16 +51,23 @@ rswap_plot_variable <- function(project_path, variable, depth = NULL, interactiv
 
   proj <- project_path %>% stringr::str_split("/") %>% unlist() %>% utils::tail(1)
   swap_data <- melt_swap_data(project_path, variable, depth, verbose)
+  swap_data$type[which(swap_data$type == "mod")] = "SWAP"
+  swap_data$type[which(swap_data$type == "obs")] = "Measured"
+
   depth_number <- swap_data$depth %>% unique() %>% length()
   df_wide <- tidyr::pivot_wider(swap_data, names_from = .data$type, values_from = .data$value)
 
   if(!interactive){
     g_plot <- ggplot2::ggplot() + ggplot2::geom_line(ggplot2::aes(.data$DATE, .data$value, linetype = .data$type), data = swap_data) +
-      ggplot2::facet_wrap( ~ depth, nrow = depth_number)+
-      ggbraid::geom_braid(ggplot2::aes(.data$DATE, ymin = .data$obs, ymax = .data$mod, fill = .data$obs < .data$mod),
-                          data = df_wide, alpha = 0.6, method = "line")+
-      ggplot2::ylab(variable)+ggplot2::ggtitle(paste(proj, variable))
-
+      ggplot2::facet_wrap( ~ depth, nrow = depth_number, labeller = "label_both")+
+      ggbraid::geom_braid(ggplot2::aes(.data$DATE, ymin = .data$Measured, ymax = .data$SWAP, fill = .data$Measured < .data$SWAP),
+                          data = df_wide, alpha = 0.6, method = "line", na.rm = FALSE, show.legend = F)+
+      ggplot2::ylab(variable)+ggplot2::ggtitle(paste0("Project ",proj), paste0("variable = ", variable ))+
+      theme_bw()+
+      scale_x_date(date_labels="%b-%y",date_breaks  ="1 month")+
+      theme(axis.text.x = element_text(angle = 45, hjust = 0.5, vjust = 0.5))+
+      labs(linetype = "")+
+      theme(legend.position = c(.94, 1.19))
     g_plot %>% graphics::plot()
   }
 
