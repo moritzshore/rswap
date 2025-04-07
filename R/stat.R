@@ -25,6 +25,7 @@
 #' @param depth depth of variable if it is depth-wise. leave blank for all
 #'   (numeric)
 #' @param verbose print status? (flag)
+#' @param force reload data?
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom tibble tibble
@@ -42,7 +43,8 @@ get_swap_performance <-
            archived = FALSE,
            variable = NULL,
            depth = NULL,
-           verbose = F) {
+           verbose = FALSE,
+           force = FALSE) {
 
     # vectorized behavior (recursive)
     if(length(project_path)>1){
@@ -90,7 +92,8 @@ get_swap_performance <-
       variable = variable,
       depth = depth,
       verbose = verbose,
-      archived = archived
+      archived = archived,
+      force = force
     )
 
     # unpack the list
