@@ -79,7 +79,7 @@ clean_swap_file <- function(project_path, swap_file = "swap.swp") {
 #'
 #' @export
 #'
-parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
+parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F, force = F) {
   # TODO, add force?
   file_ext = substr(swap_file, nchar(swap_file)-3, nchar(swap_file))
   if(file_ext == ".dra"){
@@ -89,8 +89,8 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   }
 
   # Only build if needed or force true
-  if (!dir.exists(paste0(project_path, "/rswap"))) {
-    rswap_dir <- build_rswap_directory(project_path)
+  if (!dir.exists(paste0(project_path, "/rswap")) | force == TRUE){
+    rswap_dir <- build_rswap_directory(project_path, force = force, verbose = verbose)
   }else{rswap_dir = paste0(project_path, "/rswap/")}
 
   swp <- clean_swap_file(rswap_dir, swap_file = swap_file)
@@ -233,10 +233,20 @@ parse_swap_file <- function(project_path, swap_file = "swap.swp", verbose = F) {
   } # END of for loop
 
   # write parameters:
-  if(drain_file){
-    write_swap_parameters(project_path, par_df, type = "dra", verbose)
-  }else{
-    write_swap_parameters(project_path, par_df, type = "main", verbose)
+  if (drain_file) {
+    write_swap_parameters(
+      project_path = project_path,
+      parameters =  par_df,
+      type = "dra",
+      verbose =  verbose
+    )
+  } else{
+    write_swap_parameters(
+      project_path = project_path,
+      parameters =  par_df,
+      type = "main",
+      verbose = verbose
+    )
 
   }
 

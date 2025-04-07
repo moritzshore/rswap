@@ -4,7 +4,7 @@
 \alias{parse_swap_file}
 \title{Parse SWAP File}
 \usage{
-parse_swap_file(project_path, swap_file = "swap.swp", verbose = F)
+parse_swap_file(project_path, swap_file = "swap.swp", verbose = F, force = F)
 }
 \arguments{
 \item{project_path}{path to project directory (string)}
