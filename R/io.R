@@ -565,6 +565,7 @@ get_swap_depths <- function(data, variable = NULL) {
 #' @param depth an optional depth to select for (numeric)
 #' @param verbose print status? (boolean)
 #' @param archived is the project in /rswap_saved/?
+#' @param force force reload of source data?
 #'
 #' @importFrom tibble %>%
 #' @importFrom glue glue
@@ -583,7 +584,7 @@ get_swap_depths <- function(data, variable = NULL) {
 #'
 #' match_swap_data(example_path, "WC", depth = 15, verbose = TRUE)
 match_swap_data <- function(project_path, variable, depth = NULL,
-                          verbose = F, archived = F) {
+                          verbose = F, archived = F, force = FALSE) {
 
     # TODO rename: match_swap_data
 
@@ -595,8 +596,8 @@ match_swap_data <- function(project_path, variable, depth = NULL,
     project_path <- project_path %>% stringr::str_remove("/rswap/")
   }
 
-  observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived)
-  modelled_data <- load_swap_output(project_path = project_path, archived = archived)
+  observed_data <- load_swap_observed(project_path = project_path, verbose = verbose, archived = archived, force = force)
+  modelled_data <- load_swap_output(project_path = project_path, archived = archived, verbose = verbose)
 
   observed_data_filtered <-filter_swap_data(data = observed_data,
                                             variable = variable, depth = depth)

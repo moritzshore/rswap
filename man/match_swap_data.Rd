@@ -9,7 +9,8 @@ match_swap_data(
   variable,
   depth = NULL,
   verbose = F,
-  archived = F
+  archived = F,
+  force = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ match_swap_data(
 \item{verbose}{print status? (boolean)}
 
 \item{archived}{is the project in /rswap_saved/?}
+
+\item{force}{force reload of source data?}
 }
 \value{
 Returns a list of two dataframes, \code{.$mod} and \code{.$obs}. These two dataframes have identical dimensions and column names.

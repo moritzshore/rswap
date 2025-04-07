@@ -25,6 +25,7 @@
 #' @param depth depth of variable if it is depth-wise. leave blank for all
 #'   (numeric)
 #' @param verbose print status? (flag)
+#' @param force reload data?
 #'
 #' @importFrom dplyr %>% nth
 #' @importFrom tibble tibble
@@ -42,7 +43,8 @@ get_swap_performance <-
            archived = FALSE,
            variable = NULL,
            depth = NULL,
-           verbose = F) {
+           verbose = FALSE,
+           force = FALSE) {
 
     # vectorized behavior (recursive)
     if(length(project_path)>1){
@@ -90,7 +92,8 @@ get_swap_performance <-
       variable = variable,
       depth = depth,
       verbose = verbose,
-      archived = archived
+      archived = archived,
+      force = force
     )
 
     # unpack the list
@@ -114,10 +117,17 @@ get_swap_performance <-
       joined_df <- dplyr::left_join(joined_df, mod_join, by = "DATE")
       colnames(joined_df) <- c("DATE", "obs", "mod")
 
-      stat_val <- hydroGOF_function(sim = joined_df$mod,
-                          obs = joined_df$obs,
-                          na.rm = TRUE)
-
+      # Error handling for if there is no overlapping values.
+      if (joined_df$obs %>% is.na() %>% all()) {
+        error_col <- observed_data_filtered %>% colnames() %>% nth(i)
+        warning("No observations within modelled timeframe! Cannot compute statistics for: \n",
+                error_col, " @ (", project_path, ")\n")
+        stat_val <- NA
+      }else{
+        stat_val <- hydroGOF_function(sim = joined_df$mod,
+                                      obs = joined_df$obs,
+                                      na.rm = TRUE)
+      }
       row = data.frame(variable = name, value =  stat_val)
       return_df = rbind(return_df, row)
     }

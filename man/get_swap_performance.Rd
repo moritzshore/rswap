@@ -10,7 +10,8 @@ get_swap_performance(
   archived = FALSE,
   variable = NULL,
   depth = NULL,
-  verbose = F
+  verbose = FALSE,
+  force = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ get_swap_performance(
 (numeric)}
 
 \item{verbose}{print status? (flag)}
+
+\item{force}{reload data?}
 }
 \value{
 dataframe value(s) of performance indicator(s) for given variable(s)
