@@ -44,9 +44,12 @@ build_rswap_directory <- function(project_path, force = T, verbose = F){
     cat(green(underline(temp_directory)), "\n")
   }
 
+  file_list <- list.files(project_path, full.names = T, recursive = T)
+  if((file_list %>% length()) == 0){
+    stop("No SWAP files detected, cannot build! Are you sure this is the correct project path?\n", getwd() ,"/ [>> " ,project_path,  " <<]")
+  }
   # list files found in project path (Note, this includes all the saved runs as
   # well, which we dont want, which is why we need to remove them)
-  file_list <- list.files(project_path, full.names = T, recursive = T)
   ignore <-  grepl(x = file_list, "\\b/rswap_saved/\\b") %>% which()
   # only remove files if they actually need to be, because if you do this
   # with an empty vector, it will delete ALL the files
