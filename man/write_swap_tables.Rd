@@ -4,7 +4,7 @@
 \alias{write_swap_tables}
 \title{Write SWAP Tables}
 \usage{
-write_swap_tables(project_path, tables, type = "main", verbose = F)
+write_swap_tables(project_path, tables, type = "main", format = F, verbose = F)
 }
 \arguments{
 \item{project_path}{path to project directory}

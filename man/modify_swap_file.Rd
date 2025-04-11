@@ -11,6 +11,7 @@ modify_swap_file(
   variable,
   value,
   row = NULL,
+  format = T,
   fast = F,
   write = T,
   verbose = F
@@ -28,6 +29,8 @@ modify_swap_file(
 \item{value}{value to assign \code{string}}
 
 \item{row}{(optional) only pass if vector (as index) or table. \code{integer}}
+
+\item{format}{auto-format parameters?}
 
 \item{fast}{(optional) If rswap has already parsed the swap file \code{flag}}
 

@@ -17,6 +17,7 @@ check_swap_sensitivity(
   n_cores = NULL,
   autoset_output = FALSE,
   force = TRUE,
+  format = FALSE,
   verbose = FALSE,
   timeout = Inf
 )
@@ -57,6 +58,8 @@ data?}
 
 \item{force}{(optional, Boolean) If an rswap directory already exists, no new
 one will be generated/reloaded unless force=TRUE. Defaults to TRUE}
+
+\item{format}{auto-format parameter set?}
 
 \item{verbose}{(optional, Boolean) Print actions to console?}
 

@@ -42,6 +42,7 @@
 #' @param verbose (optional, Boolean) Print actions to console?
 #' @param timeout (optional, numeric) Maximum model run time in seconds.
 #'   Unlimited by default.
+#' @param format auto-format parameter set?
 #'
 #' @importFrom plotly plot_ly layout add_trace
 #' @importFrom stringr str_split
@@ -77,6 +78,7 @@ check_swap_sensitivity <- function(project_path,
                                    n_cores = NULL,
                                    autoset_output = FALSE,
                                    force = TRUE,
+                                   format = FALSE,
                                    verbose = FALSE,
                                    timeout = Inf){
 
@@ -84,7 +86,13 @@ check_swap_sensitivity <- function(project_path,
   # if the project has not been parsed yet, parse it here!
   base_proj <- paste0(project_path, "/rswap/")
   qparse = dir.exists(paste0(base_proj, "/parameters"))
-  if(!qparse){parse_swap_file(project_path, swap_file, verbose)}
+  if(!qparse){parse_swap_file(project_path, swap_file, verbose, force = force)}
+
+  # format all the tables (BIG MESS)
+  if(format){
+    tables <- load_swap_tables(project_path, verbose = verbose)
+    write_swap_tables(project_path, tables, format = T, verbose = verbose)
+    }
 
   working_dir <- dirname(project_path)
   project_name <- basename(project_path)
@@ -92,20 +100,32 @@ check_swap_sensitivity <- function(project_path,
   dir.create(sens_dir)
   sensnames <- paste0(sens_dir, "/run_",c(1:length(values)), "/")
 
-  if(verbose){cat("generating scenario files\n")}
+  if(verbose){cat("\n >> generating scenario files\n")}
   res = lapply(X = sensnames,
     FUN = function(x) {
       dir.create(x, showWarnings = F)
       if(verbose){cat(">>>", x, "\n")}
       status = file.copy(from = base_proj, to = x, recursive = T, overwrite = T)})
 
-  # this does not work yet
-  #set_swap_format(parameter = variable, value = .03)
+  # format values
+  if(format){
+    values <- rswap::set_swap_format(value = values, parameter = variable)
+  }
 
   # modify the SWAP files with rswap function
-  res <- modify_swap_file(project_path = sensnames,
-                   input_file = swap_file, output_file = "rswap/swap_sens.swp",
-                   variable = variable, value = values, row = row, fast = T, verbose = verbose)
+  res <- modify_swap_file(
+    project_path = sensnames,
+    input_file = swap_file,
+    output_file = "rswap/swap_sens.swp",
+    variable = variable,
+    value = values,
+    row = row,
+    fast = F,
+    verbose = verbose,
+    write = T,
+    format = F # this should be done once for the values vector, not for every run
+  )
+
 
   # this should eventually be replaced by storing the ".exe" location in the
   # package environment.
@@ -181,7 +201,7 @@ check_swap_sensitivity <- function(project_path,
     var_sens_vectorized <- function(sens_res_path, obs_variable, depth) {
       id =  sens_res_path %>% stringr::str_split("/", simplify = F) %>%
         unlist() %>% last()
-      rswap::melt_swap_data(sens_res_path, obs_variable , depth) %>%
+      melt_swap_data(project_path = sens_res_path, variable = obs_variable , depth = depth, verbose = verbose) %>%
         filter(.data$type == "mod") %>% cbind(id) %>% return()
     }
     # extract all the data from each run
@@ -192,10 +212,20 @@ check_swap_sensitivity <- function(project_path,
 
     # bind them together, convert to tibble, and join with ID table giving a
     # dataframe ready to plot with.
+    values <- values %>% as.numeric() %>% sort() %>% as.character()
+
+    if(length(values) <= 26){
+      letters_len <- LETTERS[1:length(values)]
+      values_legend <- paste0("run", letters_len," >> ", variable, "=", values)
+    }else{
+      warning("Legend coloring in plot will be off, I am working to fix this. use less than 26 runs for proper legend ordering!")
+      values_legend <- paste0("run", c(1:length(values))," >> ", variable, "=", values)
+      }
+
     outputDF <- do.call(rbind, data_Extract)
     outputDF <- outputDF %>% as_tibble()
     intermediate_df <- data.frame(id = paste0("run_", c(1:length(values))),
-                                  sens_val = paste(variable , "@", values))
+                                  sens_val =values_legend)
     plot_df <- left_join(outputDF, intermediate_df, by = "id")
 
     # defining a color scheme with the given amount of runs
@@ -212,6 +242,7 @@ check_swap_sensitivity <- function(project_path,
       type = 'scatter',
       mode = 'lines'
     )
+
 
     # loading observed data
     # TODO: make sure this doesnt break if there is no observed data

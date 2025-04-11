@@ -811,7 +811,7 @@ load_swap_parameters <- function(project_path, file_type = ".swp", verbose = F){
 #' @importFrom purrr map2
 #'
 #' @export
-write_swap_parameters <- function(project_path, parameters, type = "main", verbose = F){
+write_swap_parameters <- function(project_path, parameters, type = "main",verbose = F){
 
   if(type == "main"){
     file_dir = paste0(project_path, "/rswap/parameters/" )
@@ -863,7 +863,7 @@ write_swap_parameters <- function(project_path, parameters, type = "main", verbo
 #' @importFrom utils write.table
 #' @export
 #' @importFrom utils write.table
-write_swap_tables <- function(project_path, tables, type = "main", verbose = F) {
+write_swap_tables <- function(project_path, tables, type = "main", format = F, verbose = F) {
   # TODO: type should match that from load_swap_tables
 
   if(type == "main"){
@@ -872,6 +872,10 @@ write_swap_tables <- function(project_path, tables, type = "main", verbose = F) 
     file_path <-  paste0(project_path, "/rswap/dra_tables/")
   }else{
     stop("only supported types are 'main' and 'dra'")
+  }
+
+  if(format){
+    tables <- lapply(tables, format_swap_table)
   }
 
   if(dir.exists(file_path)){
@@ -1074,6 +1078,7 @@ change_swap_vector <- function(vector, index, value, variable = NULL, verbose = 
 #' @param output_file SWAP file name write (required if write=TRUE) `string`
 #' @param variable SWAP variable to change `string`
 #' @param value value to assign `string`
+#' @param format auto-format parameters?
 #' @param row (optional) only pass if vector (as index) or table. `integer`
 #' @param fast (optional) If rswap has already parsed the swap file `flag`
 #' @param write (optional) Flag to enable or disable writing of output file `flag`
@@ -1094,6 +1099,7 @@ modify_swap_file <- function(project_path,
                              variable,
                              value,
                              row = NULL,
+                             format = T,
                              fast = F,
                              write = T,
                              verbose = F) {
@@ -1107,7 +1113,7 @@ modify_swap_file <- function(project_path,
     # both "project_path" and "value" are vectors, the rest are constant which
     # get recycled. This is intended behavior.
     result <- mapply(modify_swap_file, project_path, input_file, output_file,
-                     variable, value, row, fast, write, verbose)
+                     variable, value, row, format, fast, write, verbose)
     return(result %>% as.vector())
 }
 
@@ -1142,8 +1148,9 @@ modify_swap_file <- function(project_path,
     if(is.null(input_file)){
       stop("If you want to use fast=FALSE you need to pass an input file!")
     }
-    fps = parse_swap_file(project_path = project_path, swap_file = input_file, verbose = verbose)
   }
+
+  fps = parse_swap_file(project_path = project_path, swap_file = input_file, verbose = verbose)
 
   # TODO this should only be checked if both files are provided.
   file_ext = substr(input_file, nchar(input_file) - 3, nchar(input_file))
@@ -1203,9 +1210,9 @@ modify_swap_file <- function(project_path,
   }
   if(write){
     if(output_file %>% is.null()){
-      path <- write_swap_file(project_path = project_path, outfile = input_file, verbose = verbose)
+      path <- write_swap_file(project_path = project_path, outfile = input_file, verbose = verbose, format = format)
     }else{
-      path <- write_swap_file(project_path = project_path, outfile = output_file, verbose = verbose)
+      path <- write_swap_file(project_path = project_path, outfile = output_file, verbose = verbose, format = format)
     }
   }else{
     path <- NULL
