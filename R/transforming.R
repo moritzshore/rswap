@@ -33,8 +33,19 @@ melt_swap_data <- function(project_path, variable = NULL, depth = NULL, verbose 
 
   if(depth %>% is.null()){
     depths <- get_swap_depths(data = obser_dat, variable = variable)
+  }else{
+    available_depths <- get_swap_depths(data = obser_dat, variable = variable)
+    if (depth %in% available_depths == FALSE) {
+      stop(
+        "Depth ",
+        depth,
+        " is not available for variable ",
+        variable,
+        " in the observed data! Available depths include: ",
+        paste0(available_depths, collapse = ", ")
+      )
+    }
   }
-
   matched <- match_swap_data(project_path, variable, depth, verbose, archived = F)
 
   mod_melt <- matched$mod %>% tidyr::pivot_longer(cols = colnames(matched$obs)[-1])
